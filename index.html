@@ -199,7 +199,7 @@
     .feature-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
 
     /* GENERATOR */
-    #generator { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #generator { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }i
     .generator-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
     .generator-form { display: flex; flex-direction: column; gap: 18px; }
     .form-group { display: flex; flex-direction: column; gap: 7px; }
@@ -447,6 +447,49 @@
     .footer-badges { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .badge-pill { padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); }
 
+    /* ZORA BUY BUTTON */
+    .btn-zora {
+      padding: 13px 30px; border-radius: 4px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border: none; color: white; font-family: 'Rajdhani', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-zora:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.45); }
+
+    /* CHAIN BADGES */
+    .chain-badges {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;
+      margin-top: 14px; animation: fadeUp 0.7s 0.35s ease both;
+    }
+    .chain-badge {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 999px;
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; border: 1px solid;
+    }
+    .chain-badge-sol {
+      background: rgba(20,241,149,0.07);
+      border-color: rgba(20,241,149,0.3);
+      color: #14f195;
+    }
+    .chain-badge-base {
+      background: rgba(0,82,255,0.07);
+      border-color: rgba(0,82,255,0.3);
+      color: #6b8cff;
+    }
+    .chain-badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .chain-badge-sol .chain-badge-dot { background: #14f195; box-shadow: 0 0 6px #14f195; }
+    .chain-badge-base .chain-badge-dot { background: #0052ff; box-shadow: 0 0 6px #0052ff; }
+
+    /* BUILT ON LABEL (hero) */
+    .built-on-label {
+      font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
+      margin-top: 28px; animation: fadeUp 0.7s 0.35s ease both;
+    }
+
     /* TOAST */
     .toast {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
@@ -535,7 +578,13 @@
     </p>
     <div class="hero-cta">
       <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
+      <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="btn-zora">⚡ Buy $KAIZENKICK on Zora</a>
       <a href="#how" class="btn-outline">使い方 / How It Works</a>
+    </div>
+    <div class="built-on-label">⛓ Built on</div>
+    <div class="chain-badges">
+      <span class="chain-badge chain-badge-sol"><span class="chain-badge-dot"></span>Solana</span>
+      <span class="chain-badge chain-badge-base"><span class="chain-badge-dot"></span>Base</span>
     </div>
     <div class="hero-stats">
       <div class="stat">
@@ -904,7 +953,14 @@
     <div class="cta-title-en">Start Your Evolution Today</div>
     <p class="cta-sub">カード一枚が、あなたの改善の証になる。</p>
     <p class="cta-sub-en">One card. Your proof of progress.</p>
-    <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center;">
+      <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
+      <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="btn-zora">⚡ Buy $KAIZENKICK on Zora</a>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
+      <span class="chain-badge chain-badge-sol"><span class="chain-badge-dot"></span>Solana</span>
+      <span class="chain-badge chain-badge-base"><span class="chain-badge-dot"></span>Base</span>
+    </div>
   </section>
 
   <!-- FOOTER -->
@@ -940,6 +996,7 @@
         <div class="footer-col-title">フォロー / Follow</div>
         <div class="footer-links">
           <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
+          <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" style="color:var(--gold)">⚡ Buy on Zora</a>
           <a href="#">📸 Instagram</a>
           <a href="#">プライバシー / Privacy</a>
         </div>
@@ -951,6 +1008,8 @@
         <span class="badge-pill">⚽ Made for Ballers</span>
         <span class="badge-pill">🇯🇵 Japan</span>
         <span class="badge-pill">🌍 Global</span>
+        <span class="chain-badge chain-badge-sol" style="font-size:9px;padding:3px 10px;"><span class="chain-badge-dot"></span>Solana</span>
+        <span class="chain-badge chain-badge-base" style="font-size:9px;padding:3px 10px;"><span class="chain-badge-dot"></span>Base</span>
       </div>
     </div>
   </footer>
