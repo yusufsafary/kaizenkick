@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KaizenKick — Samurai Blue 2026</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial, sans-serif;}
+body{background:#0b0f1a;color:#fff;line-height:1.6;}
+nav{position:fixed;width:100%;top:0;background:rgba(0,0,0,0.7);padding:15px;z-index:999;}
+nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:14px;}
+.hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(180deg,#0b0f1a,#111c3a);}
+.hero h1{font-size:40px;}
+.hero p{opacity:0.7;margin:10px 0;}
+.btn{padding:10px 20px;background:#e60026;border:none;color:#fff;cursor:pointer;margin-top:10px;}
+.section{padding:80px 20px;max-width:1100px;margin:auto;}
+.card{background:#111c3a;padding:20px;margin:10px;border-radius:10px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;}
+footer{text-align:center;padding:30px;background:#000;}
+.lang-switch{position:fixed;right:10px;top:60px;}
+.lang-switch button{margin:3px;padding:5px 10px;}
+</style>
+
+<script>
+function setLang(lang){
+  document.querySelectorAll("[data-en]").forEach(el=>{
+    el.innerText = el.getAttribute("data-"+lang);
+  });
+}
+</script>
+
+</head>
+
+<body>
+
+<nav>
+<a href="#home">Home</a>
+<a href="#squad">Squad</a>
+<a href="#tactics">Tactics</a>
+<a href="#roadmap">Roadmap</a>
+<a href="#travel">Travel</a>
+</nav>
+
+<div class="lang-switch">
+<button onclick="setLang('en')">EN</button>
+<button onclick="setLang('jp')">JP</button>
+</div>
+
+<section class="hero" id="home">
+<h1 data-en="KaizenKick" data-jp="カイゼンキック">KaizenKick</h1>
+<p data-en="The Evolution of Samurai Blue toward 2026"
+   data-jp="2026年へ進化するサムライブルー">
+</p>
+<button class="btn"
+data-en="Explore Squad"
+data-jp="チームを見る"></button>
+</section>
+
+<section class="section" id="squad">
+<h2 data-en="Squad Analysis" data-jp="チーム分析"></h2>
+<div class="grid">
+
+<div class="card">
+<h3>Takefusa Kubo</h3>
+<p data-en="Creative winger with high vision and control"
+   data-jp="高い視野とコントロールを持つ創造的ウィンガー"></p>
+</div>
+
+<div class="card">
+<h3>Kaoru Mitoma</h3>
+<p data-en="Explosive dribbler, key attacking weapon"
+   data-jp="爆発的なドリブルで攻撃の要"></p>
+</div>
+
+<div class="card">
+<h3>Wataru Endo</h3>
+<p data-en="Midfield anchor, defensive intelligence"
+   data-jp="守備的知性を持つ中盤の要"></p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="tactics">
+<h2 data-en="Tactical System" data-jp="戦術システム"></h2>
+
+<div class="card">
+<p data-en="High pressing, structured build-up, fast wing play"
+   data-jp="ハイプレス、組織的ビルドアップ、速いサイド攻撃"></p>
+</div>
+
+<div class="card">
+<p data-en="4-3-3 flexible formation adapting to opponent"
+   data-jp="相手に応じて変化する4-3-3フォーメーション"></p>
+</div>
+
+</section>
+
+<section class="section" id="roadmap">
+<h2 data-en="World Cup 2026 Path" data-jp="ワールドカップ2026への道"></h2>
+
+<div class="card">
+<p data-en="Group Stage → Knockout → Quarterfinal Goal"
+   data-jp="グループステージ → 決勝トーナメント → ベスト8目標"></p>
+</div>
+
+</section>
+
+<section class="section" id="travel">
+<h2 data-en="Travel & Tickets" data-jp="旅行とチケット"></h2>
+
+<div class="card">
+<p data-en="Secure tickets early via official FIFA channels"
+   data-jp="公式FIFAサイトで早めにチケットを確保"></p>
+</div>
+
+<div class="card">
+<p data-en="Host cities include Los Angeles, New York, Toronto"
+   data-jp="開催都市：ロサンゼルス、ニューヨーク、トロントなど"></p>
+</div>
+
+</section>
+
+<section class="section">
+<h2 data-en="Kaizen Philosophy" data-jp="カイゼン哲学"></h2>
+
+<div class="card">
+<p data-en="Continuous improvement defines the Samurai Blue identity"
+   data-jp="継続的な改善こそサムライブルーの本質"></p>
+</div>
+
+</section>
+
+<footer>
+<p>© KaizenKick 2026</p>
+<p data-en="Not an official FIFA site"
+   data-jp="これは公式FIFAサイトではありません"></p>
+</footer>
+
+</body>
+</html>
