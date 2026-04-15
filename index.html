@@ -1,142 +1,978 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KaizenKick — Samurai Blue 2026</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>カイゼンキック | KaizenKick</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d078;
+      --gold-dim: #5a4820;
+      --red: #c1121f;
+      --red-bright: #ef233c;
+      --bg: #06060a;
+      --surface: #0d0d14;
+      --surface2: #14141e;
+      --text: #e8e8f0;
+      --text-dim: #6b6b80;
+      --border: rgba(201,168,76,0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .grid-texture {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none; z-index: 0;
+    }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial, sans-serif;}
-body{background:#0b0f1a;color:#fff;line-height:1.6;}
-nav{position:fixed;width:100%;top:0;background:rgba(0,0,0,0.7);padding:15px;z-index:999;}
-nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:14px;}
-.hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(180deg,#0b0f1a,#111c3a);}
-.hero h1{font-size:40px;}
-.hero p{opacity:0.7;margin:10px 0;}
-.btn{padding:10px 20px;background:#e60026;border:none;color:#fff;cursor:pointer;margin-top:10px;}
-.section{padding:80px 20px;max-width:1100px;margin:auto;}
-.card{background:#111c3a;padding:20px;margin:10px;border-radius:10px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;}
-footer{text-align:center;padding:30px;background:#000;}
-.lang-switch{position:fixed;right:10px;top:60px;}
-.lang-switch button{margin:3px;padding:5px 10px;}
-</style>
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 5%;
+      background: rgba(6,6,10,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 4px; color: var(--gold); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 2px; color: var(--text-dim); text-decoration: none;
+      text-transform: uppercase; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); transition: all 0.3s; }
+    .mobile-menu {
+      display: none; position: fixed; top: 58px; left: 0; right: 0;
+      background: rgba(6,6,10,0.97); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); z-index: 99;
+      padding: 16px 5%; flex-direction: column;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700;
+      letter-spacing: 3px; color: var(--text-dim); text-decoration: none;
+      text-transform: uppercase; padding: 14px 0;
+      border-bottom: 1px solid var(--border); transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
 
-<script>
-function setLang(lang){
-  document.querySelectorAll("[data-en]").forEach(el=>{
-    el.innerText = el.getAttribute("data-"+lang);
-  });
-}
-</script>
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 120px 5% 80px; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 550px;
+      background: radial-gradient(ellipse, rgba(193,18,31,0.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 6px; color: var(--red-bright); text-transform: uppercase;
+      margin-bottom: 20px; animation: fadeUp 0.6s ease both;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(60px, 14vw, 140px);
+      letter-spacing: 8px; line-height: 1; color: var(--gold);
+      text-shadow: 0 0 80px rgba(201,168,76,0.3);
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .hero-sub {
+      font-size: clamp(13px, 2.5vw, 17px); color: var(--text-dim);
+      margin: 20px 0 40px; letter-spacing: 1px; line-height: 1.7;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+    .hero-cta {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 80px; flex-wrap: wrap;
+      justify-content: center; animation: fadeUp 0.7s 0.4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--gold); line-height: 1; }
+    .stat-label { font-size: 10px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
 
+    /* BUTTONS */
+    .btn-primary {
+      padding: 13px 30px; border-radius: 4px;
+      background: linear-gradient(135deg, var(--red), #8b0000);
+      border: none; color: white; font-family: 'Rajdhani', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(193,18,31,0.4); }
+    .btn-outline {
+      padding: 13px 30px; border-radius: 4px; background: transparent;
+      border: 1px solid var(--gold-dim); color: var(--gold);
+      font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
+      transition: all 0.2s; text-decoration: none; display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+    /* SECTION */
+    section { position: relative; z-index: 1; padding: 100px 5%; }
+    .section-label {
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 5px; color: var(--red-bright); text-transform: uppercase; margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(34px, 6vw, 58px);
+      letter-spacing: 4px; color: var(--gold); margin-bottom: 14px;
+    }
+    .section-desc { font-size: 14px; line-height: 1.8; color: var(--text-dim); max-width: 540px; }
+    .divider { width: 50px; height: 2px; background: linear-gradient(90deg, var(--red), transparent); margin: 16px 0; }
+
+    /* ABOUT */
+    #about {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+      align-items: center; max-width: 1200px; margin: 0 auto;
+    }
+    .about-box {
+      aspect-ratio: 4/5; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .about-box-inner {
+      font-family: 'Bebas Neue', sans-serif; font-size: 110px;
+      color: rgba(201,168,76,0.05); letter-spacing: -4px;
+      line-height: 1; user-select: none; text-align: center; padding: 20px;
+    }
+    .about-badge {
+      position: absolute; bottom: 24px; right: -16px;
+      background: var(--red); padding: 14px 18px; border-radius: 4px; text-align: center;
+    }
+    .about-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 1; }
+    .about-badge-txt { font-size: 9px; letter-spacing: 2px; opacity: 0.8; }
+    .about-features { margin-top: 32px; display: flex; flex-direction: column; gap: 14px; }
+    .feature-row {
+      display: flex; align-items: flex-start; gap: 14px; padding: 14px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+      transition: border-color 0.2s;
+    }
+    .feature-row:hover { border-color: var(--gold-dim); }
+    .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .feature-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
+      letter-spacing: 1px; color: var(--gold); margin-bottom: 3px;
+    }
+    .feature-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+
+    /* GENERATOR */
+    #generator { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .generator-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .generator-form { display: flex; flex-direction: column; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+    .form-label {
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
+    }
+    .form-input {
+      padding: 13px 15px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; color: var(--text); font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
+    }
+    .form-input:focus { border-color: var(--gold-dim); }
+    .form-select {
+      padding: 13px 15px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; color: var(--text); font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
+      cursor: pointer; appearance: none; -webkit-appearance: none;
+    }
+    .form-select:focus { border-color: var(--gold-dim); }
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: '▾'; position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%); color: var(--gold); pointer-events: none;
+    }
+    .stat-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .slider-group { display: flex; flex-direction: column; gap: 5px; }
+    .slider-top { display: flex; justify-content: space-between; align-items: center; }
+    .slider-name {
+      font-size: 10px; letter-spacing: 2px; color: var(--text-dim);
+      text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600;
+    }
+    .slider-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); }
+    input[type=range] {
+      -webkit-appearance: none; width: 100%; height: 3px;
+      background: var(--surface2); border-radius: 2px; outline: none; border: 1px solid var(--border);
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--gold); cursor: pointer;
+    }
+    .randomize-btn {
+      padding: 9px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; color: var(--text-dim); font-family: 'Rajdhani', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .randomize-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .generate-actions { display: flex; gap: 12px; }
+
+    /* PLAYER CARD */
+    .card-preview {
+      display: flex; flex-direction: column; align-items: center; gap: 18px;
+      position: sticky; top: 90px;
+    }
+    #player-card {
+      width: 270px;
+      background: linear-gradient(160deg, #0f0f1a 0%, #06060a 60%, #0a0005 100%);
+      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 30px rgba(201,168,76,0.07);
+      animation: pulse-gold 3s infinite;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #1a0a0a, #0f0510);
+      padding: 18px 18px 0; position: relative;
+    }
+    .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-overall {
+      font-family: 'Bebas Neue', sans-serif; font-size: 50px; line-height: 1;
+      color: var(--gold); text-shadow: 0 0 20px rgba(201,168,76,0.4);
+    }
+    .card-pos-badge {
+      background: var(--red); padding: 4px 10px; border-radius: 3px;
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    }
+    .card-nation { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-top: 1px; }
+    .card-avatar {
+      width: 100%; height: 120px; display: flex; align-items: center;
+      justify-content: center; font-size: 66px; margin-top: 8px;
+    }
+    .card-body { padding: 14px 18px 18px; }
+    .card-name {
+      font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px;
+      color: var(--gold); text-align: center; margin-bottom: 3px;
+    }
+    .card-team-name { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-align: center; margin-bottom: 12px; text-transform: uppercase; }
+    .card-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); margin-bottom: 12px; }
+    .card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .card-stat { text-align: center; }
+    .card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); line-height: 1; }
+    .card-stat-lbl { font-family: 'Rajdhani', sans-serif; font-size: 8px; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; }
+    .card-footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(201,168,76,0.1); text-align: center; }
+    .card-footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 4px; color: rgba(201,168,76,0.28); }
+    .card-actions { display: flex; gap: 10px; width: 270px; }
+    .card-actions .btn-primary, .card-actions .btn-outline {
+      flex: 1; text-align: center; padding: 11px 14px; font-size: 12px;
+    }
+
+    /* HOW */
+    .how-inner { max-width: 1200px; margin: 0 auto; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 56px; }
+    .step {
+      position: relative; padding: 28px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .step:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 68px; color: rgba(201,168,76,0.06); line-height: 1; position: absolute; top: 14px; right: 18px; }
+    .step-icon { font-size: 30px; margin-bottom: 14px; }
+    .step-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700;
+      letter-spacing: 2px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase;
+    }
+    .step-desc { font-size: 13px; line-height: 1.7; color: var(--text-dim); }
+
+    /* SHOWCASE */
+    .showcase-inner { max-width: 1200px; margin: 0 auto; }
+    .showcase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 48px; }
+    .showcase-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; cursor: pointer; transition: transform 0.2s, border-color 0.2s;
+    }
+    .showcase-item:hover { transform: scale(1.03); border-color: var(--gold-dim); }
+    .showcase-card-mini {
+      padding: 18px 14px; background: linear-gradient(160deg, #12121f, #06060a); text-align: center;
+    }
+    .sc-overall { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--gold); line-height: 1; }
+    .sc-pos { font-size: 9px; letter-spacing: 2px; color: var(--red-bright); font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; }
+    .sc-avatar { font-size: 38px; margin: 6px 0; }
+    .sc-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--gold); }
+    .showcase-meta { padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
+    .sc-user { font-size: 10px; color: var(--text-dim); }
+    .sc-date { font-size: 9px; color: var(--text-dim); opacity: 0.6; }
+
+    /* TEAM */
+    #team { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .team-inner { max-width: 1200px; margin: 0 auto; }
+    .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 56px; }
+    .team-card {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+    }
+    .team-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+    .team-avatar {
+      width: 100%; aspect-ratio: 1; display: flex; align-items: center;
+      justify-content: center; font-size: 52px;
+      background: linear-gradient(135deg, #111120, #0a0a12);
+    }
+    .team-info { padding: 14px; }
+    .team-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; color: var(--text); margin-bottom: 3px; }
+    .team-role { font-size: 10px; letter-spacing: 2px; color: var(--red-bright); text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; margin-bottom: 7px; }
+    .team-bio { font-size: 11px; line-height: 1.6; color: var(--text-dim); }
+    .team-socials { display: flex; gap: 8px; margin-top: 10px; }
+    .team-social {
+      width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+      cursor: pointer; transition: border-color 0.2s; text-decoration: none; color: var(--text-dim);
+    }
+    .team-social:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+    /* FAQ */
+    .faq-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+    .faq-list { text-align: left; margin-top: 48px; display: flex; flex-direction: column; gap: 10px; }
+    .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .faq-q {
+      padding: 16px 18px; cursor: pointer; display: flex; justify-content: space-between;
+      align-items: center; font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: 1px; color: var(--text); user-select: none; transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--gold); }
+    .faq-icon { font-size: 18px; color: var(--gold); transition: transform 0.3s; flex-shrink: 0; margin-left: 12px; }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s;
+      font-size: 13px; line-height: 1.75; color: var(--text-dim);
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding: 0 18px 16px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* CTA */
+    #cta-banner {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(193,18,31,0.1), rgba(201,168,76,0.05));
+      border-top: 1px solid rgba(193,18,31,0.18);
+      border-bottom: 1px solid rgba(193,18,31,0.18);
+    }
+    .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 6vw, 70px); letter-spacing: 6px; color: var(--gold); margin-bottom: 14px; }
+    .cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 34px; }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; padding: 60px 5% 36px; border-top: 1px solid var(--border); }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 44px;
+    }
+    .footer-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; color: var(--gold); margin-bottom: 10px; }
+    .footer-brand-desc { font-size: 12px; line-height: 1.75; color: var(--text-dim); max-width: 260px; }
+    .footer-col-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 14px; }
+    .footer-links { display: flex; flex-direction: column; gap: 9px; }
+    .footer-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto; padding-top: 22px;
+      border-top: 1px solid var(--border); display: flex;
+      justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .footer-copy { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+    .footer-badges { display: flex; gap: 10px; }
+    .badge-pill { padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--surface2); border: 1px solid var(--gold-dim); border-radius: 8px;
+      padding: 13px 22px; font-family: 'Rajdhani', sans-serif; font-size: 14px;
+      letter-spacing: 1px; color: var(--gold); z-index: 999;
+      transition: transform 0.4s ease; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.08); }
+      50% { box-shadow: 0 0 40px rgba(201,168,76,0.22); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      #about { grid-template-columns: 1fr; gap: 48px; }
+      .about-badge { right: 0; }
+      .generator-inner { grid-template-columns: 1fr; gap: 48px; }
+      .card-preview { position: static; }
+      .steps { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .showcase-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 28px; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero h1 { letter-spacing: 3px; }
+      .hero-stats { gap: 22px; }
+      .stat-sliders { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .showcase-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .card-actions { width: 100%; }
+      #player-card { width: 255px; }
+      .generate-actions { flex-direction: column; }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="grid-texture"></div>
 
-<nav>
-<a href="#home">Home</a>
-<a href="#squad">Squad</a>
-<a href="#tactics">Tactics</a>
-<a href="#roadmap">Roadmap</a>
-<a href="#travel">Travel</a>
-</nav>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">カイゼンキック</div>
+    <ul class="nav-links">
+      <li><a href="#about">概要</a></li>
+      <li><a href="#generator">カード生成</a></li>
+      <li><a href="#showcase">ウォール</a></li>
+      <li><a href="#team">チーム</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" onclick="toggleMenu()">概要</a>
+    <a href="#generator" onclick="toggleMenu()">カード生成</a>
+    <a href="#showcase" onclick="toggleMenu()">ウォール</a>
+    <a href="#team" onclick="toggleMenu()">チーム</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+  </div>
 
-<div class="lang-switch">
-<button onclick="setLang('en')">EN</button>
-<button onclick="setLang('jp')">JP</button>
-</div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-eyebrow">⚽ 進化を可視化せよ</div>
+    <h1>カイゼン<br>キック</h1>
+    <p class="hero-sub">あなたのサッカーの成長を、<br>プレイヤーカードで共有する新体験</p>
+    <div class="hero-cta">
+      <a href="#generator" class="btn-primary">カードを作る — 無料</a>
+      <a href="#about" class="btn-outline">詳しく見る</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">12,480</div><div class="stat-label">カード生成数</div></div>
+      <div class="stat"><div class="stat-num">3,200+</div><div class="stat-label">アクティブユーザー</div></div>
+      <div class="stat"><div class="stat-num">47</div><div class="stat-label">対応ポジション</div></div>
+    </div>
+  </section>
 
-<section class="hero" id="home">
-<h1 data-en="KaizenKick" data-jp="カイゼンキック">KaizenKick</h1>
-<p data-en="The Evolution of Samurai Blue toward 2026"
-   data-jp="2026年へ進化するサムライブルー">
-</p>
-<button class="btn"
-data-en="Explore Squad"
-data-jp="チームを見る"></button>
-</section>
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-visual">
+      <div class="about-box">
+        <div class="about-box-inner">改善<br>蹴球<br>進化</div>
+        <div class="about-badge">
+          <div class="about-badge-num">99</div>
+          <div class="about-badge-txt">MAX LEVEL</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="section-label">カイゼンキックとは</div>
+      <h2 class="section-title">進化を<br>カードにせよ</h2>
+      <div class="divider"></div>
+      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。</p>
+      <div class="about-features">
+        <div class="feature-row">
+          <div class="feature-icon">🎴</div>
+          <div>
+            <div class="feature-title">カスタムカード生成</div>
+            <div class="feature-desc">名前・ポジション・国籍・能力値を自由に設定して、世界に一枚だけのプレイヤーカードを作成できます。</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon">📤</div>
+          <div>
+            <div class="feature-title">SNS シェア対応</div>
+            <div class="feature-desc">生成したカードをPNGでダウンロードし、X（Twitter）へ即時投稿。仲間に自分の成長を証明しよう。</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon">🔥</div>
+          <div>
+            <div class="feature-title">カイゼン精神</div>
+            <div class="feature-desc">小さな改善を積み重ね、レベルを上げ続ける。サッカーも人生もカイゼンが全てだ。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="section" id="squad">
-<h2 data-en="Squad Analysis" data-jp="チーム分析"></h2>
-<div class="grid">
+  <!-- GENERATOR -->
+  <section id="generator">
+    <div class="generator-inner">
+      <div>
+        <div class="section-label">カード生成</div>
+        <h2 class="section-title">あなたの<br>カードを作れ</h2>
+        <div class="divider"></div>
+        <div class="generator-form">
+          <div class="form-group">
+            <label class="form-label">名前 / NAME</label>
+            <input class="form-input" id="nameInput" placeholder="例：田中 カイゼン" maxlength="20" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">ポジション / POSITION</label>
+            <div class="select-wrapper">
+              <select class="form-select" id="posInput">
+                <option value="ST">ST — ストライカー</option>
+                <option value="CF">CF — センターフォワード</option>
+                <option value="LW">LW — 左ウィング</option>
+                <option value="RW">RW — 右ウィング</option>
+                <option value="CAM">CAM — 攻撃的MF</option>
+                <option value="CM">CM — セントラルMF</option>
+                <option value="CDM">CDM — 守備的MF</option>
+                <option value="LB">LB — 左サイドバック</option>
+                <option value="RB">RB — 右サイドバック</option>
+                <option value="CB">CB — センターバック</option>
+                <option value="GK">GK — ゴールキーパー</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">国籍 / NATION</label>
+            <div class="select-wrapper">
+              <select class="form-select" id="nationInput">
+                <option value="🇯🇵 JPN">🇯🇵 日本</option>
+                <option value="🇧🇷 BRA">🇧🇷 ブラジル</option>
+                <option value="🇦🇷 ARG">🇦🇷 アルゼンチン</option>
+                <option value="🇫🇷 FRA">🇫🇷 フランス</option>
+                <option value="🇩🇪 GER">🇩🇪 ドイツ</option>
+                <option value="🇪🇸 ESP">🇪🇸 スペイン</option>
+                <option value="🇵🇹 POR">🇵🇹 ポルトガル</option>
+                <option value="🇬🇧 ENG">🇬🇧 イングランド</option>
+                <option value="🌏 OTH">🌏 その他</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">能力値 / STATS</label>
+            <button class="randomize-btn" onclick="randomizeStats()">🎲 ランダム生成</button>
+            <div class="stat-sliders" style="margin-top:12px">
+              <div class="slider-group">
+                <div class="slider-top"><span class="slider-name">PAC</span><span class="slider-val" id="val-pac">75</span></div>
+                <input type="range" min="40" max="99" value="75" id="sl-pac" oninput="updateStat('pac',this.value)">
+              </div>
+              <div class="slider-group">
+                <div class="slider-top"><span class="slider-name">SHO</span><span class="slider-val" id="val-sho">70</span></div>
+                <input type="range" min="40" max="99" value="70" id="sl-sho" oninput="updateStat('sho',this.value)">
+              </div>
+              <div class="slider-group">
+                <div class="slider-top"><span class="slider-name">PAS</span><span class="slider-val" id="val-pas">72</span></div>
+                <input type="range" min="40" max="99" value="72" id="sl-pas" oninput="updateStat('pas',this.value)">
+              </div>
+              <div class="slider-group">
+                <div class="slider-top"><span class="slider-name">DRI</span><span class="slider-val" id="val-dri">68</span></div>
+                <input type="range" min="40" max="99" value="68" id="sl-dri" oninput="updateStat('dri',this.value)">
+              </div>
+              <div class="slider-group">
+                <div class="slider-top"><span class="slider-name">DEF</span><span class="slider-val" id="val-def">55</span></div>
+                <input type="range" min="40" max="99" value="55" id="sl-def" oninput="updateStat('def',this.value)">
+              </div>
+              <div class="slider-group">
+                <div class="slider-top"><span class="slider-name">PHY</span><span class="slider-val" id="val-phy">65</span></div>
+                <input type="range" min="40" max="99" value="65" id="sl-phy" oninput="updateStat('phy',this.value)">
+              </div>
+            </div>
+          </div>
+          <div class="generate-actions">
+            <button class="btn-primary" onclick="generateCard()">⚡ カード生成</button>
+          </div>
+        </div>
+      </div>
 
-<div class="card">
-<h3>Takefusa Kubo</h3>
-<p data-en="Creative winger with high vision and control"
-   data-jp="高い視野とコントロールを持つ創造的ウィンガー"></p>
-</div>
+      <!-- CARD PREVIEW -->
+      <div class="card-preview">
+        <div id="player-card">
+          <div class="card-header">
+            <div class="card-header-top">
+              <div>
+                <div class="card-overall" id="c-overall">68</div>
+                <div class="card-nation" id="c-nation">🇯🇵 JPN</div>
+              </div>
+              <div class="card-pos-badge" id="c-pos">ST</div>
+            </div>
+            <div class="card-avatar" id="c-avatar">⚽</div>
+          </div>
+          <div class="card-body">
+            <div class="card-name" id="c-name">YOUR NAME</div>
+            <div class="card-team-name">KAIZEN PLAYER</div>
+            <div class="card-divider"></div>
+            <div class="card-stats">
+              <div class="card-stat"><div class="card-stat-val" id="c-pac">75</div><div class="card-stat-lbl">PAC</div></div>
+              <div class="card-stat"><div class="card-stat-val" id="c-sho">70</div><div class="card-stat-lbl">SHO</div></div>
+              <div class="card-stat"><div class="card-stat-val" id="c-pas">72</div><div class="card-stat-lbl">PAS</div></div>
+              <div class="card-stat"><div class="card-stat-val" id="c-dri">68</div><div class="card-stat-lbl">DRI</div></div>
+              <div class="card-stat"><div class="card-stat-val" id="c-def">55</div><div class="card-stat-lbl">DEF</div></div>
+              <div class="card-stat"><div class="card-stat-val" id="c-phy">65</div><div class="card-stat-lbl">PHY</div></div>
+            </div>
+            <div class="card-footer"><div class="card-footer-brand">カイゼンキック</div></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-primary" onclick="downloadCard()">📥 保存</button>
+          <button class="btn-outline" onclick="shareX()">𝕏 シェア</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<h3>Kaoru Mitoma</h3>
-<p data-en="Explosive dribbler, key attacking weapon"
-   data-jp="爆発的なドリブルで攻撃の要"></p>
-</div>
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="how-inner">
+      <div style="max-width:540px">
+        <div class="section-label">使い方</div>
+        <h2 class="section-title">3ステップで完成</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-icon">✏️</div>
+          <div class="step-title">情報を入力</div>
+          <p class="step-desc">名前・ポジション・国籍を入力し、6つの能力値をスライダーで自由に設定。スライダーを動かすたびにカードがリアルタイムで更新されます。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-icon">⚡</div>
+          <div class="step-title">カード生成</div>
+          <p class="step-desc">「カード生成」ボタンを押すと、あなただけのオリジナルプレイヤーカードが完成。総合値は6つの能力値から自動計算されます。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-icon">🚀</div>
+          <div class="step-title">保存 & シェア</div>
+          <p class="step-desc">PNG形式でカードをダウンロード、またはX（Twitter）へ直接シェア。ハッシュタグ #KaizenKick でコミュニティと繋がろう。</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<h3>Wataru Endo</h3>
-<p data-en="Midfield anchor, defensive intelligence"
-   data-jp="守備的知性を持つ中盤の要"></p>
-</div>
+  <!-- SHOWCASE -->
+  <section id="showcase" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="showcase-inner">
+      <div class="section-label">コミュニティ</div>
+      <h2 class="section-title">カードウォール</h2>
+      <div class="divider"></div>
+      <p class="section-desc">みんなのカイゼンキックカード。あなたも参加しよう。</p>
+      <div class="showcase-grid" id="showcaseGrid"></div>
+    </div>
+  </section>
 
-</div>
-</section>
+  <!-- TEAM -->
+  <section id="team">
+    <div class="team-inner">
+      <div class="section-label">チーム紹介</div>
+      <h2 class="section-title">開発チーム</h2>
+      <div class="divider"></div>
+      <p class="section-desc">カイゼンキックは、サッカーとテクノロジーを愛する少数精鋭チームが運営しています。</p>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">🧑‍💻</div>
+          <div class="team-info">
+            <div class="team-name">田中 大輝</div>
+            <div class="team-role">Founder / CEO</div>
+            <div class="team-bio">元アマチュアFW。テクノロジーでサッカー文化を変えることを夢見る創業者。好きなポジションはST、夢はカイゼンキックを世界へ届けること。</div>
+            <div class="team-socials">
+              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="#" title="GitHub">⌨</a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">👩‍🎨</div>
+          <div class="team-info">
+            <div class="team-name">佐藤 美咲</div>
+            <div class="team-role">Head of Design</div>
+            <div class="team-bio">UIデザイナー兼フットサル選手。カイゼンキックのビジュアルアイデンティティを一から設計。美しいカードを生み出すことが使命。</div>
+            <div class="team-socials">
+              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="#" title="Dribbble">🎨</a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">🧑‍🔬</div>
+          <div class="team-info">
+            <div class="team-name">山本 健太</div>
+            <div class="team-role">Lead Engineer</div>
+            <div class="team-bio">フルスタックエンジニア。週末は地元チームのGK。コードとゴールの両方を守るのが得意。パフォーマンスと品質に一切妥協しない。</div>
+            <div class="team-socials">
+              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="#" title="GitHub">⌨</a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">👩‍💼</div>
+          <div class="team-info">
+            <div class="team-name">中村 遥</div>
+            <div class="team-role">Community Manager</div>
+            <div class="team-bio">コミュニティ構築とSNS運営を担当。熱狂的なサッカーファンで年間観戦数は50試合超。カイゼンキックの声を世界に広める役割を担う。</div>
+            <div class="team-socials">
+              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="#" title="Instagram">📸</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="section" id="tactics">
-<h2 data-en="Tactical System" data-jp="戦術システム"></h2>
+  <!-- FAQ -->
+  <section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="faq-inner">
+      <div class="section-label">よくある質問</div>
+      <h2 class="section-title">FAQ</h2>
+      <div class="divider" style="margin:16px auto"></div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">カイゼンキックは無料ですか？<span class="faq-icon">+</span></div>
+          <div class="faq-a">はい、カード生成・ダウンロード・シェアはすべて完全無料です。アカウント登録も不要でご利用いただけます。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">生成したカードはどこに保存されますか？<span class="faq-icon">+</span></div>
+          <div class="faq-a">カードはブラウザ上で生成されており、サーバーには保存されません。「保存」ボタンでPNG画像としてデバイスにダウンロードしてください。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">能力値の「総合値」はどう計算されますか？<span class="faq-icon">+</span></div>
+          <div class="faq-a">6つの能力値（PAC・SHO・PAS・DRI・DEF・PHY）の平均値を基に算出されます。スライダーを動かすと総合値がリアルタイムで更新されます。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">スマートフォンでも使えますか？<span class="faq-icon">+</span></div>
+          <div class="faq-a">はい。カイゼンキックはモバイルフレンドリー設計です。iOS・AndroidのSafari・Chromeから快適にご利用いただけます。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">今後の機能追加予定はありますか？<span class="faq-icon">+</span></div>
+          <div class="faq-a">チームカード作成、カード対決（バトル）モード、成長履歴の記録機能などを開発中です。SNSフォローで最新情報をお見逃しなく！</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">カードをXにシェアするとどうなりますか？<span class="faq-icon">+</span></div>
+          <div class="faq-a">ハッシュタグ #KaizenKick が自動的に付与された投稿画面が開きます。あなたのカード情報（名前・ポジション・総合値）がテキストとして含まれます。</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<p data-en="High pressing, structured build-up, fast wing play"
-   data-jp="ハイプレス、組織的ビルドアップ、速いサイド攻撃"></p>
-</div>
+  <!-- CTA BANNER -->
+  <section id="cta-banner">
+    <div class="cta-title">今すぐ進化を始めろ</div>
+    <p class="cta-sub">カード一枚が、あなたの改善の証になる。</p>
+    <a href="#generator" class="btn-primary">カードを作る — 無料</a>
+  </section>
 
-<div class="card">
-<p data-en="4-3-3 flexible formation adapting to opponent"
-   data-jp="相手に応じて変化する4-3-3フォーメーション"></p>
-</div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand-name">カイゼンキック</div>
+        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化するプラットフォーム。あなたの進化を世界に証明しよう。</p>
+      </div>
+      <div>
+        <div class="footer-col-title">サービス</div>
+        <div class="footer-links">
+          <a href="#generator">カード生成</a>
+          <a href="#showcase">カードウォール</a>
+          <a href="#about">概要</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">会社</div>
+        <div class="footer-links">
+          <a href="#team">チーム</a>
+          <a href="#faq">FAQ</a>
+          <a href="#">お問い合わせ</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">フォロー</div>
+        <div class="footer-links">
+          <a href="#">X (Twitter)</a>
+          <a href="#">Instagram</a>
+          <a href="#">プライバシー</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 カイゼンキック — All rights reserved.</div>
+      <div class="footer-badges">
+        <span class="badge-pill">⚽ Made for Ballers</span>
+        <span class="badge-pill">🇯🇵 Japan</span>
+      </div>
+    </div>
+  </footer>
 
-</section>
+  <div class="toast" id="toast"></div>
 
-<section class="section" id="roadmap">
-<h2 data-en="World Cup 2026 Path" data-jp="ワールドカップ2026への道"></h2>
+  <script>
+    // MOBILE MENU
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
 
-<div class="card">
-<p data-en="Group Stage → Knockout → Quarterfinal Goal"
-   data-jp="グループステージ → 決勝トーナメント → ベスト8目標"></p>
-</div>
+    // STATS
+    const stats = { pac: 75, sho: 70, pas: 72, dri: 68, def: 55, phy: 65 };
 
-</section>
+    function updateStat(key, val) {
+      stats[key] = parseInt(val);
+      document.getElementById('val-' + key).textContent = val;
+      document.getElementById('c-' + key).textContent = val;
+      updateOverall();
+    }
 
-<section class="section" id="travel">
-<h2 data-en="Travel & Tickets" data-jp="旅行とチケット"></h2>
+    function updateOverall() {
+      const vals = Object.values(stats);
+      const avg = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+      document.getElementById('c-overall').textContent = avg;
+    }
 
-<div class="card">
-<p data-en="Secure tickets early via official FIFA channels"
-   data-jp="公式FIFAサイトで早めにチケットを確保"></p>
-</div>
+    function randomizeStats() {
+      ['pac','sho','pas','dri','def','phy'].forEach(k => {
+        const v = Math.floor(Math.random() * 50) + 50;
+        stats[k] = v;
+        document.getElementById('sl-' + k).value = v;
+        document.getElementById('val-' + k).textContent = v;
+        document.getElementById('c-' + k).textContent = v;
+      });
+      updateOverall();
+    }
 
-<div class="card">
-<p data-en="Host cities include Los Angeles, New York, Toronto"
-   data-jp="開催都市：ロサンゼルス、ニューヨーク、トロントなど"></p>
-</div>
+    // AVATAR
+    const avatarMap = {
+      ST:'🏃',CF:'⚡',LW:'🌪️',RW:'🌪️',
+      CAM:'🎯',CM:'🔄',CDM:'🛡️',
+      LB:'🏃',RB:'🏃',CB:'🧱',GK:'🧤'
+    };
 
-</section>
+    // GENERATE
+    function generateCard() {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) { showToast('❗ 名前を入力してください'); return; }
+      const pos = document.getElementById('posInput').value;
+      const nation = document.getElementById('nationInput').value;
+      document.getElementById('c-name').textContent = name.toUpperCase();
+      document.getElementById('c-pos').textContent = pos;
+      document.getElementById('c-nation').textContent = nation;
+      document.getElementById('c-avatar').textContent = avatarMap[pos] || '⚽';
+      updateOverall();
+      showToast('🎴 カードを生成しました！');
+      addToShowcase(name.toUpperCase(), pos, parseInt(document.getElementById('c-overall').textContent));
+    }
 
-<section class="section">
-<h2 data-en="Kaizen Philosophy" data-jp="カイゼン哲学"></h2>
+    // DOWNLOAD
+    function downloadCard() {
+      const card = document.getElementById('player-card');
+      html2canvas(card, { backgroundColor: '#06060a', scale: 2, useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'kaizenkick-card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('✅ カードを保存しました');
+      }).catch(() => showToast('⚠️ 保存に失敗しました'));
+    }
 
-<div class="card">
-<p data-en="Continuous improvement defines the Samurai Blue identity"
-   data-jp="継続的な改善こそサムライブルーの本質"></p>
-</div>
+    // SHARE X
+    function shareX() {
+      const name = document.getElementById('c-name').textContent;
+      const ovr = document.getElementById('c-overall').textContent;
+      const pos = document.getElementById('c-pos').textContent;
+      const text = `🎴 カイゼンキック プレイヤーカード\n⚡ ${name} | ${pos} | OVR ${ovr}\n\n改善を続ける選手として認定されました！\n#KaizenKick #カイゼンキック`;
+      window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+    }
 
-</section>
+    // TOAST
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
 
-<footer>
-<p>© KaizenKick 2026</p>
-<p data-en="Not an official FIFA site"
-   data-jp="これは公式FIFAサイトではありません"></p>
-</footer>
+    // FAQ
+    function toggleFaq(el) {
+      const item = el.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
 
+    // SHOWCASE
+    const fakeCards = [
+      { name:'SUZUKI K.',  pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',   date:'2時間前' },
+      { name:'HAYASHI R.', pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',   date:'5時間前' },
+      { name:'NAKAMURA',   pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',    date:'昨日' },
+      { name:'WATANABE',   pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense', date:'昨日' },
+      { name:'ITO YUKI',   pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',       date:'2日前' },
+      { name:'KATO S.',    pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',  date:'2日前' },
+      { name:'YAMAMOTO',   pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',     date:'3日前' },
+      { name:'TANAKA D.',  pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',   date:'3日前' },
+    ];
+
+    function buildShowcaseItem(c) {
+      return `<div class="showcase-item">
+        <div class="showcase-card-mini">
+          <div class="sc-overall">${c.ovr}</div>
+          <div class="sc-pos">${c.pos}</div>
+          <div class="sc-avatar">${c.avatar}</div>
+          <div class="sc-name">${c.name}</div>
+        </div>
+        <div class="showcase-meta">
+          <span class="sc-user">${c.user}</span>
+          <span class="sc-date">${c.date}</span>
+        </div>
+      </div>`;
+    }
+
+    function addToShowcase(name, pos, ovr) {
+      const grid = document.getElementById('showcaseGrid');
+      const item = buildShowcaseItem({ name, pos, ovr, avatar: avatarMap[pos]||'⚽', user:'@you', date:'たった今' });
+      grid.insertAdjacentHTML('afterbegin', item);
+      const items = grid.querySelectorAll('.showcase-item');
+      if (items.length > 8) items[items.length - 1].remove();
+    }
+
+    document.getElementById('showcaseGrid').innerHTML = fakeCards.map(buildShowcaseItem).join('');
+
+    // LIVE PREVIEW
+    document.getElementById('nameInput').addEventListener('input', function() {
+      document.getElementById('c-name').textContent = this.value.toUpperCase() || 'YOUR NAME';
+    });
+    document.getElementById('posInput').addEventListener('change', function() {
+      document.getElementById('c-pos').textContent = this.value;
+      document.getElementById('c-avatar').textContent = avatarMap[this.value] || '⚽';
+    });
+    document.getElementById('nationInput').addEventListener('change', function() {
+      document.getElementById('c-nation').textContent = this.value;
+    });
+
+    // init overall
+    updateOverall();
+  </script>
 </body>
 </html>
