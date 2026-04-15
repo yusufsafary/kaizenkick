@@ -55,6 +55,14 @@
       text-transform: uppercase; transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--gold); }
+    .nav-x-link {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border: 1px solid var(--border); border-radius: 4px;
+      font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 2px; color: var(--text-dim); text-decoration: none;
+      text-transform: uppercase; transition: all 0.2s; white-space: nowrap;
+    }
+    .nav-x-link:hover { border-color: var(--gold-dim); color: var(--gold); }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
     .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); transition: all 0.3s; }
     .mobile-menu {
@@ -102,6 +110,7 @@
       margin: 20px 0 40px; letter-spacing: 1px; line-height: 1.7;
       animation: fadeUp 0.7s 0.2s ease both;
     }
+    .hero-sub .en { font-family: 'Rajdhani', sans-serif; font-size: 0.88em; color: rgba(201,168,76,0.5); display: block; margin-top: 4px; letter-spacing: 2px; }
     .hero-cta {
       display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
       animation: fadeUp 0.7s 0.3s ease both;
@@ -113,6 +122,7 @@
     .stat { text-align: center; }
     .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--gold); line-height: 1; }
     .stat-label { font-size: 10px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
+    .stat-label .en { display: block; font-size: 8px; opacity: 0.55; margin-top: 2px; }
 
     /* BUTTONS */
     .btn-primary {
@@ -142,7 +152,12 @@
     .section-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(34px, 6vw, 58px);
-      letter-spacing: 4px; color: var(--gold); margin-bottom: 14px;
+      letter-spacing: 4px; color: var(--gold); margin-bottom: 4px;
+    }
+    .section-title-en {
+      font-family: 'Rajdhani', sans-serif; font-size: clamp(13px, 2vw, 18px);
+      letter-spacing: 4px; color: rgba(201,168,76,0.35); text-transform: uppercase;
+      margin-bottom: 10px; font-weight: 700;
     }
     .section-desc { font-size: 14px; line-height: 1.8; color: var(--text-dim); max-width: 540px; }
     .divider { width: 50px; height: 2px; background: linear-gradient(90deg, var(--red), transparent); margin: 16px 0; }
@@ -283,9 +298,18 @@
       flex: 1; text-align: center; padding: 11px 14px; font-size: 12px;
     }
 
-    /* HOW */
+    /* HOW IT WORKS — bilingual enhanced */
+    #how { background: var(--bg); }
     .how-inner { max-width: 1200px; margin: 0 auto; }
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 56px; }
+    .how-lang-toggle { display: flex; gap: 8px; margin-top: 20px; }
+    .lang-btn {
+      padding: 6px 16px; border-radius: 3px; font-family: 'Rajdhani', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer;
+      border: 1px solid var(--border); background: transparent; color: var(--text-dim);
+      transition: all 0.2s; text-transform: uppercase;
+    }
+    .lang-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
     .step {
       position: relative; padding: 28px; background: var(--surface);
       border: 1px solid var(--border); border-radius: 8px;
@@ -296,9 +320,28 @@
     .step-icon { font-size: 30px; margin-bottom: 14px; }
     .step-title {
       font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700;
-      letter-spacing: 2px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; text-transform: uppercase;
     }
+    .step-title-ja { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 700; color: rgba(201,168,76,0.5); margin-bottom: 8px; }
     .step-desc { font-size: 13px; line-height: 1.7; color: var(--text-dim); }
+    .step-desc.ja { display: none; }
+    .step-desc.en { display: block; }
+    .lang-ja .step-desc.ja { display: block; }
+    .lang-ja .step-desc.en { display: none; }
+    .how-tip {
+      margin-top: 48px; padding: 22px 28px;
+      background: linear-gradient(135deg, rgba(193,18,31,0.07), rgba(201,168,76,0.04));
+      border: 1px solid rgba(193,18,31,0.2); border-radius: 8px;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .how-tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .how-tip-body {}
+    .how-tip-title { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--red-bright); text-transform: uppercase; margin-bottom: 4px; }
+    .how-tip-text { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+    .how-tip-text .ja { display: none; }
+    .how-tip-text .en { display: block; }
+    .lang-ja .how-tip-text .ja { display: block; }
+    .lang-ja .how-tip-text .en { display: none; }
 
     /* SHOWCASE */
     .showcase-inner { max-width: 1200px; margin: 0 auto; }
@@ -315,9 +358,13 @@
     .sc-pos { font-size: 9px; letter-spacing: 2px; color: var(--red-bright); font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; }
     .sc-avatar { font-size: 38px; margin: 6px 0; }
     .sc-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--gold); }
+    .sc-nation { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
     .showcase-meta { padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
     .sc-user { font-size: 10px; color: var(--text-dim); }
     .sc-date { font-size: 9px; color: var(--text-dim); opacity: 0.6; }
+    .showcase-stats-mini { display: flex; justify-content: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .ssm { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--text-dim); background: var(--surface2); padding: 2px 6px; border-radius: 2px; border: 1px solid var(--border); }
+    .ssm span { color: var(--gold); }
 
     /* TEAM */
     #team { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -360,8 +407,9 @@
       max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s;
       font-size: 13px; line-height: 1.75; color: var(--text-dim);
     }
-    .faq-item.open .faq-a { max-height: 200px; padding: 0 18px 16px; }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 18px 16px; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-en { font-size: 11px; color: rgba(201,168,76,0.4); display: block; margin-top: 3px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
 
     /* CTA */
     #cta-banner {
@@ -370,8 +418,10 @@
       border-top: 1px solid rgba(193,18,31,0.18);
       border-bottom: 1px solid rgba(193,18,31,0.18);
     }
-    .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 6vw, 70px); letter-spacing: 6px; color: var(--gold); margin-bottom: 14px; }
-    .cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 34px; }
+    .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 6vw, 70px); letter-spacing: 6px; color: var(--gold); margin-bottom: 6px; }
+    .cta-title-en { font-family: 'Rajdhani', sans-serif; font-size: clamp(14px, 2.5vw, 22px); letter-spacing: 5px; color: rgba(201,168,76,0.35); font-weight: 700; text-transform: uppercase; margin-bottom: 14px; }
+    .cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
+    .cta-sub-en { font-family: 'Rajdhani', sans-serif; font-size: 12px; color: rgba(201,168,76,0.35); letter-spacing: 2px; margin-bottom: 34px; }
 
     /* FOOTER */
     footer { position: relative; z-index: 1; padding: 60px 5% 36px; border-top: 1px solid var(--border); }
@@ -381,9 +431,12 @@
     }
     .footer-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; color: var(--gold); margin-bottom: 10px; }
     .footer-brand-desc { font-size: 12px; line-height: 1.75; color: var(--text-dim); max-width: 260px; }
+    .footer-orynth { margin-top: 18px; }
+    .footer-orynth img { display: block; opacity: 0.85; transition: opacity 0.2s; border-radius: 6px; }
+    .footer-orynth img:hover { opacity: 1; }
     .footer-col-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 14px; }
     .footer-links { display: flex; flex-direction: column; gap: 9px; }
-    .footer-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+    .footer-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 5px; }
     .footer-links a:hover { color: var(--text); }
     .footer-bottom {
       max-width: 1200px; margin: 0 auto; padding-top: 22px;
@@ -391,7 +444,7 @@
       justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
     }
     .footer-copy { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
-    .footer-badges { display: flex; gap: 10px; }
+    .footer-badges { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .badge-pill { padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); }
 
     /* TOAST */
@@ -427,6 +480,7 @@
     }
     @media (max-width: 600px) {
       .nav-links { display: none; }
+      .nav-x-link { display: none; }
       .hamburger { display: flex; }
       .hero h1 { letter-spacing: 3px; }
       .hero-stats { gap: 22px; }
@@ -450,10 +504,12 @@
     <ul class="nav-links">
       <li><a href="#about">概要</a></li>
       <li><a href="#generator">カード生成</a></li>
+      <li><a href="#how">使い方</a></li>
       <li><a href="#showcase">ウォール</a></li>
       <li><a href="#team">チーム</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
+    <a class="nav-x-link" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
@@ -461,25 +517,39 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="#about" onclick="toggleMenu()">概要</a>
     <a href="#generator" onclick="toggleMenu()">カード生成</a>
+    <a href="#how" onclick="toggleMenu()">使い方</a>
     <a href="#showcase" onclick="toggleMenu()">ウォール</a>
     <a href="#team" onclick="toggleMenu()">チーム</a>
     <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 フォローする</a>
   </div>
 
   <!-- HERO -->
   <section class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-eyebrow">⚽ 進化を可視化せよ</div>
+    <div class="hero-eyebrow">⚽ 進化を可視化せよ · VISUALIZE YOUR EVOLUTION</div>
     <h1>カイゼン<br>キック</h1>
-    <p class="hero-sub">あなたのサッカーの成長を、<br>プレイヤーカードで共有する新体験</p>
+    <p class="hero-sub">
+      あなたのサッカーの成長を、プレイヤーカードで共有する新体験
+      <span class="en">Your soccer growth, shared as a player card.</span>
+    </p>
     <div class="hero-cta">
-      <a href="#generator" class="btn-primary">カードを作る — 無料</a>
-      <a href="#about" class="btn-outline">詳しく見る</a>
+      <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
+      <a href="#how" class="btn-outline">使い方 / How It Works</a>
     </div>
     <div class="hero-stats">
-      <div class="stat"><div class="stat-num">12,480</div><div class="stat-label">カード生成数</div></div>
-      <div class="stat"><div class="stat-num">3,200+</div><div class="stat-label">アクティブユーザー</div></div>
-      <div class="stat"><div class="stat-num">47</div><div class="stat-label">対応ポジション</div></div>
+      <div class="stat">
+        <div class="stat-num">12,480</div>
+        <div class="stat-label">カード生成数<span class="en">Cards Created</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3,200+</div>
+        <div class="stat-label">アクティブユーザー<span class="en">Active Users</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">11</div>
+        <div class="stat-label">対応ポジション<span class="en">Positions</span></div>
+      </div>
     </div>
   </section>
 
@@ -495,30 +565,31 @@
       </div>
     </div>
     <div class="about-content">
-      <div class="section-label">カイゼンキックとは</div>
+      <div class="section-label">カイゼンキックとは · About</div>
       <h2 class="section-title">進化を<br>カードにせよ</h2>
+      <div class="section-title-en">Turn Your Growth Into a Card</div>
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。</p>
+      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。<br><br><span style="color:rgba(201,168,76,0.45);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day.</span></p>
       <div class="about-features">
         <div class="feature-row">
           <div class="feature-icon">🎴</div>
           <div>
-            <div class="feature-title">カスタムカード生成</div>
-            <div class="feature-desc">名前・ポジション・国籍・能力値を自由に設定して、世界に一枚だけのプレイヤーカードを作成できます。</div>
+            <div class="feature-title">カスタムカード生成 / Custom Card Generator</div>
+            <div class="feature-desc">名前・ポジション・国籍・能力値を自由に設定して、世界に一枚だけのプレイヤーカードを作成できます。<br>Set name, position, nationality and stats freely — create a one-of-a-kind card.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon">📤</div>
           <div>
-            <div class="feature-title">SNS シェア対応</div>
-            <div class="feature-desc">生成したカードをPNGでダウンロードし、X（Twitter）へ即時投稿。仲間に自分の成長を証明しよう。</div>
+            <div class="feature-title">SNS シェア対応 / Share to X (Twitter)</div>
+            <div class="feature-desc">生成したカードをPNGでダウンロードし、X（Twitter）へ即時投稿。仲間に自分の成長を証明しよう。<br>Download as PNG or post directly to X. Prove your progress to the world.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon">🔥</div>
           <div>
-            <div class="feature-title">カイゼン精神</div>
-            <div class="feature-desc">小さな改善を積み重ね、レベルを上げ続ける。サッカーも人生もカイゼンが全てだ。</div>
+            <div class="feature-title">カイゼン精神 / The Kaizen Spirit</div>
+            <div class="feature-desc">小さな改善を積み重ね、レベルを上げ続ける。サッカーも人生もカイゼンが全てだ。<br>Small improvements, every day. In football and in life — Kaizen is everything.</div>
           </div>
         </div>
       </div>
@@ -529,29 +600,30 @@
   <section id="generator">
     <div class="generator-inner">
       <div>
-        <div class="section-label">カード生成</div>
+        <div class="section-label">カード生成 · Create Your Card</div>
         <h2 class="section-title">あなたの<br>カードを作れ</h2>
+        <div class="section-title-en">Build Your Player Card</div>
         <div class="divider"></div>
         <div class="generator-form">
           <div class="form-group">
             <label class="form-label">名前 / NAME</label>
-            <input class="form-input" id="nameInput" placeholder="例：田中 カイゼン" maxlength="20" />
+            <input class="form-input" id="nameInput" placeholder="例：田中 カイゼン / e.g. T. KAIZEN" maxlength="20" />
           </div>
           <div class="form-group">
             <label class="form-label">ポジション / POSITION</label>
             <div class="select-wrapper">
               <select class="form-select" id="posInput">
-                <option value="ST">ST — ストライカー</option>
-                <option value="CF">CF — センターフォワード</option>
-                <option value="LW">LW — 左ウィング</option>
-                <option value="RW">RW — 右ウィング</option>
-                <option value="CAM">CAM — 攻撃的MF</option>
-                <option value="CM">CM — セントラルMF</option>
-                <option value="CDM">CDM — 守備的MF</option>
-                <option value="LB">LB — 左サイドバック</option>
-                <option value="RB">RB — 右サイドバック</option>
-                <option value="CB">CB — センターバック</option>
-                <option value="GK">GK — ゴールキーパー</option>
+                <option value="ST">ST — ストライカー / Striker</option>
+                <option value="CF">CF — センターフォワード / Centre Forward</option>
+                <option value="LW">LW — 左ウィング / Left Wing</option>
+                <option value="RW">RW — 右ウィング / Right Wing</option>
+                <option value="CAM">CAM — 攻撃的MF / Attacking Mid</option>
+                <option value="CM">CM — セントラルMF / Central Mid</option>
+                <option value="CDM">CDM — 守備的MF / Defensive Mid</option>
+                <option value="LB">LB — 左サイドバック / Left Back</option>
+                <option value="RB">RB — 右サイドバック / Right Back</option>
+                <option value="CB">CB — センターバック / Centre Back</option>
+                <option value="GK">GK — ゴールキーパー / Goalkeeper</option>
               </select>
             </div>
           </div>
@@ -559,50 +631,52 @@
             <label class="form-label">国籍 / NATION</label>
             <div class="select-wrapper">
               <select class="form-select" id="nationInput">
-                <option value="🇯🇵 JPN">🇯🇵 日本</option>
-                <option value="🇧🇷 BRA">🇧🇷 ブラジル</option>
-                <option value="🇦🇷 ARG">🇦🇷 アルゼンチン</option>
-                <option value="🇫🇷 FRA">🇫🇷 フランス</option>
-                <option value="🇩🇪 GER">🇩🇪 ドイツ</option>
-                <option value="🇪🇸 ESP">🇪🇸 スペイン</option>
-                <option value="🇵🇹 POR">🇵🇹 ポルトガル</option>
-                <option value="🇬🇧 ENG">🇬🇧 イングランド</option>
-                <option value="🌏 OTH">🌏 その他</option>
+                <option value="🇯🇵 JPN">🇯🇵 日本 / Japan</option>
+                <option value="🇧🇷 BRA">🇧🇷 ブラジル / Brazil</option>
+                <option value="🇦🇷 ARG">🇦🇷 アルゼンチン / Argentina</option>
+                <option value="🇫🇷 FRA">🇫🇷 フランス / France</option>
+                <option value="🇩🇪 GER">🇩🇪 ドイツ / Germany</option>
+                <option value="🇪🇸 ESP">🇪🇸 スペイン / Spain</option>
+                <option value="🇵🇹 POR">🇵🇹 ポルトガル / Portugal</option>
+                <option value="🇬🇧 ENG">🇬🇧 イングランド / England</option>
+                <option value="🇰🇷 KOR">🇰🇷 韓国 / Korea</option>
+                <option value="🇮🇩 IDN">🇮🇩 インドネシア / Indonesia</option>
+                <option value="🌏 OTH">🌏 その他 / Other</option>
               </select>
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">能力値 / STATS</label>
-            <button class="randomize-btn" onclick="randomizeStats()">🎲 ランダム生成</button>
+            <button class="randomize-btn" onclick="randomizeStats()">🎲 ランダム生成 / Randomize</button>
             <div class="stat-sliders" style="margin-top:12px">
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PAC</span><span class="slider-val" id="val-pac">75</span></div>
+                <div class="slider-top"><span class="slider-name">PAC 速さ</span><span class="slider-val" id="val-pac">75</span></div>
                 <input type="range" min="40" max="99" value="75" id="sl-pac" oninput="updateStat('pac',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">SHO</span><span class="slider-val" id="val-sho">70</span></div>
+                <div class="slider-top"><span class="slider-name">SHO シュート</span><span class="slider-val" id="val-sho">70</span></div>
                 <input type="range" min="40" max="99" value="70" id="sl-sho" oninput="updateStat('sho',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PAS</span><span class="slider-val" id="val-pas">72</span></div>
+                <div class="slider-top"><span class="slider-name">PAS パス</span><span class="slider-val" id="val-pas">72</span></div>
                 <input type="range" min="40" max="99" value="72" id="sl-pas" oninput="updateStat('pas',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">DRI</span><span class="slider-val" id="val-dri">68</span></div>
+                <div class="slider-top"><span class="slider-name">DRI ドリブル</span><span class="slider-val" id="val-dri">68</span></div>
                 <input type="range" min="40" max="99" value="68" id="sl-dri" oninput="updateStat('dri',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">DEF</span><span class="slider-val" id="val-def">55</span></div>
+                <div class="slider-top"><span class="slider-name">DEF 守備</span><span class="slider-val" id="val-def">55</span></div>
                 <input type="range" min="40" max="99" value="55" id="sl-def" oninput="updateStat('def',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PHY</span><span class="slider-val" id="val-phy">65</span></div>
+                <div class="slider-top"><span class="slider-name">PHY フィジカル</span><span class="slider-val" id="val-phy">65</span></div>
                 <input type="range" min="40" max="99" value="65" id="sl-phy" oninput="updateStat('phy',this.value)">
               </div>
             </div>
           </div>
           <div class="generate-actions">
-            <button class="btn-primary" onclick="generateCard()">⚡ カード生成</button>
+            <button class="btn-primary" onclick="generateCard()">⚡ カード生成 / Generate</button>
           </div>
         </div>
       </div>
@@ -643,32 +717,55 @@
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-  <section>
+  <!-- HOW IT WORKS — BILINGUAL ENHANCED -->
+  <section id="how">
     <div class="how-inner">
-      <div style="max-width:540px">
-        <div class="section-label">使い方</div>
+      <div style="max-width:600px">
+        <div class="section-label">使い方 · How It Works</div>
         <h2 class="section-title">3ステップで完成</h2>
+        <div class="section-title-en">Ready in 3 Steps</div>
         <div class="divider"></div>
+        <div class="how-lang-toggle" id="howLangToggle">
+          <button class="lang-btn active" onclick="setHowLang('ja')">🇯🇵 日本語</button>
+          <button class="lang-btn" onclick="setHowLang('en')">🇬🇧 English</button>
+        </div>
       </div>
-      <div class="steps">
+
+      <div class="steps" id="howSteps">
         <div class="step">
           <div class="step-num">01</div>
           <div class="step-icon">✏️</div>
-          <div class="step-title">情報を入力</div>
-          <p class="step-desc">名前・ポジション・国籍を入力し、6つの能力値をスライダーで自由に設定。スライダーを動かすたびにカードがリアルタイムで更新されます。</p>
+          <div class="step-title">Enter Your Info</div>
+          <div class="step-title-ja">情報を入力する</div>
+          <p class="step-desc en">Type your name, pick your position and nationality, then slide each of the 6 stat bars — PAC, SHO, PAS, DRI, DEF, PHY. The card preview updates live as you go.</p>
+          <p class="step-desc ja">名前・ポジション・国籍を入力し、6つの能力値（PAC・SHO・PAS・DRI・DEF・PHY）をスライダーで自由に設定。スライダーを動かすたびにカードがリアルタイムで更新されます。</p>
         </div>
         <div class="step">
           <div class="step-num">02</div>
           <div class="step-icon">⚡</div>
-          <div class="step-title">カード生成</div>
-          <p class="step-desc">「カード生成」ボタンを押すと、あなただけのオリジナルプレイヤーカードが完成。総合値は6つの能力値から自動計算されます。</p>
+          <div class="step-title">Generate Your Card</div>
+          <div class="step-title-ja">カードを生成する</div>
+          <p class="step-desc en">Hit the <strong style="color:var(--gold)">Generate</strong> button. Your one-of-a-kind player card is created instantly — overall rating is auto-calculated from all 6 stats and your card appears in the Community Wall.</p>
+          <p class="step-desc ja">「カード生成」ボタンを押すと、あなただけのオリジナルプレイヤーカードが完成。総合値は6つの能力値から自動計算され、カードウォールにも即時表示されます。</p>
         </div>
         <div class="step">
           <div class="step-num">03</div>
           <div class="step-icon">🚀</div>
-          <div class="step-title">保存 & シェア</div>
-          <p class="step-desc">PNG形式でカードをダウンロード、またはX（Twitter）へ直接シェア。ハッシュタグ #KaizenKick でコミュニティと繋がろう。</p>
+          <div class="step-title">Save &amp; Share</div>
+          <div class="step-title-ja">保存してシェアする</div>
+          <p class="step-desc en">Download as a high-quality PNG or post directly to X (Twitter) with one tap. Your hashtag <strong style="color:var(--gold)">#KaizenKick</strong> is added automatically — join the community of improvers.</p>
+          <p class="step-desc ja">PNG形式でカードをダウンロード、またはX（Twitter）へ直接シェア。ハッシュタグ <strong style="color:var(--gold)">#KaizenKick</strong> が自動で付与されます。コミュニティに参加しよう！</p>
+        </div>
+      </div>
+
+      <div class="how-tip">
+        <div class="how-tip-icon">💡</div>
+        <div class="how-tip-body">
+          <div class="how-tip-title">Pro Tip / ヒント</div>
+          <div class="how-tip-text">
+            <span class="en">Use <strong style="color:var(--gold)">🎲 Randomize</strong> to instantly populate stats — great for trying different builds before committing to your own numbers. No account needed, works on any browser.</span>
+            <span class="ja">「🎲 ランダム生成」ボタンで能力値を瞬時に埋めることができます。自分の数値を決める前に、いろんなビルドを試してみましょう。アカウント登録不要、どのブラウザでも動作します。</span>
+          </div>
         </div>
       </div>
     </div>
@@ -677,10 +774,11 @@
   <!-- SHOWCASE -->
   <section id="showcase" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
     <div class="showcase-inner">
-      <div class="section-label">コミュニティ</div>
+      <div class="section-label">コミュニティ · Community Wall</div>
       <h2 class="section-title">カードウォール</h2>
+      <div class="section-title-en">Latest Player Cards</div>
       <div class="divider"></div>
-      <p class="section-desc">みんなのカイゼンキックカード。あなたも参加しよう。</p>
+      <p class="section-desc">みんなのカイゼンキックカード。あなたも参加しよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(201,168,76,0.4);">Real cards from the KaizenKick community. Generate yours and join the wall.</span></p>
       <div class="showcase-grid" id="showcaseGrid"></div>
     </div>
   </section>
@@ -688,19 +786,20 @@
   <!-- TEAM -->
   <section id="team">
     <div class="team-inner">
-      <div class="section-label">チーム紹介</div>
+      <div class="section-label">チーム紹介 · Meet the Team</div>
       <h2 class="section-title">開発チーム</h2>
+      <div class="section-title-en">The People Behind KaizenKick</div>
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーとテクノロジーを愛する少数精鋭チームが運営しています。</p>
+      <p class="section-desc">カイゼンキックは、サッカーとテクノロジーを愛する少数精鋭チームが運営しています。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(201,168,76,0.4);">A small, passionate team at the intersection of football and technology.</span></p>
       <div class="team-grid">
         <div class="team-card">
           <div class="team-avatar">🧑‍💻</div>
           <div class="team-info">
-            <div class="team-name">田中 大輝</div>
+            <div class="team-name">田中 大輝 / Daiki Tanaka</div>
             <div class="team-role">Founder / CEO</div>
-            <div class="team-bio">元アマチュアFW。テクノロジーでサッカー文化を変えることを夢見る創業者。好きなポジションはST、夢はカイゼンキックを世界へ届けること。</div>
+            <div class="team-bio">元アマチュアFW。テクノロジーでサッカー文化を変えることを夢見る創業者。夢はカイゼンキックを世界へ。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">Ex-amateur striker turned founder. Dreaming of changing football culture through tech.</span></div>
             <div class="team-socials">
-              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener" title="X">𝕏</a>
               <a class="team-social" href="#" title="GitHub">⌨</a>
             </div>
           </div>
@@ -708,11 +807,11 @@
         <div class="team-card">
           <div class="team-avatar">👩‍🎨</div>
           <div class="team-info">
-            <div class="team-name">佐藤 美咲</div>
+            <div class="team-name">佐藤 美咲 / Misaki Sato</div>
             <div class="team-role">Head of Design</div>
-            <div class="team-bio">UIデザイナー兼フットサル選手。カイゼンキックのビジュアルアイデンティティを一から設計。美しいカードを生み出すことが使命。</div>
+            <div class="team-bio">UIデザイナー兼フットサル選手。カイゼンキックのビジュアルアイデンティティを一から設計。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">UI designer & futsal player. Crafted KaizenKick's visual identity from scratch.</span></div>
             <div class="team-socials">
-              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener" title="X">𝕏</a>
               <a class="team-social" href="#" title="Dribbble">🎨</a>
             </div>
           </div>
@@ -720,11 +819,11 @@
         <div class="team-card">
           <div class="team-avatar">🧑‍🔬</div>
           <div class="team-info">
-            <div class="team-name">山本 健太</div>
+            <div class="team-name">山本 健太 / Kenta Yamamoto</div>
             <div class="team-role">Lead Engineer</div>
-            <div class="team-bio">フルスタックエンジニア。週末は地元チームのGK。コードとゴールの両方を守るのが得意。パフォーマンスと品質に一切妥協しない。</div>
+            <div class="team-bio">フルスタックエンジニア。週末は地元チームのGK。コードとゴールの両方を守るのが得意。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">Full-stack engineer & weekend goalkeeper. Guards both code and the net.</span></div>
             <div class="team-socials">
-              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener" title="X">𝕏</a>
               <a class="team-social" href="#" title="GitHub">⌨</a>
             </div>
           </div>
@@ -732,11 +831,11 @@
         <div class="team-card">
           <div class="team-avatar">👩‍💼</div>
           <div class="team-info">
-            <div class="team-name">中村 遥</div>
+            <div class="team-name">中村 遥 / Haruka Nakamura</div>
             <div class="team-role">Community Manager</div>
-            <div class="team-bio">コミュニティ構築とSNS運営を担当。熱狂的なサッカーファンで年間観戦数は50試合超。カイゼンキックの声を世界に広める役割を担う。</div>
+            <div class="team-bio">コミュニティ構築とSNS運営を担当。年間観戦数は50試合超。カイゼンキックの声を世界に広める。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">Community builder & football fanatic. 50+ matches a year. KaizenKick's global voice.</span></div>
             <div class="team-socials">
-              <a class="team-social" href="#" title="X">𝕏</a>
+              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener" title="X">𝕏</a>
               <a class="team-social" href="#" title="Instagram">📸</a>
             </div>
           </div>
@@ -748,33 +847,52 @@
   <!-- FAQ -->
   <section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
     <div class="faq-inner">
-      <div class="section-label">よくある質問</div>
+      <div class="section-label">よくある質問 · FAQ</div>
       <h2 class="section-title">FAQ</h2>
+      <div class="section-title-en">Frequently Asked Questions</div>
       <div class="divider" style="margin:16px auto"></div>
       <div class="faq-list">
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">カイゼンキックは無料ですか？<span class="faq-icon">+</span></div>
-          <div class="faq-a">はい、カード生成・ダウンロード・シェアはすべて完全無料です。アカウント登録も不要でご利用いただけます。</div>
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>カイゼンキックは無料ですか？<span class="faq-en">Is KaizenKick free?</span></span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">はい、カード生成・ダウンロード・シェアはすべて完全無料です。アカウント登録も不要でご利用いただけます。<br><br><em>Yes — card creation, download, and sharing are completely free. No account required.</em></div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">生成したカードはどこに保存されますか？<span class="faq-icon">+</span></div>
-          <div class="faq-a">カードはブラウザ上で生成されており、サーバーには保存されません。「保存」ボタンでPNG画像としてデバイスにダウンロードしてください。</div>
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>生成したカードはどこに保存されますか？<span class="faq-en">Where is my card saved?</span></span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">カードはブラウザ上で生成されており、サーバーには保存されません。「保存」ボタンでPNG画像としてデバイスにダウンロードしてください。<br><br><em>Cards are generated in your browser and not stored on any server. Tap Save to download a PNG to your device.</em></div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">能力値の「総合値」はどう計算されますか？<span class="faq-icon">+</span></div>
-          <div class="faq-a">6つの能力値（PAC・SHO・PAS・DRI・DEF・PHY）の平均値を基に算出されます。スライダーを動かすと総合値がリアルタイムで更新されます。</div>
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>能力値の「総合値」はどう計算されますか？<span class="faq-en">How is the Overall rating calculated?</span></span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">6つの能力値（PAC・SHO・PAS・DRI・DEF・PHY）の平均値を基に算出されます。スライダーを動かすと総合値がリアルタイムで更新されます。<br><br><em>It's the average of all 6 stats (PAC, SHO, PAS, DRI, DEF, PHY). The overall updates live as you move the sliders.</em></div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">スマートフォンでも使えますか？<span class="faq-icon">+</span></div>
-          <div class="faq-a">はい。カイゼンキックはモバイルフレンドリー設計です。iOS・AndroidのSafari・Chromeから快適にご利用いただけます。</div>
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>スマートフォンでも使えますか？<span class="faq-en">Does it work on mobile?</span></span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">はい。カイゼンキックはモバイルフレンドリー設計です。iOS・AndroidのSafari・Chromeから快適にご利用いただけます。<br><br><em>Yes. KaizenKick is fully mobile-friendly — works on Safari and Chrome for iOS and Android.</em></div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">今後の機能追加予定はありますか？<span class="faq-icon">+</span></div>
-          <div class="faq-a">チームカード作成、カード対決（バトル）モード、成長履歴の記録機能などを開発中です。SNSフォローで最新情報をお見逃しなく！</div>
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>今後の機能追加予定はありますか？<span class="faq-en">What features are coming next?</span></span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">チームカード作成、カード対決（バトル）モード、成長履歴の記録機能などを開発中です。SNSフォローで最新情報をお見逃しなく！<br><br><em>Team cards, card battle mode, and growth history tracking are in development. Follow us on X for updates!</em></div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">カードをXにシェアするとどうなりますか？<span class="faq-icon">+</span></div>
-          <div class="faq-a">ハッシュタグ #KaizenKick が自動的に付与された投稿画面が開きます。あなたのカード情報（名前・ポジション・総合値）がテキストとして含まれます。</div>
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>カードをXにシェアするとどうなりますか？<span class="faq-en">What happens when I share to X?</span></span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">ハッシュタグ #KaizenKick が自動的に付与された投稿画面が開きます。あなたのカード情報（名前・ポジション・総合値）がテキストとして含まれます。<br><br><em>A pre-filled post opens on X with hashtag #KaizenKick, your player name, position, and overall rating included.</em></div>
         </div>
       </div>
     </div>
@@ -783,8 +901,10 @@
   <!-- CTA BANNER -->
   <section id="cta-banner">
     <div class="cta-title">今すぐ進化を始めろ</div>
+    <div class="cta-title-en">Start Your Evolution Today</div>
     <p class="cta-sub">カード一枚が、あなたの改善の証になる。</p>
-    <a href="#generator" class="btn-primary">カードを作る — 無料</a>
+    <p class="cta-sub-en">One card. Your proof of progress.</p>
+    <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
   </section>
 
   <!-- FOOTER -->
@@ -792,30 +912,36 @@
     <div class="footer-inner">
       <div>
         <div class="footer-brand-name">カイゼンキック</div>
-        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化するプラットフォーム。あなたの進化を世界に証明しよう。</p>
-      </div>
-      <div>
-        <div class="footer-col-title">サービス</div>
-        <div class="footer-links">
-          <a href="#generator">カード生成</a>
-          <a href="#showcase">カードウォール</a>
-          <a href="#about">概要</a>
+        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化するプラットフォーム。あなたの進化を世界に証明しよう。<br><br><span style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(201,168,76,0.35);">The platform that turns your soccer passion and daily improvement into a shareable player card.</span></p>
+        <div class="footer-orynth">
+          <a href="https://orynth.dev/projects/kaizenkick" target="_blank" rel="noopener">
+            <img src="https://orynth.dev/api/badge/kaizenkick?theme=light&style=default" alt="Featured on Orynth" width="160" height="49" />
+          </a>
         </div>
       </div>
       <div>
-        <div class="footer-col-title">会社</div>
+        <div class="footer-col-title">サービス / Service</div>
         <div class="footer-links">
-          <a href="#team">チーム</a>
+          <a href="#generator">カード生成 / Create Card</a>
+          <a href="#showcase">カードウォール / Card Wall</a>
+          <a href="#how">使い方 / How It Works</a>
+          <a href="#about">概要 / About</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">会社 / Company</div>
+        <div class="footer-links">
+          <a href="#team">チーム / Team</a>
           <a href="#faq">FAQ</a>
-          <a href="#">お問い合わせ</a>
+          <a href="#">お問い合わせ / Contact</a>
         </div>
       </div>
       <div>
-        <div class="footer-col-title">フォロー</div>
+        <div class="footer-col-title">フォロー / Follow</div>
         <div class="footer-links">
-          <a href="#">X (Twitter)</a>
-          <a href="#">Instagram</a>
-          <a href="#">プライバシー</a>
+          <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
+          <a href="#">📸 Instagram</a>
+          <a href="#">プライバシー / Privacy</a>
         </div>
       </div>
     </div>
@@ -824,6 +950,7 @@
       <div class="footer-badges">
         <span class="badge-pill">⚽ Made for Ballers</span>
         <span class="badge-pill">🇯🇵 Japan</span>
+        <span class="badge-pill">🌍 Global</span>
       </div>
     </div>
   </footer>
@@ -873,7 +1000,7 @@
     // GENERATE
     function generateCard() {
       const name = document.getElementById('nameInput').value.trim();
-      if (!name) { showToast('❗ 名前を入力してください'); return; }
+      if (!name) { showToast('❗ 名前を入力してください / Enter your name'); return; }
       const pos = document.getElementById('posInput').value;
       const nation = document.getElementById('nationInput').value;
       document.getElementById('c-name').textContent = name.toUpperCase();
@@ -881,8 +1008,8 @@
       document.getElementById('c-nation').textContent = nation;
       document.getElementById('c-avatar').textContent = avatarMap[pos] || '⚽';
       updateOverall();
-      showToast('🎴 カードを生成しました！');
-      addToShowcase(name.toUpperCase(), pos, parseInt(document.getElementById('c-overall').textContent));
+      showToast('🎴 カードを生成しました！ / Card Generated!');
+      addToShowcase(name.toUpperCase(), pos, parseInt(document.getElementById('c-overall').textContent), nation);
     }
 
     // DOWNLOAD
@@ -893,8 +1020,8 @@
         link.download = 'kaizenkick-card.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-        showToast('✅ カードを保存しました');
-      }).catch(() => showToast('⚠️ 保存に失敗しました'));
+        showToast('✅ カードを保存しました / Card Saved!');
+      }).catch(() => showToast('⚠️ 保存に失敗しました / Save failed'));
     }
 
     // SHARE X
@@ -902,7 +1029,7 @@
       const name = document.getElementById('c-name').textContent;
       const ovr = document.getElementById('c-overall').textContent;
       const pos = document.getElementById('c-pos').textContent;
-      const text = `🎴 カイゼンキック プレイヤーカード\n⚡ ${name} | ${pos} | OVR ${ovr}\n\n改善を続ける選手として認定されました！\n#KaizenKick #カイゼンキック`;
+      const text = `🎴 カイゼンキック プレイヤーカード\n⚡ ${name} | ${pos} | OVR ${ovr}\n\n改善を続ける選手として認定されました！\n#KaizenKick #カイゼンキック\nhttps://x.com/kainzenkick`;
       window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
     }
 
@@ -922,16 +1049,32 @@
       if (!isOpen) item.classList.add('open');
     }
 
-    // SHOWCASE
+    // HOW IT WORKS LANGUAGE TOGGLE
+    function setHowLang(lang) {
+      const steps = document.getElementById('howSteps');
+      const tip = document.querySelector('.how-tip');
+      const btns = document.querySelectorAll('#howLangToggle .lang-btn');
+      if (lang === 'ja') {
+        steps.classList.add('lang-ja');
+        tip.classList.add('lang-ja');
+      } else {
+        steps.classList.remove('lang-ja');
+        tip.classList.remove('lang-ja');
+      }
+      btns.forEach(b => b.classList.remove('active'));
+      btns[lang === 'ja' ? 0 : 1].classList.add('active');
+    }
+
+    // SHOWCASE — RICH MOCK DATA
     const fakeCards = [
-      { name:'SUZUKI K.',  pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',   date:'2時間前' },
-      { name:'HAYASHI R.', pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',   date:'5時間前' },
-      { name:'NAKAMURA',   pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',    date:'昨日' },
-      { name:'WATANABE',   pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense', date:'昨日' },
-      { name:'ITO YUKI',   pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',       date:'2日前' },
-      { name:'KATO S.',    pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',  date:'2日前' },
-      { name:'YAMAMOTO',   pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',     date:'3日前' },
-      { name:'TANAKA D.',  pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',   date:'3日前' },
+      { name:'SUZUKI K.',   pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',   date:'2時間前',  nation:'🇯🇵', pac:88,sho:85,pas:72,dri:80,def:42,phy:76 },
+      { name:'HAYASHI R.',  pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',   date:'5時間前',  nation:'🇯🇵', pac:55,sho:40,pas:68,dri:45,def:92,phy:89 },
+      { name:'NAKAMURA T.', pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',    date:'昨日',     nation:'🇧🇷', pac:76,sho:79,pas:91,dri:88,def:44,phy:62 },
+      { name:'WATANABE',    pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense', date:'昨日',     nation:'🇯🇵', pac:66,sho:48,pas:71,dri:58,def:90,phy:85 },
+      { name:'ITO YUKI',    pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',       date:'2日前',    nation:'🇦🇷', pac:95,sho:80,pas:77,dri:92,def:38,phy:68 },
+      { name:'KATO S.',     pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',  date:'2日前',    nation:'🇯🇵', pac:68,sho:55,pas:78,dri:64,def:88,phy:82 },
+      { name:'YAMAMOTO',    pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',     date:'3日前',    nation:'🇩🇪', pac:74,sho:70,pas:87,dri:80,def:68,phy:71 },
+      { name:'TANAKA D.',   pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',   date:'3日前',    nation:'🇫🇷', pac:91,sho:83,pas:74,dri:90,def:40,phy:72 },
     ];
 
     function buildShowcaseItem(c) {
@@ -941,6 +1084,12 @@
           <div class="sc-pos">${c.pos}</div>
           <div class="sc-avatar">${c.avatar}</div>
           <div class="sc-name">${c.name}</div>
+          <div class="sc-nation">${c.nation || ''}</div>
+          <div class="showcase-stats-mini">
+            <span class="ssm">PAC <span>${c.pac||'—'}</span></span>
+            <span class="ssm">SHO <span>${c.sho||'—'}</span></span>
+            <span class="ssm">PAS <span>${c.pas||'—'}</span></span>
+          </div>
         </div>
         <div class="showcase-meta">
           <span class="sc-user">${c.user}</span>
@@ -949,9 +1098,13 @@
       </div>`;
     }
 
-    function addToShowcase(name, pos, ovr) {
+    function addToShowcase(name, pos, ovr, nation) {
       const grid = document.getElementById('showcaseGrid');
-      const item = buildShowcaseItem({ name, pos, ovr, avatar: avatarMap[pos]||'⚽', user:'@you', date:'たった今' });
+      const item = buildShowcaseItem({
+        name, pos, ovr, nation: nation||'🌏',
+        avatar: avatarMap[pos]||'⚽', user:'@you', date:'たった今 / Just now',
+        pac: stats.pac, sho: stats.sho, pas: stats.pas
+      });
       grid.insertAdjacentHTML('afterbegin', item);
       const items = grid.querySelectorAll('.showcase-item');
       if (items.length > 8) items[items.length - 1].remove();
