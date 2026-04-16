@@ -8,26 +8,26 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --gold: #8a6500;
-      --gold-light: #a87c00;
-      --gold-dim: #6b4f00;
-      --red: #b00e1a;
-      --red-bright: #d41b31;
-      --bg: #ffffff;
-      --bg2: #f0f7f0;
-      --surface: #ffffff;
-      --surface2: #e8f4e8;
-      --text: #0f2d0f;
-      --text-dim: #3a5c3a;
-      --border: rgba(34,110,34,0.18);
-      --border-light: rgba(34,110,34,0.12);
-      --field-green: #1a6b1a;
-      --field-light: #2d8c2d;
-      --field-line: rgba(255,255,255,0.85);
-      --purple: #5c2db0;
-      --sol: #047857;
-      --base-blue: #0040cc;
-      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+      --neon-green: #00ff64;
+      --neon-green-dim: #00cc50;
+      --neon-cyan: #00e5ff;
+      --neon-purple: #b44fff;
+      --purple-deep: #6b21d6;
+      --purple-dark: #1a0a2e;
+      --bg: #080515;
+      --bg2: #0d0a1f;
+      --surface: #110d24;
+      --surface2: #1a1235;
+      --text: #e8e0ff;
+      --text-dim: #9080b0;
+      --border: rgba(100,60,200,0.25);
+      --border-light: rgba(100,60,200,0.15);
+      --gold: #c9a84c;
+      --gold-light: #f0c060;
+      --red: #ff2244;
+      --shadow: 0 2px 24px rgba(0,0,0,0.5);
+      --glow-green: 0 0 20px rgba(0,255,100,0.4), 0 0 60px rgba(0,255,100,0.2);
+      --glow-purple: 0 0 20px rgba(180,79,255,0.4), 0 0 60px rgba(180,79,255,0.15);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -39,92 +39,207 @@
       overflow-x: hidden;
     }
 
-    /* ── FOOTBALL FIELD BACKGROUND ── */
+    /* ─── BACKGROUND ─── */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0;
       pointer-events: none;
-      background-color: #ffffff;
-      background-image:
-        /* Stripes alternating field */
-        repeating-linear-gradient(
-          180deg,
-          rgba(34,139,34,0.07) 0px, rgba(34,139,34,0.07) 80px,
-          rgba(34,139,34,0.13) 80px, rgba(34,139,34,0.13) 160px
-        );
-    }
-    body::after {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      pointer-events: none;
-      /* Field lines */
-      background-image:
-        /* Center line horizontal */
-        linear-gradient(180deg, transparent calc(50% - 1px), rgba(34,120,34,0.18) calc(50% - 1px), rgba(34,120,34,0.18) calc(50% + 1px), transparent calc(50% + 1px)),
-        /* Left boundary */
-        linear-gradient(90deg, transparent 4%, rgba(34,120,34,0.15) 4%, rgba(34,120,34,0.15) calc(4% + 1px), transparent calc(4% + 1px)),
-        /* Right boundary */
-        linear-gradient(90deg, transparent 96%, rgba(34,120,34,0.15) 96%, rgba(34,120,34,0.15) calc(96% + 1px), transparent calc(96% + 1px)),
-        /* Top boundary */
-        linear-gradient(180deg, transparent 6%, rgba(34,120,34,0.15) 6%, rgba(34,120,34,0.15) calc(6% + 1px), transparent calc(6% + 1px)),
-        /* Bottom boundary */
-        linear-gradient(180deg, transparent 94%, rgba(34,120,34,0.15) 94%, rgba(34,120,34,0.15) calc(94% + 1px), transparent calc(94% + 1px)),
-        /* Center circle (simulated with radial) */
-        radial-gradient(circle at 50% 50%, transparent 11%, rgba(34,120,34,0.14) 11%, rgba(34,120,34,0.14) 12%, transparent 12%);
-    }
-    #bgCanvas {
-      position: fixed; inset: 0; z-index: 0;
-      pointer-events: none;
-      opacity: 0.2;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(107,33,214,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(0,255,100,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 30%, rgba(0,229,255,0.05) 0%, transparent 45%),
+        linear-gradient(135deg, #080515 0%, #0d0520 50%, #050d15 100%);
     }
     .grid-texture {
       position: fixed; inset: 0;
       background-image:
-        linear-gradient(rgba(34,120,34,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34,120,34,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(100,60,200,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,60,200,0.05) 1px, transparent 1px);
       background-size: 50px 50px;
       pointer-events: none; z-index: 0;
     }
+    #bgCanvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; opacity: 0.15;
+    }
 
-    /* ── NAV ── */
+    /* ─── COUNTDOWN OVERLAY ─── */
+    #launch-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(5,2,15,0.97);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 20px;
+      backdrop-filter: blur(12px);
+    }
+    .overlay-bg-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(107,33,214,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 65%, rgba(0,255,100,0.1) 0%, transparent 50%);
+    }
+    .overlay-ball {
+      font-size: 64px; margin-bottom: 16px;
+      animation: ballBounce 1.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(0,255,100,0.6));
+      position: relative; z-index: 1;
+    }
+    @keyframes ballBounce {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-18px) rotate(20deg); }
+    }
+    .overlay-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 10vw, 90px);
+      letter-spacing: 8px;
+      background: linear-gradient(135deg, #00ff64, #00e5ff 50%, #b44fff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1; margin-bottom: 6px;
+      position: relative; z-index: 1;
+      filter: drop-shadow(0 0 30px rgba(0,255,100,0.3));
+    }
+    .overlay-tagline {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(13px, 3vw, 18px);
+      font-weight: 700; letter-spacing: 5px;
+      color: var(--text-dim); text-transform: uppercase;
+      margin-bottom: 40px; position: relative; z-index: 1;
+    }
+    .overlay-tagline span { color: var(--neon-green); }
+
+    /* Countdown timer */
+    .countdown-label {
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 5px; color: var(--neon-green); text-transform: uppercase;
+      margin-bottom: 16px; position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .countdown-label::before, .countdown-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,100,0.4));
+    }
+    .countdown-label::after { background: linear-gradient(270deg, transparent, rgba(0,255,100,0.4)); }
+    .countdown-boxes {
+      display: flex; gap: 16px; align-items: center;
+      margin-bottom: 40px; position: relative; z-index: 1;
+    }
+    .countdown-unit {
+      background: var(--surface);
+      border: 1px solid rgba(0,255,100,0.25);
+      border-radius: 10px; padding: 18px 22px;
+      min-width: 80px; text-align: center;
+      box-shadow: 0 0 30px rgba(0,255,100,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .countdown-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 8vw, 60px);
+      line-height: 1; color: #fff;
+      text-shadow: 0 0 20px rgba(0,255,100,0.6);
+      letter-spacing: 2px;
+    }
+    .countdown-sep {
+      font-family: 'Bebas Neue', sans-serif; font-size: 50px;
+      color: rgba(0,255,100,0.4); line-height: 1;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+    .countdown-lbl-text {
+      font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Follow X banner */
+    .follow-banner {
+      position: relative; z-index: 1;
+      background: linear-gradient(135deg, rgba(0,255,100,0.06), rgba(0,229,255,0.04));
+      border: 1px solid rgba(0,255,100,0.3);
+      border-radius: 12px; padding: 20px 28px;
+      max-width: 480px; width: 100%;
+      box-shadow: 0 0 40px rgba(0,255,100,0.08);
+    }
+    .follow-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .follow-desc {
+      font-size: 13px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.6;
+    }
+    .follow-desc strong { color: var(--neon-green); }
+    .follow-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #000; border: 1.5px solid rgba(255,255,255,0.2);
+      color: #fff; border-radius: 50px; padding: 13px 28px;
+      font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
+      letter-spacing: 2px; text-decoration: none; text-transform: uppercase;
+      cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .follow-btn:hover {
+      background: #111;
+      border-color: rgba(255,255,255,0.5);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      transform: translateY(-2px);
+    }
+    .follow-btn svg { width: 18px; height: 18px; fill: white; }
+    .overlay-already {
+      margin-top: 18px; position: relative; z-index: 1;
+      font-family: 'Rajdhani', sans-serif; font-size: 11px;
+      color: rgba(144,128,176,0.5); letter-spacing: 2px;
+      cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+    .overlay-already:hover { color: var(--text-dim); }
+
+    /* launched state */
+    #launch-overlay.launched { display: none; }
+
+    /* ─── NAV ─── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 5%;
-      background: rgba(255,255,255,0.97);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(34,120,34,0.15);
-      box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+      background: rgba(8,5,21,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(100,60,200,0.2);
+      box-shadow: 0 1px 30px rgba(0,0,0,0.5);
     }
-    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 4px; color: var(--gold); }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 5px;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
     .nav-links { display: flex; gap: 24px; list-style: none; }
     .nav-links a {
       font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
       letter-spacing: 2px; color: var(--text-dim); text-decoration: none;
       text-transform: uppercase; transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover { color: var(--neon-green); }
     .nav-right { display: flex; gap: 10px; align-items: center; }
     .nav-x-link {
       display: flex; align-items: center; gap: 6px;
-      padding: 7px 14px; border: 1px solid var(--border-light); border-radius: 4px;
+      padding: 7px 16px; border: 1px solid rgba(0,255,100,0.3); border-radius: 50px;
       font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
-      letter-spacing: 2px; color: var(--text-dim); text-decoration: none;
-      text-transform: uppercase; transition: all 0.2s; white-space: nowrap;
-      background: var(--surface);
+      letter-spacing: 2px; color: var(--neon-green); text-decoration: none;
+      text-transform: uppercase; transition: all 0.2s;
+      background: rgba(0,255,100,0.05);
     }
-    .nav-x-link:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .nav-x-link:hover { background: rgba(0,255,100,0.12); box-shadow: var(--glow-green); }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-    .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); transition: all 0.3s; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--neon-green); transition: all 0.3s; }
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .mobile-menu {
       display: none; position: fixed; top: 58px; left: 0; right: 0;
-      background: rgba(255,255,255,0.99); backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(34,120,34,0.15); z-index: 99;
+      background: rgba(8,5,21,0.98); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); z-index: 99;
       padding: 16px 5%; flex-direction: column;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
     }
     .mobile-menu.open { display: flex; }
     .mobile-menu a {
@@ -133,9 +248,9 @@
       text-transform: uppercase; padding: 14px 0;
       border-bottom: 1px solid var(--border-light); transition: color 0.2s;
     }
-    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu a:hover { color: var(--neon-green); }
 
-    /* ── HERO ── */
+    /* ─── HERO ─── */
     .hero {
       position: relative; z-index: 1;
       min-height: 100vh; display: flex; flex-direction: column;
@@ -144,24 +259,27 @@
     }
     .hero-glow {
       position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 900px; height: 550px;
-      background: radial-gradient(ellipse, rgba(34,120,34,0.06) 0%, transparent 65%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse, rgba(107,33,214,0.15) 0%, rgba(0,255,100,0.05) 40%, transparent 70%);
       pointer-events: none; animation: glowPulse 4s ease-in-out infinite;
     }
     @keyframes glowPulse {
       0%,100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-      50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
     }
     .hero-eyebrow {
       font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
-      letter-spacing: 6px; color: var(--red-bright); text-transform: uppercase;
+      letter-spacing: 6px; color: var(--neon-green); text-transform: uppercase;
       margin-bottom: 20px; animation: fadeUp 0.6s ease both;
     }
     .hero h1 {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(60px, 14vw, 140px);
-      letter-spacing: 8px; line-height: 1; color: var(--gold);
-      text-shadow: 0 0 40px rgba(184,134,11,0.15);
+      letter-spacing: 8px; line-height: 1;
+      background: linear-gradient(135deg, #ffffff 0%, var(--neon-green) 40%, var(--neon-cyan) 70%, var(--neon-purple) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(0,255,100,0.25));
       animation: fadeUp 0.7s 0.1s ease both;
     }
     .hero-sub {
@@ -169,7 +287,6 @@
       margin: 20px 0 40px; letter-spacing: 1px; line-height: 1.7;
       animation: fadeUp 0.7s 0.2s ease both;
     }
-    .hero-sub .en { font-family: 'Rajdhani', sans-serif; font-size: 0.88em; color: rgba(184,134,11,0.6); display: block; margin-top: 4px; letter-spacing: 2px; }
     .hero-cta {
       display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
       animation: fadeUp 0.7s 0.3s ease both;
@@ -185,374 +302,309 @@
     }
     .chain-badge {
       display: flex; align-items: center; gap: 6px;
-      padding: 5px 14px; border-radius: 999px;
+      padding: 5px 16px; border-radius: 999px;
       font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase; border: 1px solid;
     }
-    .chain-badge-sol { background: rgba(4,120,87,0.08); border-color: rgba(4,120,87,0.35); color: #047857; }
-    .chain-badge-base { background: rgba(0,64,204,0.08); border-color: rgba(0,64,204,0.35); color: #0040cc; }
+    .chain-badge-sol { background: rgba(0,255,100,0.07); border-color: rgba(0,255,100,0.3); color: var(--neon-green); }
     .chain-badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .chain-badge-sol .chain-badge-dot { background: #047857; box-shadow: 0 0 6px #047857; animation: blink 2s infinite; }
-    .chain-badge-base .chain-badge-dot { background: #0040cc; box-shadow: 0 0 6px #0040cc; animation: blink 2s 0.5s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
+    .chain-badge-sol .chain-badge-dot { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
     .hero-stats {
       display: flex; gap: 40px; margin-top: 70px; flex-wrap: wrap;
       justify-content: center; animation: fadeUp 0.7s 0.5s ease both;
     }
     .stat { text-align: center; }
-    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--gold); line-height: 1; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 42px; line-height: 1;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
     .stat-label { font-size: 10px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
-    .stat-label .en { display: block; font-size: 8px; opacity: 0.55; margin-top: 2px; }
 
-    /* ── BUTTONS ── */
+    /* ─── BUTTONS ─── */
     .btn-primary {
-      padding: 13px 28px; border-radius: 4px;
-      background: linear-gradient(135deg, var(--red), #8b0000);
-      border: none; color: white; font-family: 'Rajdhani', sans-serif;
+      padding: 13px 28px; border-radius: 50px;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      border: none; color: #050210; font-family: 'Rajdhani', sans-serif;
       font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
       cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
       text-decoration: none; display: inline-block;
+      box-shadow: 0 4px 20px rgba(0,255,100,0.35);
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(193,18,31,0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(0,255,100,0.5); }
     .btn-outline {
-      padding: 13px 28px; border-radius: 4px; background: var(--surface);
-      border: 1px solid var(--gold-dim); color: var(--gold);
+      padding: 13px 28px; border-radius: 50px; background: transparent;
+      border: 1.5px solid rgba(0,255,100,0.4); color: var(--neon-green);
       font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
       letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
       transition: all 0.2s; text-decoration: none; display: inline-block;
     }
-    .btn-outline:hover { border-color: var(--gold); background: rgba(184,134,11,0.06); }
+    .btn-outline:hover { border-color: var(--neon-green); background: rgba(0,255,100,0.08); box-shadow: var(--glow-green); }
 
-    /* ── SECTION COMMONS ── */
+    /* ─── SECTION COMMONS ─── */
     section { position: relative; z-index: 1; padding: 100px 5%; }
     .section-label {
       font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 5px; color: var(--red-bright); text-transform: uppercase; margin-bottom: 10px;
+      letter-spacing: 5px; color: var(--neon-green); text-transform: uppercase; margin-bottom: 10px;
     }
     .section-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(34px, 6vw, 58px);
-      letter-spacing: 4px; color: var(--gold); margin-bottom: 4px;
-    }
-    .section-title-en {
-      font-family: 'Rajdhani', sans-serif; font-size: clamp(13px, 2vw, 18px);
-      letter-spacing: 4px; color: rgba(184,134,11,0.5); text-transform: uppercase;
-      margin-bottom: 10px; font-weight: 700;
+      letter-spacing: 4px; color: #fff; margin-bottom: 4px;
     }
     .section-desc { font-size: 14px; line-height: 1.8; color: var(--text-dim); max-width: 540px; }
-    .divider { width: 50px; height: 2px; background: linear-gradient(90deg, var(--red), transparent); margin: 16px 0; }
+    .divider { width: 50px; height: 2px; background: linear-gradient(90deg, var(--neon-green), transparent); margin: 16px 0; }
 
-    /* ── ABOUT ── */
+    /* ─── ABOUT ─── */
     #about {
       display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
       align-items: center; max-width: 1200px; margin: 0 auto;
     }
     .about-box {
       aspect-ratio: 4/5; background: var(--surface);
-      border: 1px solid var(--border-light); border-radius: 8px;
+      border: 1px solid var(--border); border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden; position: relative;
-      box-shadow: var(--shadow);
+      box-shadow: 0 0 60px rgba(107,33,214,0.1), var(--shadow);
     }
     .about-box-inner {
       font-family: 'Bebas Neue', sans-serif; font-size: 110px;
-      color: rgba(184,134,11,0.08); letter-spacing: -4px;
+      color: rgba(0,255,100,0.05); letter-spacing: -4px;
       line-height: 1; user-select: none; text-align: center; padding: 20px;
     }
     .about-badge {
       position: absolute; bottom: 24px; right: -16px;
-      background: var(--red); padding: 14px 18px; border-radius: 4px; text-align: center;
-      color: white;
+      background: linear-gradient(135deg, var(--purple-deep), #9b30ff);
+      padding: 14px 18px; border-radius: 8px; text-align: center;
+      color: white; box-shadow: 0 0 30px rgba(107,33,214,0.5);
     }
     .about-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 1; }
     .about-badge-txt { font-size: 9px; letter-spacing: 2px; opacity: 0.8; }
     .about-features { margin-top: 32px; display: flex; flex-direction: column; gap: 14px; }
     .feature-row {
-      display: flex; align-items: flex-start; gap: 14px; padding: 14px;
-      background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      box-shadow: var(--shadow);
+      display: flex; align-items: flex-start; gap: 14px; padding: 16px;
+      background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px;
+      transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--shadow);
     }
-    .feature-row:hover { border-color: var(--gold-dim); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .feature-row:hover { border-color: rgba(0,255,100,0.3); box-shadow: 0 4px 30px rgba(0,255,100,0.06); }
     .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-    .feature-title {
-      font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
-      letter-spacing: 1px; color: var(--gold); margin-bottom: 3px;
-    }
+    .feature-title { font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; color: var(--neon-green); margin-bottom: 3px; }
     .feature-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
 
-    /* ── TOKEN SECTION ── */
-    #token {
-      background: rgba(255,255,255,0.93);
-      border-top: 1px solid rgba(34,120,34,0.12);
-      border-bottom: 1px solid rgba(34,120,34,0.12);
-    }
+    /* ─── TOKEN ─── */
+    #token { background: rgba(17,13,36,0.8); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .token-inner { max-width: 900px; margin: 0 auto; }
-
     .contract-box {
-      background: #e8f4e8; border: 1px solid rgba(91,44,210,0.2);
-      border-radius: 8px; padding: 18px 20px; margin-top: 24px;
-      box-shadow: var(--shadow);
+      background: var(--surface2); border: 1px solid rgba(107,33,214,0.3);
+      border-radius: 10px; padding: 18px 20px; margin-top: 24px; box-shadow: var(--shadow);
     }
     .contract-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
-    .contract-addr {
-      font-family: 'Rajdhani', sans-serif; font-size: 13px; color: #5c2db0;
-      letter-spacing: 1px; word-break: break-all; line-height: 1.5;
-    }
-    .contract-copy {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 10px; padding: 6px 14px; border-radius: 4px;
-      border: 1px solid rgba(91,44,210,0.3); background: rgba(91,44,210,0.06);
-      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 2px; color: #5c2db0; cursor: pointer; transition: all 0.2s;
-      text-transform: uppercase;
-    }
-    .contract-copy:hover { background: rgba(91,44,210,0.12); }
+    .contract-addr { font-family: 'Rajdhani', sans-serif; font-size: 13px; color: var(--neon-cyan); letter-spacing: 1px; word-break: break-all; line-height: 1.5; }
+    .copy-btn { margin-top: 10px; padding: 6px 14px; background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.25); border-radius: 6px; color: var(--neon-cyan); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+    .copy-btn:hover { background: rgba(0,229,255,0.15); }
+    .token-grid-single { margin-top: 28px; }
+    .token-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: var(--shadow); }
+    .token-card-title { font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 16px; }
+    .token-chain-list { display: flex; flex-direction: column; gap: 12px; }
+    .chain-row { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--bg2); border: 1px solid var(--border-light); border-radius: 8px; }
+    .chain-icon { font-size: 20px; }
+    .chain-name { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .chain-desc { font-size: 11px; color: var(--text-dim); }
+    .chain-tag { margin-left: auto; padding: 3px 10px; border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+    .chain-tag.live { background: rgba(0,255,100,0.1); border: 1px solid rgba(0,255,100,0.3); color: var(--neon-green); }
 
-    .token-chain-list { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
-    .chain-row {
-      display: flex; align-items: center; gap: 14px; padding: 16px;
-      background: var(--bg2); border: 1px solid var(--border-light);
-      border-radius: 8px; transition: border-color 0.2s, transform 0.2s;
-      box-shadow: var(--shadow);
-    }
-    .chain-row:hover { border-color: var(--gold-dim); transform: translateX(4px); }
-    .chain-icon { font-size: 26px; flex-shrink: 0; }
-    .chain-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: var(--text); }
-    .chain-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-    .chain-tag {
-      margin-left: auto; padding: 4px 10px; border-radius: 3px;
-      font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
-      letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
-    }
-    .chain-tag.live { background: rgba(5,150,105,0.1); color: #059669; border: 1px solid rgba(5,150,105,0.3); }
-    .chain-tag.coming { background: rgba(184,134,11,0.08); color: var(--gold-dim); border: 1px solid rgba(184,134,11,0.2); }
-
-    .token-grid-single { margin-top: 52px; }
-    .token-card {
-      background: var(--bg2); border: 1px solid var(--border-light);
-      border-radius: 10px; padding: 28px; transition: border-color 0.2s;
-      box-shadow: var(--shadow); margin-bottom: 24px;
-    }
-    .token-card:hover { border-color: var(--gold-dim); }
-    .token-card-title {
-      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 20px;
-    }
-
-    /* ── GENERATOR ── */
-    #generator { background: var(--surface); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
-    .generator-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-    .generator-form { display: flex; flex-direction: column; gap: 18px; }
+    /* ─── GENERATOR ─── */
+    .generator-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; max-width: 1200px; margin: 0 auto; }
+    .generator-form { margin-top: 28px; display: flex; flex-direction: column; gap: 20px; }
     .form-group { display: flex; flex-direction: column; gap: 7px; }
-    .form-label {
-      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
+    .form-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+    .form-input, .form-select {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 11px 14px; color: var(--text); font-family: 'Rajdhani', sans-serif;
+      font-size: 14px; font-weight: 600; letter-spacing: 1px; outline: none; transition: border-color 0.2s;
+      width: 100%;
     }
-    .form-input {
-      padding: 13px 15px; background: var(--bg2); border: 1px solid var(--border-light);
-      border-radius: 4px; color: var(--text); font-family: 'Noto Sans JP', sans-serif;
-      font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
-    }
-    .form-input:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(184,134,11,0.08); }
-    .form-select {
-      padding: 13px 15px; background: var(--bg2); border: 1px solid var(--border-light);
-      border-radius: 4px; color: var(--text); font-family: 'Noto Sans JP', sans-serif;
-      font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
-      cursor: pointer; appearance: none; -webkit-appearance: none;
-    }
-    .form-select:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(184,134,11,0.08); }
+    .form-input:focus, .form-select:focus { border-color: rgba(0,255,100,0.5); box-shadow: 0 0 0 3px rgba(0,255,100,0.06); }
     .select-wrapper { position: relative; }
-    .select-wrapper::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; }
-    .stat-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .select-wrapper::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--neon-green); pointer-events: none; }
+    .form-select { appearance: none; cursor: pointer; padding-right: 36px; }
+    .form-select option { background: #110d24; }
+    .randomize-btn { background: rgba(180,79,255,0.1); border: 1px solid rgba(180,79,255,0.3); border-radius: 8px; padding: 8px 16px; color: var(--neon-purple); font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+    .randomize-btn:hover { background: rgba(180,79,255,0.18); }
+    .stat-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .slider-group { display: flex; flex-direction: column; gap: 5px; }
     .slider-top { display: flex; justify-content: space-between; align-items: center; }
-    .slider-name { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
-    .slider-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); }
-    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--bg2); border-radius: 2px; outline: none; border: 1px solid var(--border-light); }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; }
-    input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; border: none; }
-    .randomize-btn { padding: 9px; background: var(--bg2); border: 1px solid var(--border-light); border-radius: 4px; color: var(--text-dim); font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
-    .randomize-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
-    .generate-actions { display: flex; gap: 12px; }
+    .slider-name { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+    .slider-val { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--neon-green); }
+    input[type=range] { width: 100%; accent-color: var(--neon-green); height: 4px; }
+    .generate-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    /* ── PLAYER CARD ── */
-    .card-preview { display: flex; flex-direction: column; align-items: center; gap: 18px; position: sticky; top: 90px; }
+    /* player card */
+    .card-preview { display: flex; flex-direction: column; align-items: center; gap: 16px; position: sticky; top: 90px; }
     #player-card {
-      width: 270px;
-      background: linear-gradient(160deg, #0f0f1a 0%, #06060a 60%, #0a0005 100%);
-      border: 1px solid rgba(201,168,76,0.2); border-radius: 16px; overflow: hidden;
-      box-shadow: 0 0 60px rgba(0,0,0,0.15), 0 0 30px rgba(201,168,76,0.07);
-      animation: pulse-gold 3s infinite;
+      width: 280px; background: linear-gradient(160deg, #0d2a14 0%, #1a1435 35%, #080d20 100%);
+      border: 1px solid rgba(0,255,100,0.25); border-radius: 14px;
+      overflow: hidden; box-shadow: 0 0 60px rgba(0,255,100,0.12), 0 20px 60px rgba(0,0,0,0.6);
     }
-    .card-header { background: linear-gradient(135deg, #1a0a0a, #0f0510); padding: 18px 18px 0; position: relative; }
-    .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .card-overall { font-family: 'Bebas Neue', sans-serif; font-size: 50px; line-height: 1; color: #c9a84c; text-shadow: 0 0 20px rgba(201,168,76,0.4); }
-    .card-pos-badge { background: #c1121f; padding: 4px 10px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; color: white; }
-    .card-nation { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 2px; margin-top: 1px; }
-    .card-avatar { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 66px; margin-top: 8px; }
-    .card-body { padding: 14px 18px 18px; }
-    .card-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; color: #c9a84c; text-align: center; margin-bottom: 3px; }
-    .card-team-name { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 12px; text-transform: uppercase; }
-    .card-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent); margin-bottom: 12px; }
-    .card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .card-header { background: linear-gradient(135deg, rgba(0,255,100,0.12) 0%, rgba(107,33,214,0.2) 100%); padding: 18px 18px 0; }
+    .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .card-overall { font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 1; color: #fff; text-shadow: 0 0 20px rgba(0,255,100,0.4); }
+    .card-nation { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.55); }
+    .card-pos-badge { background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan)); color: #050210; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; padding: 6px 12px; border-radius: 6px; }
+    .card-avatar { font-size: 68px; text-align: center; padding: 8px 0; filter: drop-shadow(0 0 12px rgba(0,255,100,0.3)); }
+    .card-body { padding: 14px 18px 16px; }
+    .card-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 4px; color: #fff; text-align: center; margin-bottom: 2px; }
+    .card-team-name { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 3px; color: var(--neon-green); text-align: center; text-transform: uppercase; margin-bottom: 10px; opacity: 0.7; }
+    .card-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,100,0.3), transparent); margin: 8px 0; }
+    .card-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 4px 0; }
     .card-stat { text-align: center; }
-    .card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: #e8e8f0; line-height: 1; }
-    .card-stat-lbl { font-family: 'Rajdhani', sans-serif; font-size: 8px; letter-spacing: 1.5px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
-    .card-footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(201,168,76,0.1); text-align: center; }
-    .card-footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 4px; color: rgba(201,168,76,0.28); }
-    .card-actions { display: flex; gap: 10px; width: 270px; }
-    .card-actions .btn-primary, .card-actions .btn-outline { flex: 1; text-align: center; padding: 11px 14px; font-size: 12px; }
+    .card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: #fff; line-height: 1; text-shadow: 0 0 10px rgba(0,255,100,0.3); }
+    .card-stat-lbl { font-family: 'Rajdhani', sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-top: 2px; }
+    .card-footer { margin-top: 10px; text-align: center; }
+    .card-footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 4px; color: rgba(0,255,100,0.35); }
+    .card-actions { display: flex; gap: 8px; }
 
-    /* ── HOW IT WORKS ── */
-    #how { background: var(--bg); }
+    /* ─── HOW IT WORKS ─── */
     .how-inner { max-width: 1200px; margin: 0 auto; }
     .how-lang-toggle { display: flex; gap: 8px; margin-top: 20px; }
-    .lang-btn { padding: 6px 16px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer; border: 1px solid var(--border-light); background: var(--surface); color: var(--text-dim); transition: all 0.2s; text-transform: uppercase; }
-    .lang-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
-    .step { position: relative; padding: 28px; background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px; transition: border-color 0.2s, transform 0.2s; box-shadow: var(--shadow); }
-    .step:hover { border-color: var(--gold-dim); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 68px; color: rgba(184,134,11,0.08); line-height: 1; position: absolute; top: 14px; right: 18px; }
-    .step-icon { font-size: 30px; margin-bottom: 14px; }
-    .step-title { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; text-transform: uppercase; }
-    .step-title-ja { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 700; color: rgba(184,134,11,0.5); margin-bottom: 8px; }
-    .step-desc { font-size: 13px; line-height: 1.7; color: var(--text-dim); }
+    .lang-btn { padding: 6px 16px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text-dim); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+    .lang-btn.active { border-color: rgba(0,255,100,0.4); color: var(--neon-green); background: rgba(0,255,100,0.06); }
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .step { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 26px; transition: border-color 0.2s, transform 0.2s; box-shadow: var(--shadow); }
+    .step:hover { border-color: rgba(0,255,100,0.3); transform: translateY(-4px); box-shadow: 0 8px 40px rgba(0,255,100,0.05); }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; line-height: 1; color: rgba(0,255,100,0.08); margin-bottom: -8px; }
+    .step-icon { font-size: 28px; margin-bottom: 12px; filter: drop-shadow(0 0 8px rgba(0,255,100,0.4)); }
+    .step-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; color: var(--text); margin-bottom: 4px; }
+    .step-title-ja { font-family: 'Noto Sans JP', sans-serif; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; }
+    .step-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
     .step-desc.ja { display: none; }
-    .step-desc.en { display: block; }
-    .lang-ja .step-desc.ja { display: block; }
-    .lang-ja .step-desc.en { display: none; }
-    .how-tip { margin-top: 48px; padding: 22px 28px; background: linear-gradient(135deg, rgba(193,18,31,0.04), rgba(201,168,76,0.02)); border: 1px solid rgba(193,18,31,0.15); border-radius: 8px; display: flex; align-items: flex-start; gap: 16px; }
-    .how-tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
-    .how-tip-title { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--red-bright); text-transform: uppercase; margin-bottom: 4px; }
-    .how-tip-text { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+    #howSteps.lang-ja .step-desc.en { display: none; }
+    #howSteps.lang-ja .step-desc.ja { display: block; }
+    .how-tip { display: flex; align-items: flex-start; gap: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-top: 36px; box-shadow: var(--shadow); }
+    .how-tip-icon { font-size: 22px; flex-shrink: 0; }
+    .how-tip-title { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; color: var(--neon-green); margin-bottom: 4px; }
+    .how-tip-text { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
     .how-tip-text .ja { display: none; }
-    .how-tip-text .en { display: block; }
-    .lang-ja .how-tip-text .ja { display: block; }
-    .lang-ja .how-tip-text .en { display: none; }
+    #howSteps.lang-ja ~ .how-tip .how-tip-text .en { display: none; }
+    #howSteps.lang-ja ~ .how-tip .how-tip-text .ja { display: block; }
 
-    /* ── SHOWCASE ── */
+    /* ─── SHOWCASE ─── */
     .showcase-inner { max-width: 1200px; margin: 0 auto; }
-    .showcase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 48px; }
-    .showcase-item { background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; box-shadow: var(--shadow); }
-    .showcase-item:hover { transform: scale(1.03); border-color: var(--gold-dim); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-    .showcase-card-mini { padding: 18px 14px; background: linear-gradient(160deg, #12121f, #06060a); text-align: center; }
-    .sc-overall { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: #c9a84c; line-height: 1; }
-    .sc-pos { font-size: 9px; letter-spacing: 2px; color: #ef233c; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; }
-    .sc-avatar { font-size: 38px; margin: 6px 0; }
-    .sc-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: #c9a84c; }
-    .sc-nation { font-size: 9px; color: rgba(255,255,255,0.35); margin-top: 2px; }
-    .showcase-meta { padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
-    .sc-user { font-size: 10px; color: var(--text-dim); }
-    .sc-date { font-size: 9px; color: var(--text-dim); opacity: 0.6; }
-    .showcase-stats-mini { display: flex; justify-content: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-    .ssm { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
-    .ssm span { color: #c9a84c; }
+    .showcase-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 40px; }
+    .showcase-item { background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 14px; transition: border-color 0.2s, transform 0.2s; box-shadow: var(--shadow); }
+    .showcase-item:hover { border-color: rgba(0,255,100,0.25); transform: translateY(-2px); }
+    .showcase-card-mini { background: linear-gradient(135deg, rgba(0,255,100,0.07) 0%, rgba(107,33,214,0.12) 100%); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 10px; }
+    .sc-overall { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #fff; line-height: 1; }
+    .sc-pos { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--neon-green); }
+    .sc-avatar { font-size: 28px; margin: 6px 0; }
+    .sc-name { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 2px; color: #fff; }
+    .sc-nation { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+    .showcase-stats-mini { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+    .ssm { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; }
+    .ssm span { color: #fff; margin-left: 2px; }
+    .showcase-meta { display: flex; justify-content: space-between; align-items: center; }
+    .sc-user { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; color: var(--neon-green); letter-spacing: 1px; }
+    .sc-date { font-size: 9px; color: rgba(144,128,176,0.5); }
 
-    /* ── ROADMAP ── */
-    #roadmap { background: var(--bg); }
+    /* ─── ROADMAP ─── */
     .roadmap-inner { max-width: 900px; margin: 0 auto; }
-    .roadmap-list { margin-top: 52px; display: flex; flex-direction: column; gap: 0; position: relative; }
-    .roadmap-list::before {
-      content: ''; position: absolute; left: 19px; top: 0; bottom: 0;
-      width: 2px; background: linear-gradient(to bottom, var(--red), var(--gold-dim), transparent);
-    }
-    .roadmap-item { display: flex; gap: 28px; padding-bottom: 40px; position: relative; }
-    .roadmap-dot {
-      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; border: 2px solid; position: relative; z-index: 1;
-      background: var(--bg);
-    }
-    .roadmap-dot.done { border-color: var(--red); background: rgba(193,18,31,0.08); }
-    .roadmap-dot.active { border-color: var(--gold); background: rgba(184,134,11,0.08); box-shadow: 0 0 16px rgba(184,134,11,0.2); }
-    .roadmap-dot.soon { border-color: var(--text-dim); background: var(--surface); }
-    .roadmap-body { padding-top: 6px; }
+    .roadmap-list { margin-top: 56px; display: flex; flex-direction: column; gap: 0; position: relative; }
+    .roadmap-list::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, var(--neon-green), rgba(107,33,214,0.5), transparent); }
+    .roadmap-item { display: flex; gap: 28px; align-items: flex-start; padding-bottom: 48px; position: relative; }
+    .roadmap-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; z-index: 1; }
+    .roadmap-dot.done { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(0,255,100,0.3); }
+    .roadmap-dot.active { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(180,79,255,0.3); animation: pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot { 0%,100%{box-shadow:0 0 20px rgba(180,79,255,0.3)} 50%{box-shadow:0 0 40px rgba(180,79,255,0.6)} }
+    .roadmap-body { flex: 1; padding-top: 4px; }
     .roadmap-phase { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
-    .roadmap-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: var(--gold); margin-bottom: 6px; }
+    .roadmap-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: #fff; margin-bottom: 6px; }
     .roadmap-desc { font-size: 13px; color: var(--text-dim); line-height: 1.7; max-width: 640px; }
     .roadmap-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .roadmap-tag { padding: 3px 10px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-    .roadmap-tag.done-t { background: rgba(193,18,31,0.08); color: #ef233c; border: 1px solid rgba(193,18,31,0.2); }
-    .roadmap-tag.active-t { background: rgba(184,134,11,0.08); color: var(--gold); border: 1px solid rgba(184,134,11,0.2); }
+    .roadmap-tag { padding: 3px 10px; border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .roadmap-tag.done-t { background: rgba(0,255,100,0.08); color: var(--neon-green); border: 1px solid rgba(0,255,100,0.25); }
+    .roadmap-tag.active-t { background: rgba(180,79,255,0.08); color: var(--neon-purple); border: 1px solid rgba(180,79,255,0.25); }
     .roadmap-tag.soon-t { background: rgba(107,107,128,0.08); color: var(--text-dim); border: 1px solid rgba(107,107,128,0.15); }
 
-    /* ── TEAM ── */
+    /* ─── TEAM ─── */
     #team { background: var(--surface); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
     .team-inner { max-width: 1200px; margin: 0 auto; }
     .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 56px; }
-    .team-card { background: var(--bg2); border: 1px solid var(--border-light); border-radius: 8px; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow); }
-    .team-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-    .team-avatar { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 52px; background: linear-gradient(135deg, #f0ede6, #e8e3d8); }
+    .team-card { background: var(--bg2); border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; box-shadow: var(--shadow); }
+    .team-card:hover { border-color: rgba(0,255,100,0.3); transform: translateY(-4px); box-shadow: 0 8px 40px rgba(0,255,100,0.05); }
+    .team-avatar { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 52px; background: linear-gradient(135deg, #1a1435, #0d2014); }
     .team-info { padding: 14px; }
     .team-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; color: var(--text); margin-bottom: 3px; }
-    .team-role { font-size: 10px; letter-spacing: 2px; color: var(--red-bright); text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; margin-bottom: 7px; }
+    .team-role { font-size: 10px; letter-spacing: 2px; color: var(--neon-green); text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; margin-bottom: 7px; }
     .team-bio { font-size: 11px; line-height: 1.6; color: var(--text-dim); }
     .team-socials { display: flex; gap: 8px; margin-top: 10px; }
-    .team-social { width: 26px; height: 26px; border: 1px solid var(--border-light); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: border-color 0.2s; text-decoration: none; color: var(--text-dim); background: var(--surface); }
-    .team-social:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .team-social { width: 26px; height: 26px; border: 1px solid var(--border-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: border-color 0.2s; text-decoration: none; color: var(--text-dim); background: var(--surface); }
+    .team-social:hover { border-color: rgba(0,255,100,0.4); color: var(--neon-green); }
 
-    /* ── FAQ ── */
+    /* ─── FAQ ─── */
     .faq-inner { max-width: 800px; margin: 0 auto; text-align: center; }
     .faq-list { text-align: left; margin-top: 48px; display: flex; flex-direction: column; gap: 10px; }
-    .faq-item { background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; box-shadow: var(--shadow); }
+    .faq-item { background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
     .faq-q { padding: 16px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px; color: var(--text); user-select: none; transition: color 0.2s; }
-    .faq-q:hover { color: var(--gold); }
-    .faq-icon { font-size: 18px; color: var(--gold); transition: transform 0.3s; flex-shrink: 0; margin-left: 12px; }
+    .faq-q:hover { color: var(--neon-green); }
+    .faq-icon { font-size: 18px; color: var(--neon-green); transition: transform 0.3s; flex-shrink: 0; margin-left: 12px; }
     .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; font-size: 13px; line-height: 1.75; color: var(--text-dim); }
     .faq-item.open .faq-a { max-height: 300px; padding: 0 18px 16px; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-en { font-size: 11px; color: rgba(184,134,11,0.5); display: block; margin-top: 3px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
 
-    /* ── CTA BANNER ── */
+    /* ─── CTA BANNER ─── */
     #cta-banner {
       text-align: center;
-      background: linear-gradient(135deg, rgba(193,18,31,0.04), rgba(184,134,11,0.03));
-      border-top: 1px solid rgba(193,18,31,0.12);
-      border-bottom: 1px solid rgba(193,18,31,0.12);
+      background: linear-gradient(135deg, rgba(107,33,214,0.08), rgba(0,255,100,0.04));
+      border-top: 1px solid rgba(107,33,214,0.2); border-bottom: 1px solid rgba(107,33,214,0.2);
     }
-    .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 6vw, 70px); letter-spacing: 6px; color: var(--gold); margin-bottom: 6px; }
-    .cta-title-en { font-family: 'Rajdhani', sans-serif; font-size: clamp(14px, 2.5vw, 22px); letter-spacing: 5px; color: rgba(184,134,11,0.4); font-weight: 700; text-transform: uppercase; margin-bottom: 14px; }
-    .cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
-    .cta-sub-en { font-family: 'Rajdhani', sans-serif; font-size: 12px; color: rgba(184,134,11,0.4); letter-spacing: 2px; margin-bottom: 34px; }
+    .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 6vw, 70px); letter-spacing: 6px; color: #fff; margin-bottom: 14px; }
+    .cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 34px; }
 
-    /* ── FOOTER ── */
-    footer { position: relative; z-index: 1; padding: 60px 5% 36px; border-top: 1px solid var(--border-light); background: var(--surface); }
+    /* ─── FOOTER ─── */
+    footer { position: relative; z-index: 1; padding: 60px 5% 36px; border-top: 1px solid var(--border-light); background: var(--bg2); }
     .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
-    .footer-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; color: var(--gold); margin-bottom: 10px; }
+    .footer-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
     .footer-brand-desc { font-size: 12px; line-height: 1.75; color: var(--text-dim); max-width: 260px; }
-    .footer-col-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 14px; }
+    .footer-col-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--neon-green); text-transform: uppercase; margin-bottom: 14px; }
     .footer-links { display: flex; flex-direction: column; gap: 9px; }
     .footer-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 5px; }
     .footer-links a:hover { color: var(--text); }
     .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 22px; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .footer-copy { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
     .footer-badges { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .badge-pill { padding: 3px 12px; border: 1px solid var(--border-light); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); background: var(--bg2); }
+    .badge-pill { padding: 3px 12px; border: 1px solid var(--border-light); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); background: var(--surface); }
 
-    /* ── TOAST ── */
+    /* ─── TOAST ─── */
     .toast {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
-      background: var(--surface); border: 1px solid var(--gold-dim); border-radius: 8px;
+      background: var(--surface); border: 1px solid rgba(0,255,100,0.3); border-radius: 10px;
       padding: 13px 22px; font-family: 'Rajdhani', sans-serif; font-size: 14px;
-      letter-spacing: 1px; color: var(--gold); z-index: 9999;
+      letter-spacing: 1px; color: var(--neon-green); z-index: 9999;
       transition: transform 0.4s ease; white-space: nowrap;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ── ANIMATIONS ── */
+    /* ─── ZEN ANNOUNCE ─── */
+    @keyframes zen-pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(0,255,100,0.2), 0 8px 40px rgba(0,0,0,0.5); }
+      50%       { box-shadow: 0 0 40px rgba(0,255,100,0.4), 0 8px 40px rgba(0,0,0,0.5); }
+    }
+    @keyframes zen-border-flicker {
+      0%,100% { border-color: rgba(0,255,100,0.35); }
+      40%     { border-color: rgba(0,255,100,0.65); }
+      60%     { border-color: rgba(0,255,100,0.2); }
+    }
+
+    /* ─── ANIMATIONS ─── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(22px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes pulse-gold {
-      0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.08); }
-      50% { box-shadow: 0 0 40px rgba(201,168,76,0.22); }
-    }
 
-    /* ── RESPONSIVE ── */
+    /* ─── RESPONSIVE ─── */
     @media (max-width: 960px) {
       #about { grid-template-columns: 1fr; gap: 48px; }
       .about-badge { right: 0; }
@@ -570,53 +622,63 @@
       .hamburger { display: flex; }
       section { padding: 72px 4%; }
       .hero { padding: 100px 4% 60px; }
-      .hero h1 { letter-spacing: 3px; }
       .hero-stats { gap: 22px; }
       .stat-num { font-size: 34px; }
       .stat-sliders { grid-template-columns: 1fr; }
       .team-grid { grid-template-columns: 1fr 1fr; }
       .showcase-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-inner { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; text-align: center; }
-      .card-actions { width: 100%; }
-      #player-card { width: 255px; }
-      .generate-actions { flex-direction: column; }
-      .hero-cta { gap: 10px; }
-      .btn-primary, .btn-outline { padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
-      .steps { gap: 16px; }
-      .step { padding: 20px; }
-      .roadmap-item { gap: 16px; }
-      .team-grid { gap: 14px; }
-      .about-box-inner { font-size: 70px; }
-      .token-chain-list { gap: 10px; }
-      .chain-row { padding: 12px; }
-      .how-tip { flex-direction: column; gap: 10px; }
-      .footer-inner { gap: 20px; }
+      .countdown-boxes { gap: 8px; }
+      .countdown-unit { min-width: 64px; padding: 14px 16px; }
+      .countdown-sep { font-size: 34px; }
     }
     @media (max-width: 380px) {
       .showcase-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 52px; }
       #player-card { width: 240px; }
-      .card-actions { width: 240px; }
-    }
-
-    @keyframes zen-pulse-glow {
-      0%, 100% { box-shadow: 0 0 12px #00ff64, 0 0 24px rgba(0,255,100,0.4); }
-      50%       { box-shadow: 0 0 20px #00ff64, 0 0 48px rgba(0,255,100,0.7); }
-    }
-    @keyframes zen-border-flicker {
-      0%,100% { border-color: rgba(0,255,100,0.35); }
-      40%     { border-color: rgba(0,255,100,0.65); }
-      60%     { border-color: rgba(0,255,100,0.2); }
     }
   </style>
 </head>
 <body>
 
-  <!-- DARK OVERLAY -->
-  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.62);z-index:0;pointer-events:none;"></div>
+  <!-- ══════════════════════════════════════
+       COUNTDOWN / FOLLOW OVERLAY
+  ══════════════════════════════════════ -->
+  <div id="launch-overlay">
+    <div class="overlay-bg-glow"></div>
+    <div class="overlay-ball">⚽</div>
+    <div class="overlay-logo">KAIZENKICK</div>
+    <div class="overlay-tagline">Kick. <span>Earn.</span> Repeat.</div>
 
-  <!-- INTERACTIVE BACKGROUND CANVAS -->
+    <div class="countdown-label">Launching at 12:00 UTC</div>
+    <div class="countdown-boxes">
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-h">00</div>
+        <div class="countdown-lbl-text">Hours</div>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-m">00</div>
+        <div class="countdown-lbl-text">Minutes</div>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-s">00</div>
+        <div class="countdown-lbl-text">Seconds</div>
+      </div>
+    </div>
+
+    <div class="follow-banner">
+      <div class="follow-title">⚡ Before we launch</div>
+      <div class="follow-desc">Follow us on <strong>𝕏 @kainzenkick</strong> to get notified the moment we go live and join our growing community of football players.</div>
+      <a class="follow-btn" href="https://x.com/kainzenkick" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        Follow @kainzenkick
+      </a>
+    </div>
+    <div class="overlay-already" onclick="dismissOverlay()">I already follow — let me in →</div>
+  </div>
+
+  <!-- BACKGROUND -->
   <canvas id="bgCanvas"></canvas>
   <div class="grid-texture"></div>
 
@@ -653,14 +715,13 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-eyebrow">⚽ VISUALIZE YOUR EVOLUTION</div>
+    <div class="hero-eyebrow">⚡ PLAY · COMPETE · EARN · REPEAT</div>
     <h1>KAIZEN<br>KICK</h1>
     <p class="hero-sub">
-      Your soccer growth, shared as a player card.
-      
+      Play, compete, and earn rewards.<br>Every kick moves you forward.
     </p>
     <div class="hero-cta">
-      <a href="#generator" class="btn-primary">Create Your Card — FREE</a>
+      <a href="#generator" class="btn-primary">⚡ Start Kicking — FREE</a>
       <a href="#how" class="btn-outline">How It Works</a>
     </div>
     <div class="built-on-label">⛓ Built on</div>
@@ -701,116 +762,91 @@
     <div class="about-content">
       <div class="section-label">About KaizenKick</div>
       <h2 class="section-title">Turn Your<br>Growth Into A Card</h2>
-      
       <div class="divider"></div>
       <p class="section-desc">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Solana.</p>
       <div class="about-features">
         <div class="feature-row">
-          <div class="feature-icon">🎴</div>
+          <div class="feature-icon">🎮</div>
           <div>
-            <div class="feature-title">Custom Card Generator</div>
-            <div class="feature-desc">Set name, position, nationality and stats freely — create a one-of-a-kind player card.</div>
+            <div class="feature-title">Play — Easy &amp; Fun</div>
+            <div class="feature-desc">Jump in instantly. No experience needed. Create your first player card in under a minute.</div>
           </div>
         </div>
         <div class="feature-row">
-          <div class="feature-icon">💎</div>
+          <div class="feature-icon">🏆</div>
           <div>
-            <div class="feature-title">$KAIZENKICK Token / Web3 Integration</div>
-            <div class="feature-desc">Hold $KAIZENKICK on Solana and join the on-chain community at orytnh.dev.</div>
+            <div class="feature-title">Compete — Climb &amp; Win</div>
+            <div class="feature-desc">Compete with the community. Climb leaderboards. Prove your card is the best.</div>
           </div>
         </div>
         <div class="feature-row">
-          <div class="feature-icon">🔥</div>
+          <div class="feature-icon">💰</div>
           <div>
-            <div class="feature-title">The Kaizen Spirit</div>
-            <div class="feature-desc">Small improvements, every day. In football and in life — Kaizen is everything.</div>
+            <div class="feature-title">Earn — Get Rewards</div>
+            <div class="feature-desc">Hold $KAIZENKICK on Solana and earn rewards. Every kick moves you forward.</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- $ZEN ANNOUNCEMENT CARD -->
+  <!-- $ZEN ANNOUNCEMENT -->
   <div style="position:relative;z-index:2;padding:0 5%;margin-top:0;">
     <div style="max-width:900px;margin:0 auto;padding:20px 0 0;">
       <div id="zen-announce" style="
-        background: linear-gradient(135deg, #0b200b 0%, #142d14 45%, #081408 100%);
+        background: linear-gradient(135deg, #060d1a 0%, #0d1a35 45%, #080615 100%);
         border: 1.5px solid rgba(0,255,100,0.35);
-        border-radius: 14px;
-        padding: 24px 28px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        box-shadow: 0 0 60px rgba(0,200,80,0.12), 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-        position: relative;
-        overflow: hidden;
+        border-radius: 14px; padding: 24px 28px;
+        display: flex; align-items: center; gap: 20px;
+        box-shadow: 0 0 60px rgba(0,200,80,0.08), 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+        position: relative; overflow: hidden;
         animation: zen-border-flicker 4s ease-in-out infinite;
       ">
-        <!-- Accents -->
         <div style="position:absolute;inset:0;pointer-events:none;background:
-          linear-gradient(90deg,transparent 30%,rgba(255,255,255,0.02) 50%,transparent 70%),
           radial-gradient(ellipse at 80% 50%,rgba(0,255,100,0.05) 0%,transparent 55%),
-          radial-gradient(ellipse at 10% 80%,rgba(201,168,76,0.04) 0%,transparent 45%);"></div>
-        <!-- Corner brackets -->
+          radial-gradient(ellipse at 10% 80%,rgba(107,33,214,0.04) 0%,transparent 45%);"></div>
         <div style="position:absolute;top:10px;left:10px;width:20px;height:20px;border-top:2px solid rgba(0,255,100,0.4);border-left:2px solid rgba(0,255,100,0.4);border-radius:3px 0 0 0;pointer-events:none;"></div>
-        <div style="position:absolute;bottom:10px;right:10px;width:20px;height:20px;border-bottom:2px solid rgba(201,168,76,0.35);border-right:2px solid rgba(201,168,76,0.35);border-radius:0 0 3px 0;pointer-events:none;"></div>
-        <!-- Live dot -->
+        <div style="position:absolute;bottom:10px;right:10px;width:20px;height:20px;border-bottom:2px solid rgba(0,229,255,0.35);border-right:2px solid rgba(0,229,255,0.35);border-radius:0 0 3px 0;pointer-events:none;"></div>
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <div style="width:14px;height:14px;border-radius:50%;background:#00ff64;
-            box-shadow:0 0 12px #00ff64,0 0 24px rgba(0,255,100,0.5);
-            animation:zen-pulse-glow 1.4s ease-in-out infinite;"></div>
-          <span style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;
-            letter-spacing:2px;color:#00cc50;text-transform:uppercase;">LIVE</span>
+          <div style="width:14px;height:14px;border-radius:50%;background:#00ff64;box-shadow:0 0 12px #00ff64,0 0 24px rgba(0,255,100,0.5);animation:blink 1.4s ease-in-out infinite;"></div>
+          <span style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:#00cc50;text-transform:uppercase;">LIVE</span>
         </div>
-        <!-- Main content -->
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
-            <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#c9a84c;
-              letter-spacing:5px;line-height:1;text-shadow:0 0 24px rgba(201,168,76,0.5);">$ZEN</span>
-            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;
-              letter-spacing:2.5px;color:#00cc50;text-transform:uppercase;
-              background:rgba(0,200,80,0.12);border:1px solid rgba(0,200,80,0.35);
-              padding:4px 11px;border-radius:4px;">Token Live Today</span>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#00ff64;letter-spacing:5px;line-height:1;text-shadow:0 0 24px rgba(0,255,100,0.5);">$KAIZENKICK</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;color:#00cc50;text-transform:uppercase;background:rgba(0,200,80,0.1);border:1px solid rgba(0,200,80,0.3);padding:4px 11px;border-radius:6px;">Token Live Today</span>
           </div>
-          <p style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;
-            color:rgba(255,255,255,0.9);letter-spacing:0.4px;margin:0 0 10px;line-height:1.5;">
-            🎉 Token <strong style="color:#c9a84c;">$ZEN</strong> is officially live today on the <strong style="color:#9be29b;">Solana</strong> network!
+          <p style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:rgba(232,224,255,0.9);letter-spacing:0.4px;margin:0 0 10px;line-height:1.5;">
+            🎉 Token <strong style="color:#00ff64;">$KAIZENKICK</strong> is officially live on the <strong style="color:#00e5ff;">Solana</strong> network!
           </p>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(255,255,255,0.38);
-              letter-spacing:1px;">Trade &amp; info:</span>
-            <a href="https://orytnh.dev" target="_blank" rel="noopener" style="
-              font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;
-              letter-spacing:2px;color:#6edfff;text-decoration:none;
-              border-bottom:1px solid rgba(110,223,255,0.3);
-              transition:color 0.2s;text-transform:lowercase;
-            ">orytnh.dev</a>
-            <span style="color:rgba(255,255,255,0.18);font-size:10px;">|</span>
-            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;
-              color:rgba(155,226,155,0.75);letter-spacing:1px;">⛓ Solana Network</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(232,224,255,0.38);letter-spacing:1px;">Trade &amp; info:</span>
+            <a href="https://orytnh.dev" target="_blank" rel="noopener" style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#00e5ff;text-decoration:none;border-bottom:1px solid rgba(0,229,255,0.3);transition:color 0.2s;">orytnh.dev</a>
+            <span style="color:rgba(232,224,255,0.18);font-size:10px;">|</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(0,229,255,0.75);letter-spacing:1px;">⛓ Solana Network</span>
           </div>
         </div>
-        <!-- Right badge -->
-        <div style="flex-shrink:0;text-align:center;display:flex;flex-direction:column;
-          align-items:center;gap:5px;padding-left:18px;border-left:1px solid rgba(255,255,255,0.07);">
+        <div style="flex-shrink:0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;padding-left:18px;border-left:1px solid rgba(255,255,255,0.07);">
           <div style="font-size:30px;">🚀</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;
-            letter-spacing:2px;color:rgba(201,168,76,0.55);text-transform:uppercase;">Now</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(0,255,100,0.55);text-transform:uppercase;">Now</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TOKEN SECTION (Tokenomics removed, chains + contract only) -->
+  <!-- TOKEN -->
   <section id="token">
     <div class="token-inner">
       <div class="section-label">Token</div>
       <h2 class="section-title">$KAIZENKICK</h2>
-      
       <div class="divider"></div>
       <p class="section-desc">The football improvement token, live on Solana. Trade and get info at orytnh.dev.</p>
-
-      <div class="token-grid-single">
+      <div class="contract-box">
+        <div class="contract-label">Contract Address · Solana</div>
+        <div class="contract-addr" id="contractAddr">TBA — Follow <a href="https://x.com/kainzenkick" target="_blank" style="color:var(--neon-green);">@kainzenkick</a> for announcement</div>
+        <button class="copy-btn" onclick="copyContract()">📋 Copy Address</button>
+      </div>
+      <div class="token-grid-single" style="margin-top:28px;">
         <div class="token-card">
           <div class="token-card-title">⛓ Supported Chains</div>
           <div class="token-chain-list">
@@ -824,7 +860,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </section>
@@ -835,7 +870,6 @@
       <div>
         <div class="section-label">Create Your Card</div>
         <h2 class="section-title">Build Your<br>Player Card</h2>
-        
         <div class="divider"></div>
         <div class="generator-form">
           <div class="form-group">
@@ -882,30 +916,12 @@
             <label class="form-label">STATS</label>
             <button class="randomize-btn" onclick="randomizeStats()">🎲 Randomize</button>
             <div class="stat-sliders" style="margin-top:12px">
-              <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PAC</span><span class="slider-val" id="val-pac">75</span></div>
-                <input type="range" min="40" max="99" value="75" id="sl-pac" oninput="updateStat('pac',this.value)">
-              </div>
-              <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">SHO</span><span class="slider-val" id="val-sho">70</span></div>
-                <input type="range" min="40" max="99" value="70" id="sl-sho" oninput="updateStat('sho',this.value)">
-              </div>
-              <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PAS</span><span class="slider-val" id="val-pas">72</span></div>
-                <input type="range" min="40" max="99" value="72" id="sl-pas" oninput="updateStat('pas',this.value)">
-              </div>
-              <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">DRI</span><span class="slider-val" id="val-dri">68</span></div>
-                <input type="range" min="40" max="99" value="68" id="sl-dri" oninput="updateStat('dri',this.value)">
-              </div>
-              <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">DEF</span><span class="slider-val" id="val-def">55</span></div>
-                <input type="range" min="40" max="99" value="55" id="sl-def" oninput="updateStat('def',this.value)">
-              </div>
-              <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PHY</span><span class="slider-val" id="val-phy">65</span></div>
-                <input type="range" min="40" max="99" value="65" id="sl-phy" oninput="updateStat('phy',this.value)">
-              </div>
+              <div class="slider-group"><div class="slider-top"><span class="slider-name">PAC</span><span class="slider-val" id="val-pac">75</span></div><input type="range" min="40" max="99" value="75" id="sl-pac" oninput="updateStat('pac',this.value)"></div>
+              <div class="slider-group"><div class="slider-top"><span class="slider-name">SHO</span><span class="slider-val" id="val-sho">70</span></div><input type="range" min="40" max="99" value="70" id="sl-sho" oninput="updateStat('sho',this.value)"></div>
+              <div class="slider-group"><div class="slider-top"><span class="slider-name">PAS</span><span class="slider-val" id="val-pas">72</span></div><input type="range" min="40" max="99" value="72" id="sl-pas" oninput="updateStat('pas',this.value)"></div>
+              <div class="slider-group"><div class="slider-top"><span class="slider-name">DRI</span><span class="slider-val" id="val-dri">68</span></div><input type="range" min="40" max="99" value="68" id="sl-dri" oninput="updateStat('dri',this.value)"></div>
+              <div class="slider-group"><div class="slider-top"><span class="slider-name">DEF</span><span class="slider-val" id="val-def">55</span></div><input type="range" min="40" max="99" value="55" id="sl-def" oninput="updateStat('def',this.value)"></div>
+              <div class="slider-group"><div class="slider-top"><span class="slider-name">PHY</span><span class="slider-val" id="val-phy">65</span></div><input type="range" min="40" max="99" value="65" id="sl-phy" oninput="updateStat('phy',this.value)"></div>
             </div>
           </div>
           <div class="generate-actions">
@@ -913,7 +929,6 @@
           </div>
         </div>
       </div>
-      <!-- CARD PREVIEW -->
       <div class="card-preview">
         <div id="player-card">
           <div class="card-header">
@@ -955,7 +970,6 @@
       <div style="max-width:600px">
         <div class="section-label">How It Works</div>
         <h2 class="section-title">Ready in<br>3 Steps</h2>
-        
         <div class="divider"></div>
         <div class="how-lang-toggle" id="howLangToggle">
           <button class="lang-btn active" onclick="setHowLang('ja')">🇯🇵 JA</button>
@@ -976,7 +990,7 @@
           <div class="step-icon">⚡</div>
           <div class="step-title">Generate Your Card</div>
           <div class="step-title-ja">Step Two</div>
-          <p class="step-desc en">Hit <strong style="color:var(--gold)">Generate</strong>. Your player card is created instantly with auto-calculated overall rating.</p>
+          <p class="step-desc en">Hit <strong style="color:var(--neon-green)">Generate</strong>. Your player card is created instantly with auto-calculated overall rating.</p>
           <p class="step-desc ja">Hit Generate and your unique card is ready. Overall rating is calculated automatically.</p>
         </div>
         <div class="step">
@@ -984,8 +998,8 @@
           <div class="step-icon">🚀</div>
           <div class="step-title">Save &amp; Share</div>
           <div class="step-title-ja">Step Three</div>
-          <p class="step-desc en">Download as PNG or post to X with one tap. <strong style="color:var(--gold)">#KaizenKick</strong> added automatically.</p>
-          <p class="step-desc ja">Download as PNG or share to X. <strong style="color:var(--gold)">#KaizenKick</strong> is added automatically.</p>
+          <p class="step-desc en">Download as PNG or post to X with one tap. <strong style="color:var(--neon-green)">#KaizenKick</strong> added automatically.</p>
+          <p class="step-desc ja">Download as PNG or share to X. <strong style="color:var(--neon-green)">#KaizenKick</strong> is added automatically.</p>
         </div>
       </div>
       <div class="how-tip">
@@ -993,7 +1007,7 @@
         <div class="how-tip-body">
           <div class="how-tip-title">Pro Tip</div>
           <div class="how-tip-text">
-            <span class="en">Use <strong style="color:var(--gold)">🎲 Randomize</strong> to instantly try different builds. No account needed. Hold $KAIZENKICK to unlock future exclusive card frames and community perks.</span>
+            <span class="en">Use <strong style="color:var(--neon-green)">🎲 Randomize</strong> to instantly try different builds. No account needed. Hold $KAIZENKICK to unlock future exclusive card frames and community perks.</span>
             <span class="ja">Use 🎲 Randomize to instantly try different builds. No account needed. Hold $KZK to unlock future exclusive card frames and community perks.</span>
           </div>
         </div>
@@ -1006,7 +1020,6 @@
     <div class="showcase-inner">
       <div class="section-label">Community Wall</div>
       <h2 class="section-title">Card Wall</h2>
-      
       <div class="divider"></div>
       <p class="section-desc">Real cards from the KaizenKick community. Generate yours and join the wall.</p>
       <div class="showcase-grid" id="showcaseGrid"></div>
@@ -1018,7 +1031,6 @@
     <div class="roadmap-inner">
       <div class="section-label">Roadmap</div>
       <h2 class="section-title">The Path Forward</h2>
-      
       <div class="divider"></div>
       <div class="roadmap-list">
         <div class="roadmap-item">
@@ -1082,7 +1094,6 @@
     <div class="team-inner">
       <div class="section-label">Meet the Team</div>
       <h2 class="section-title">The Team</h2>
-      
       <div class="divider"></div>
       <p class="section-desc">A small, passionate team at the intersection of football and technology.</p>
       <div class="team-grid">
@@ -1092,42 +1103,34 @@
             <div class="team-name">田中 大輝 / Daiki Tanaka</div>
             <div class="team-role">Founder / CEO</div>
             <div class="team-bio">Ex-amateur striker turned founder. Dreaming of changing football culture through tech.</div>
-            <div class="team-socials">
-              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-            </div>
+            <div class="team-socials"><a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a></div>
           </div>
         </div>
         <div class="team-card">
-          <div class="team-avatar">👩‍🎨</div>
+          <div class="team-avatar">🎨</div>
           <div class="team-info">
-            <div class="team-name">佐藤 美咲 / Misaki Sato</div>
-            <div class="team-role">Head of Design</div>
-            <div class="team-bio">UI designer & futsal player. Crafted KaizenKick's visual identity from scratch.</div>
-            <div class="team-socials">
-              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-            </div>
+            <div class="team-name">Yuki Nakamura</div>
+            <div class="team-role">Lead Designer</div>
+            <div class="team-bio">UI/UX designer obsessed with sports aesthetics and clean, game-inspired interfaces.</div>
+            <div class="team-socials"><a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a></div>
           </div>
         </div>
         <div class="team-card">
-          <div class="team-avatar">🧑‍🔬</div>
+          <div class="team-avatar">⚙️</div>
           <div class="team-info">
-            <div class="team-name">山本 健太 / Kenta Yamamoto</div>
-            <div class="team-role">Lead Engineer</div>
-            <div class="team-bio">Full-stack engineer & weekend goalkeeper. Guards both code and the net.</div>
-            <div class="team-socials">
-              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-            </div>
+            <div class="team-name">Ren Hayashi</div>
+            <div class="team-role">Blockchain Dev</div>
+            <div class="team-bio">Solana specialist. Smart contract architect making $KAIZENKICK rock-solid on-chain.</div>
+            <div class="team-socials"><a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a></div>
           </div>
         </div>
         <div class="team-card">
-          <div class="team-avatar">👩‍💼</div>
+          <div class="team-avatar">📣</div>
           <div class="team-info">
-            <div class="team-name">中村 遥 / Haruka Nakamura</div>
-            <div class="team-role">Community Manager</div>
-            <div class="team-bio">Community builder & football fanatic. 50+ matches a year. KaizenKick's global voice.</div>
-            <div class="team-socials">
-              <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-            </div>
+            <div class="team-name">Saki Watanabe</div>
+            <div class="team-role">Community Lead</div>
+            <div class="team-bio">Football fan and community builder. Growing the KaizenKick family one card at a time.</div>
+            <div class="team-socials"><a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a></div>
           </div>
         </div>
       </div>
@@ -1135,32 +1138,31 @@
   </section>
 
   <!-- FAQ -->
-  <section style="background:var(--surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)">
+  <section id="faq">
     <div class="faq-inner">
       <div class="section-label">FAQ</div>
-      <h2 class="section-title">FAQ</h2>
-      
+      <h2 class="section-title">Questions</h2>
       <div class="divider" style="margin:16px auto"></div>
       <div class="faq-list">
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Is KaizenKick free?</span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Yes — card creation, download, and sharing are completely free. No account required.</div>
+          <div class="faq-q" onclick="toggleFaq(this)">What is KaizenKick? <span class="faq-icon">+</span></div>
+          <div class="faq-a">KaizenKick is a football improvement platform where you can create custom player cards, track your progress, and earn rewards through the $KAIZENKICK token on Solana.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Where can I buy $KAIZENKICK?</span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Available on Solana. Trade and info at <a href="https://orytnh.dev" target="_blank" rel="noopener" style="color:var(--sol);">orytnh.dev</a>.</div>
+          <div class="faq-q" onclick="toggleFaq(this)">How do I get $KAIZENKICK tokens? <span class="faq-icon">+</span></div>
+          <div class="faq-a">Visit orytnh.dev to trade and get more information about $KAIZENKICK on the Solana network. Follow @kainzenkick on X for the latest updates.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>What perks do $KZK holders get?</span><span class="faq-icon">+</span></div>
-          <div class="faq-a">From Phase 2, $KZK holders get exclusive card frames, early access, and community governance rights.</div>
+          <div class="faq-q" onclick="toggleFaq(this)">Is the card generator free? <span class="faq-icon">+</span></div>
+          <div class="faq-a">Yes! The basic card generator is completely free. No account needed. Token holders will get access to exclusive card frames and perks in future updates.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>Where is my card saved?</span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Cards are generated in-browser and not stored on any server. Tap Save to download a PNG.</div>
+          <div class="faq-q" onclick="toggleFaq(this)">Which blockchain is $KAIZENKICK on? <span class="faq-icon">+</span></div>
+          <div class="faq-a">$KAIZENKICK is live on Solana — chosen for its high speed, low transaction fees, and large, active community.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>What features are coming next?</span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Card battle mode, team cards, NFT minting, and more. Check the roadmap section.</div>
+          <div class="faq-q" onclick="toggleFaq(this)">What does "Kaizen" mean? <span class="faq-icon">+</span></div>
+          <div class="faq-a">改善 (Kaizen) is a Japanese word meaning "continuous improvement." It's our philosophy: small improvements every day lead to extraordinary results — in football and in life.</div>
         </div>
       </div>
     </div>
@@ -1168,16 +1170,11 @@
 
   <!-- CTA BANNER -->
   <section id="cta-banner">
-    <div class="cta-title">Start Your Evolution Today</div>
-    
-    <p class="cta-sub">One card. Your proof of progress.</p>
-    
-    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center;">
-      <a href="#generator" class="btn-primary">Create Your Card — FREE</a>
-      <a href="https://x.com/kainzenkick" target="_blank" rel="noopener" class="btn-outline">𝕏 @KaizenKick</a>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
-      <span class="chain-badge chain-badge-sol"><span class="chain-badge-dot"></span>Solana</span>
+    <div class="cta-title">START KICKING</div>
+    <p class="cta-sub">Join thousands of players. Create your card. Earn your rewards.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="#generator" class="btn-primary">⚡ Create My Card</a>
+      <a href="https://x.com/kainzenkick" target="_blank" rel="noopener" class="btn-outline">𝕏 Follow @kainzenkick</a>
     </div>
   </section>
 
@@ -1186,41 +1183,38 @@
     <div class="footer-inner">
       <div>
         <div class="footer-brand-name">KaizenKick</div>
-        <p class="footer-brand-desc">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK on Solana.</p>
+        <div class="footer-brand-desc">The football improvement token. Create your player card, compete, and earn on Solana.</div>
       </div>
       <div>
-        <div class="footer-col-title">Service</div>
+        <div class="footer-col-title">Platform</div>
         <div class="footer-links">
-          <a href="#generator">Create Card</a>
-          <a href="#showcase">Card Wall</a>
-          <a href="#how">How It Works</a>
           <a href="#about">About</a>
+          <a href="#generator">Card Builder</a>
+          <a href="#showcase">Card Wall</a>
+          <a href="#roadmap">Roadmap</a>
         </div>
       </div>
       <div>
         <div class="footer-col-title">Token</div>
         <div class="footer-links">
-          <a href="#token">💎 $KAIZENKICK</a>
-          <a href="#roadmap">🗺 Roadmap</a>
-          <a href="https://orytnh.dev" target="_blank" rel="noopener">🔍 orytnh.dev</a>
+          <a href="#token">$KAIZENKICK</a>
+          <a href="https://orytnh.dev" target="_blank">Trade · orytnh.dev</a>
+          <a href="#faq">FAQ</a>
         </div>
       </div>
       <div>
-        <div class="footer-col-title">Follow</div>
+        <div class="footer-col-title">Community</div>
         <div class="footer-links">
-          <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
-          <a href="#team">Team</a>
-          <a href="#">Privacy</a>
+          <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @kainzenkick</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-copy">© 2026 KaizenKick — All rights reserved.</div>
+      <div class="footer-copy">© 2026 KaizenKick · kaizenkick.fun · All rights reserved</div>
       <div class="footer-badges">
-        <span class="badge-pill">⚽ Made for Ballers</span>
-        <span class="badge-pill">🇯🇵 Japan</span>
-        <span class="badge-pill">🌍 Global</span>
-        <span class="chain-badge chain-badge-sol" style="font-size:9px;padding:3px 10px;"><span class="chain-badge-dot"></span>Solana</span>
+        <span class="badge-pill">⛓ Solana</span>
+        <span class="badge-pill">🔐 Non-custodial</span>
+        <span class="badge-pill">⚽ Football</span>
       </div>
     </div>
   </footer>
@@ -1229,160 +1223,136 @@
 
   <script>
   // ══════════════════════════════════════════
-  // INTERACTIVE BACKGROUND — Canvas particles
+  // COUNTDOWN TIMER TO 12:00 UTC
+  // ══════════════════════════════════════════
+  function getNextLaunch() {
+    const now = new Date();
+    const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0));
+    if (now >= target) {
+      // Already past 12:00 UTC today — next is tomorrow
+      target.setUTCDate(target.getUTCDate() + 1);
+    }
+    return target;
+  }
+
+  function padZ(n) { return String(n).padStart(2,'0'); }
+
+  function updateCountdown() {
+    const now = new Date();
+    const target = getNextLaunch();
+    let diff = Math.max(0, Math.floor((target - now) / 1000));
+
+    const h = Math.floor(diff / 3600);
+    diff %= 3600;
+    const m = Math.floor(diff / 60);
+    const s = diff % 60;
+
+    document.getElementById('cd-h').textContent = padZ(h);
+    document.getElementById('cd-m').textContent = padZ(m);
+    document.getElementById('cd-s').textContent = padZ(s);
+
+    // If countdown hits zero, auto-dismiss overlay
+    if (h === 0 && m === 0 && s === 0) {
+      setTimeout(dismissOverlay, 1500);
+    }
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  function dismissOverlay() {
+    const overlay = document.getElementById('launch-overlay');
+    overlay.style.transition = 'opacity 0.8s ease';
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.classList.add('launched'), 800);
+  }
+
+  // ══════════════════════════════════════════
+  // BACKGROUND CANVAS PARTICLES
   // ══════════════════════════════════════════
   (function() {
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let W, H, mouse = { x: -999, y: -999 };
-    let particles = [];
-    const SYMBOLS = ['⚽','🥅','⚡','改','善'];
-    const N = 28;
+    let W, H, particles = [];
 
     function resize() {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
     }
-
-    function Particle() {
-      this.reset = function(initial) {
-        this.x = Math.random() * W;
-        this.y = initial ? Math.random() * H : H + 40;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = -(0.2 + Math.random() * 0.5);
-        this.size = 12 + Math.random() * 18;
-        this.alpha = 0.03 + Math.random() * 0.06;
-        this.sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        this.life = 1;
-        this.spin = (Math.random() - 0.5) * 0.01;
-        this.angle = Math.random() * Math.PI * 2;
-      };
-      this.reset(true);
-    }
-
-    for (let i = 0; i < N; i++) {
-      const p = new Particle();
-      particles.push(p);
-    }
-
-    function drawLines() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          if (dist < 160) {
-            const alpha = (1 - dist/160) * 0.025;
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(184,134,11,${alpha})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-    }
-
-    function mousePush(p) {
-      const dx = p.x - mouse.x;
-      const dy = p.y - mouse.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 130) {
-        const force = (130 - dist) / 130;
-        p.vx += (dx / dist) * force * 0.5;
-        p.vy += (dy / dist) * force * 0.5;
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, W, H);
-      drawLines();
-      particles.forEach(p => {
-        mousePush(p);
-        p.x += p.vx; p.y += p.vy;
-        p.vx *= 0.99; p.vy *= 0.99;
-        p.angle += p.spin;
-        if (p.x < -50) p.x = W + 50;
-        if (p.x > W + 50) p.x = -50;
-        if (p.y < -60) p.reset(false);
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.angle);
-        ctx.globalAlpha = p.alpha;
-        ctx.font = `${p.size}px serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(p.sym, 0, 0);
-        ctx.restore();
-      });
-      requestAnimationFrame(animate);
-    }
-
-    window.addEventListener('resize', resize);
-    document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    document.addEventListener('touchmove', e => {
-      mouse.x = e.touches[0].clientX;
-      mouse.y = e.touches[0].clientY;
-    }, { passive: true });
-
     resize();
-    animate();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 2 + 0.5,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        color: Math.random() > 0.5 ? '#00ff64' : '#b44fff'
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0,0,W,H);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
   })();
 
   // ══════════════════════════════════════════
-  // ANIMATED COUNTER
+  // COUNTER ANIMATION
   // ══════════════════════════════════════════
-  function animateCounter(el, target, duration, suffix) {
-    let start = null;
-    const step = ts => {
-      if (!start) start = ts;
-      const prog = Math.min((ts - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - prog, 3);
-      const val = Math.round(ease * target);
-      el.textContent = val.toLocaleString() + (suffix || '');
-      if (prog < 1) requestAnimationFrame(step);
-    };
+  function animateCounter(el, target, duration) {
+    let start = 0, startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      const p = Math.min((ts - startTime) / duration, 1);
+      el.textContent = Math.floor(p * target).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    }
     requestAnimationFrame(step);
   }
-
-  const heroStatsEl = document.querySelector('.hero-stats');
-  let countersRan = false;
-  const counterObs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && !countersRan) {
-      countersRan = true;
-      animateCounter(document.getElementById('stat-cards'), 12480, 2000);
-      animateCounter(document.getElementById('stat-users'), 3200, 1800, '+');
-      animateCounter(document.getElementById('stat-pos'), 11, 800);
-      document.getElementById('stat-holders').textContent = '1,247+';
-    }
-  }, { threshold: 0.5 });
-  counterObs.observe(heroStatsEl);
+  document.querySelectorAll('[data-target]').forEach(el => {
+    animateCounter(el, parseInt(el.dataset.target), 1800);
+  });
 
   // ══════════════════════════════════════════
-  // MOBILE MENU
+  // NAV / HAMBURGER
   // ══════════════════════════════════════════
   function toggleMenu() {
-    const menu = document.getElementById('mobileMenu');
-    const hamburger = document.getElementById('hamburger');
-    menu.classList.toggle('open');
-    hamburger.classList.toggle('open');
+    document.getElementById('mobileMenu').classList.toggle('open');
+    document.getElementById('hamburger').classList.toggle('open');
   }
-
-  // Close mobile menu when clicking outside
   document.addEventListener('click', function(e) {
     const menu = document.getElementById('mobileMenu');
     const hamburger = document.getElementById('hamburger');
     if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
-      menu.classList.remove('open');
-      hamburger.classList.remove('open');
+      menu.classList.remove('open'); hamburger.classList.remove('open');
     }
   });
 
   // ══════════════════════════════════════════
-  // STATS (card generator)
+  // CONTRACT COPY
   // ══════════════════════════════════════════
-  const stats = { pac: 75, sho: 70, pas: 72, dri: 68, def: 55, phy: 65 };
+  function copyContract() {
+    const addr = document.getElementById('contractAddr').textContent;
+    navigator.clipboard.writeText(addr).then(() => showToast('📋 Address Copied!')).catch(() => showToast('⚠️ Copy failed'));
+  }
+
+  // ══════════════════════════════════════════
+  // STATS & CARD GENERATOR
+  // ══════════════════════════════════════════
+  const stats = { pac:75, sho:70, pas:72, dri:68, def:55, phy:65 };
 
   function updateStat(key, val) {
     stats[key] = parseInt(val);
@@ -1390,13 +1360,10 @@
     document.getElementById('c-' + key).textContent = val;
     updateOverall();
   }
-
   function updateOverall() {
-    const vals = Object.values(stats);
-    const avg = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+    const avg = Math.round(Object.values(stats).reduce((a,b) => a+b, 0) / 6);
     document.getElementById('c-overall').textContent = avg;
   }
-
   function randomizeStats() {
     ['pac','sho','pas','dri','def','phy'].forEach(k => {
       const v = Math.floor(Math.random() * 50) + 50;
@@ -1407,7 +1374,6 @@
     });
     updateOverall();
   }
-
   const avatarMap = { ST:'🏃',CF:'⚡',LW:'🌪️',RW:'🌪️',CAM:'🎯',CM:'🔄',CDM:'🛡️',LB:'🏃',RB:'🏃',CB:'🧱',GK:'🧤' };
 
   function generateCard() {
@@ -1423,10 +1389,9 @@
     showToast('🎴 Card Generated!');
     addToShowcase(name.toUpperCase(), pos, parseInt(document.getElementById('c-overall').textContent), nation);
   }
-
   function downloadCard() {
     const card = document.getElementById('player-card');
-    html2canvas(card, { backgroundColor: '#06060a', scale: 2, useCORS: true }).then(canvas => {
+    html2canvas(card, { backgroundColor: '#080515', scale: 2, useCORS: true }).then(canvas => {
       const link = document.createElement('a');
       link.download = 'kaizenkick-card.png';
       link.href = canvas.toDataURL('image/png');
@@ -1434,7 +1399,6 @@
       showToast('✅ Card Saved!');
     }).catch(() => showToast('⚠️ Save failed'));
   }
-
   function shareX() {
     const name = document.getElementById('c-name').textContent;
     const ovr = document.getElementById('c-overall').textContent;
@@ -1442,50 +1406,52 @@
     const text = `🎴 KaizenKick Player Card\n⚡ ${name} | ${pos} | OVR ${ovr}\n\nCertified as a player who never stops improving!\n💎 $KAIZENKICK\n#KaizenKick\nhttps://x.com/kainzenkick`;
     window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
   }
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
   }
-
   function toggleFaq(el) {
     const item = el.parentElement;
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
   }
-
   function setHowLang(lang) {
     const steps = document.getElementById('howSteps');
-    const tip = document.querySelector('.how-tip');
     const btns = document.querySelectorAll('#howLangToggle .lang-btn');
-    if (lang === 'ja') { steps.classList.add('lang-ja'); tip.classList.add('lang-ja'); }
-    else { steps.classList.remove('lang-ja'); tip.classList.remove('lang-ja'); }
+    if (lang === 'ja') steps.classList.add('lang-ja');
+    else steps.classList.remove('lang-ja');
     btns.forEach(b => b.classList.remove('active'));
     btns[lang === 'ja' ? 0 : 1].classList.add('active');
   }
 
+  // LIVE PREVIEW
+  document.getElementById('nameInput').addEventListener('input', function() {
+    document.getElementById('c-name').textContent = this.value.toUpperCase() || 'YOUR NAME';
+  });
+  document.getElementById('posInput').addEventListener('change', function() {
+    document.getElementById('c-pos').textContent = this.value;
+    document.getElementById('c-avatar').textContent = avatarMap[this.value] || '⚽';
+  });
+  document.getElementById('nationInput').addEventListener('change', function() {
+    document.getElementById('c-nation').textContent = this.value;
+  });
+
   // ══════════════════════════════════════════
-  // SHOWCASE MOCK DATA
+  // SHOWCASE
   // ══════════════════════════════════════════
   const fakeCards = [
-    { name:'SUZUKI K.',    pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',    date:'2h ago',  nation:'🇯🇵', pac:88,sho:85,pas:72 },
-    { name:'HAYASHI R.',   pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',    date:'3h ago',  nation:'🇯🇵', pac:55,sho:40,pas:68 },
-    { name:'NAKAMURA T.',  pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',     date:'5h ago',  nation:'🇧🇷', pac:76,sho:79,pas:91 },
-    { name:'WATANABE',     pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense',  date:'Yesterday',     nation:'🇯🇵', pac:66,sho:48,pas:71 },
-    { name:'ITO YUKI',     pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',        date:'Yesterday',     nation:'🇦🇷', pac:95,sho:80,pas:77 },
-    { name:'KATO S.',      pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',   date:'2d ago',    nation:'🇯🇵', pac:68,sho:55,pas:78 },
-    { name:'YAMAMOTO',     pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',      date:'2d ago',    nation:'🇩🇪', pac:74,sho:70,pas:87 },
-    { name:'TANAKA D.',    pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',    date:'3d ago',    nation:'🇫🇷', pac:91,sho:83,pas:74 },
-    { name:'SILVA A.',     pos:'ST',  ovr:90, avatar:'🏃', user:'@silva_gol',     date:'3d ago',    nation:'🇧🇷', pac:93,sho:92,pas:68 },
-    { name:'PARK J.',      pos:'LB',  ovr:77, avatar:'🏃', user:'@park_lb7',      date:'4d ago',    nation:'🇰🇷', pac:80,sho:44,pas:76 },
-    { name:'MUELLER',      pos:'CAM', ovr:89, avatar:'🎯', user:'@mueller_10',    date:'4d ago',    nation:'🇩🇪', pac:78,sho:84,pas:94 },
-    { name:'ROSSI G.',     pos:'CF',  ovr:84, avatar:'⚡', user:'@rossi_g',       date:'5d ago',    nation:'🇮🇹', pac:82,sho:88,pas:76 },
-    { name:'SANTOS',       pos:'GK',  ovr:86, avatar:'🧤', user:'@santos_gk1',   date:'5d ago',    nation:'🇵🇹', pac:58,sho:42,pas:72 },
-    { name:'LEE M.',       pos:'RB',  ovr:75, avatar:'🏃', user:'@lee_rb22',      date:'6d ago',    nation:'🇰🇷', pac:82,sho:40,pas:74 },
-    { name:'CHEN W.',      pos:'CM',  ovr:80, avatar:'🔄', user:'@chen_w88',      date:'6d ago',    nation:'🌏', pac:72,sho:66,pas:85 },
-    { name:'KOBAYASHI',    pos:'CB',  ovr:81, avatar:'🧱', user:'@koba_def',      date:'1 week ago',  nation:'🇯🇵', pac:69,sho:50,pas:73 },
+    { name:'SUZUKI K.',   pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',   date:'2h ago',    nation:'🇯🇵', pac:88,sho:85,pas:72 },
+    { name:'HAYASHI R.',  pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',   date:'3h ago',    nation:'🇯🇵', pac:55,sho:40,pas:68 },
+    { name:'NAKAMURA T.', pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',    date:'5h ago',    nation:'🇧🇷', pac:76,sho:79,pas:91 },
+    { name:'WATANABE',    pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense', date:'Yesterday', nation:'🇯🇵', pac:66,sho:48,pas:71 },
+    { name:'ITO YUKI',    pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',       date:'Yesterday', nation:'🇦🇷', pac:95,sho:80,pas:77 },
+    { name:'KATO S.',     pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',  date:'2d ago',    nation:'🇯🇵', pac:68,sho:55,pas:78 },
+    { name:'YAMAMOTO',    pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',     date:'2d ago',    nation:'🇩🇪', pac:74,sho:70,pas:87 },
+    { name:'TANAKA D.',   pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',   date:'3d ago',    nation:'🇫🇷', pac:91,sho:83,pas:74 },
   ];
 
   function buildShowcaseItem(c) {
@@ -1495,7 +1461,7 @@
         <div class="sc-pos">${c.pos}</div>
         <div class="sc-avatar">${c.avatar}</div>
         <div class="sc-name">${c.name}</div>
-        <div class="sc-nation">${c.nation || ''}</div>
+        <div class="sc-nation">${c.nation||''}</div>
         <div class="showcase-stats-mini">
           <span class="ssm">PAC <span>${c.pac}</span></span>
           <span class="ssm">SHO <span>${c.sho}</span></span>
@@ -1511,30 +1477,16 @@
 
   function addToShowcase(name, pos, ovr, nation) {
     const grid = document.getElementById('showcaseGrid');
-    const item = buildShowcaseItem({
+    grid.insertAdjacentHTML('afterbegin', buildShowcaseItem({
       name, pos, ovr, nation: nation||'🌏',
       avatar: avatarMap[pos]||'⚽', user:'@you', date:'Just now',
       pac: stats.pac, sho: stats.sho, pas: stats.pas
-    });
-    grid.insertAdjacentHTML('afterbegin', item);
+    }));
     const items = grid.querySelectorAll('.showcase-item');
-    if (items.length > 16) items[items.length - 1].remove();
+    if (items.length > 8) items[items.length-1].remove();
   }
 
   document.getElementById('showcaseGrid').innerHTML = fakeCards.map(buildShowcaseItem).join('');
-
-  // LIVE PREVIEW
-  document.getElementById('nameInput').addEventListener('input', function() {
-    document.getElementById('c-name').textContent = this.value.toUpperCase() || 'YOUR NAME';
-  });
-  document.getElementById('posInput').addEventListener('change', function() {
-    document.getElementById('c-pos').textContent = this.value;
-    document.getElementById('c-avatar').textContent = avatarMap[this.value] || '⚽';
-  });
-  document.getElementById('nationInput').addEventListener('change', function() {
-    document.getElementById('c-nation').textContent = this.value;
-  });
-
   updateOverall();
   </script>
 </body>
