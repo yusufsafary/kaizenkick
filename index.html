@@ -2,26 +2,29 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>カイゼンキック | KaizenKick</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --gold: #c9a84c;
-      --gold-light: #f0d078;
-      --gold-dim: #5a4820;
+      --gold: #b8860b;
+      --gold-light: #d4a017;
+      --gold-dim: #8b6914;
       --red: #c1121f;
       --red-bright: #ef233c;
-      --bg: #06060a;
-      --surface: #0d0d14;
-      --surface2: #14141e;
-      --text: #e8e8f0;
+      --bg: #f8f7f4;
+      --bg2: #f0ede6;
+      --surface: #ffffff;
+      --surface2: #f4f1eb;
+      --text: #1a1a2e;
       --text-dim: #6b6b80;
-      --border: rgba(201,168,76,0.15);
+      --border: rgba(184,134,11,0.18);
+      --border-light: rgba(0,0,0,0.08);
       --purple: #7c3aed;
-      --sol: #14f195;
+      --sol: #059669;
       --base-blue: #0052ff;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -37,22 +40,15 @@
     #bgCanvas {
       position: fixed; inset: 0; z-index: 0;
       pointer-events: none;
+      opacity: 0.35;
     }
     .grid-texture {
       position: fixed; inset: 0;
       background-image:
-        linear-gradient(rgba(201,168,76,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,0.02) 1px, transparent 1px);
+        linear-gradient(rgba(184,134,11,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184,134,11,0.04) 1px, transparent 1px);
       background-size: 50px 50px;
       pointer-events: none; z-index: 0;
-    }
-    /* cursor trail */
-    .cursor-dot {
-      position: fixed; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--gold); pointer-events: none; z-index: 9999;
-      transform: translate(-50%,-50%);
-      transition: opacity 0.6s ease;
-      opacity: 0;
     }
 
     /* ── NAV ── */
@@ -60,9 +56,10 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 5%;
-      background: rgba(6,6,10,0.9);
+      background: rgba(248,247,244,0.95);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-light);
+      box-shadow: 0 1px 12px rgba(0,0,0,0.06);
     }
     .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 4px; color: var(--gold); }
     .nav-links { display: flex; gap: 24px; list-style: none; }
@@ -75,42 +72,33 @@
     .nav-right { display: flex; gap: 10px; align-items: center; }
     .nav-x-link {
       display: flex; align-items: center; gap: 6px;
-      padding: 7px 14px; border: 1px solid var(--border); border-radius: 4px;
+      padding: 7px 14px; border: 1px solid var(--border-light); border-radius: 4px;
       font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
       letter-spacing: 2px; color: var(--text-dim); text-decoration: none;
       text-transform: uppercase; transition: all 0.2s; white-space: nowrap;
+      background: var(--surface);
     }
     .nav-x-link:hover { border-color: var(--gold-dim); color: var(--gold); }
-    .nav-buy-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 16px; border-radius: 4px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
-      letter-spacing: 2px; color: #fff; text-decoration: none;
-      text-transform: uppercase; transition: all 0.2s; white-space: nowrap;
-      border: none; cursor: pointer;
-    }
-    .nav-buy-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,58,237,0.5); }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
     .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .mobile-menu {
       display: none; position: fixed; top: 58px; left: 0; right: 0;
-      background: rgba(6,6,10,0.98); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border); z-index: 99;
+      background: rgba(248,247,244,0.99); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light); z-index: 99;
       padding: 16px 5%; flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
     .mobile-menu.open { display: flex; }
     .mobile-menu a {
       font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700;
       letter-spacing: 3px; color: var(--text-dim); text-decoration: none;
       text-transform: uppercase; padding: 14px 0;
-      border-bottom: 1px solid var(--border); transition: color 0.2s;
+      border-bottom: 1px solid var(--border-light); transition: color 0.2s;
     }
     .mobile-menu a:hover { color: var(--gold); }
-    .mobile-menu .mobile-zora {
-      color: #a78bfa !important;
-      font-size: 16px !important;
-    }
 
     /* ── HERO ── */
     .hero {
@@ -122,7 +110,7 @@
     .hero-glow {
       position: absolute; top: 0; left: 50%; transform: translateX(-50%);
       width: 900px; height: 550px;
-      background: radial-gradient(ellipse, rgba(193,18,31,0.18) 0%, transparent 65%);
+      background: radial-gradient(ellipse, rgba(193,18,31,0.06) 0%, transparent 65%);
       pointer-events: none; animation: glowPulse 4s ease-in-out infinite;
     }
     @keyframes glowPulse {
@@ -138,7 +126,7 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(60px, 14vw, 140px);
       letter-spacing: 8px; line-height: 1; color: var(--gold);
-      text-shadow: 0 0 80px rgba(201,168,76,0.35), 0 0 160px rgba(201,168,76,0.1);
+      text-shadow: 0 0 40px rgba(184,134,11,0.15);
       animation: fadeUp 0.7s 0.1s ease both;
     }
     .hero-sub {
@@ -146,7 +134,7 @@
       margin: 20px 0 40px; letter-spacing: 1px; line-height: 1.7;
       animation: fadeUp 0.7s 0.2s ease both;
     }
-    .hero-sub .en { font-family: 'Rajdhani', sans-serif; font-size: 0.88em; color: rgba(201,168,76,0.5); display: block; margin-top: 4px; letter-spacing: 2px; }
+    .hero-sub .en { font-family: 'Rajdhani', sans-serif; font-size: 0.88em; color: rgba(184,134,11,0.6); display: block; margin-top: 4px; letter-spacing: 2px; }
     .hero-cta {
       display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
       animation: fadeUp 0.7s 0.3s ease both;
@@ -166,10 +154,10 @@
       font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase; border: 1px solid;
     }
-    .chain-badge-sol { background: rgba(20,241,149,0.07); border-color: rgba(20,241,149,0.3); color: #14f195; }
-    .chain-badge-base { background: rgba(0,82,255,0.07); border-color: rgba(0,82,255,0.3); color: #6b8cff; }
+    .chain-badge-sol { background: rgba(5,150,105,0.07); border-color: rgba(5,150,105,0.3); color: #059669; }
+    .chain-badge-base { background: rgba(0,82,255,0.07); border-color: rgba(0,82,255,0.3); color: #0052ff; }
     .chain-badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .chain-badge-sol .chain-badge-dot { background: #14f195; box-shadow: 0 0 6px #14f195; animation: blink 2s infinite; }
+    .chain-badge-sol .chain-badge-dot { background: #059669; box-shadow: 0 0 6px #059669; animation: blink 2s infinite; }
     .chain-badge-base .chain-badge-dot { background: #0052ff; box-shadow: 0 0 6px #0052ff; animation: blink 2s 0.5s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
@@ -191,24 +179,15 @@
       cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
       text-decoration: none; display: inline-block;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(193,18,31,0.4); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(193,18,31,0.3); }
     .btn-outline {
-      padding: 13px 28px; border-radius: 4px; background: transparent;
+      padding: 13px 28px; border-radius: 4px; background: var(--surface);
       border: 1px solid var(--gold-dim); color: var(--gold);
       font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
       letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
       transition: all 0.2s; text-decoration: none; display: inline-block;
     }
-    .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
-    .btn-zora {
-      padding: 13px 28px; border-radius: 4px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      border: none; color: white; font-family: 'Rajdhani', sans-serif;
-      font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-zora:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.45); }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(184,134,11,0.06); }
 
     /* ── SECTION COMMONS ── */
     section { position: relative; z-index: 1; padding: 100px 5%; }
@@ -223,7 +202,7 @@
     }
     .section-title-en {
       font-family: 'Rajdhani', sans-serif; font-size: clamp(13px, 2vw, 18px);
-      letter-spacing: 4px; color: rgba(201,168,76,0.35); text-transform: uppercase;
+      letter-spacing: 4px; color: rgba(184,134,11,0.5); text-transform: uppercase;
       margin-bottom: 10px; font-weight: 700;
     }
     .section-desc { font-size: 14px; line-height: 1.8; color: var(--text-dim); max-width: 540px; }
@@ -236,28 +215,31 @@
     }
     .about-box {
       aspect-ratio: 4/5; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 8px;
+      border: 1px solid var(--border-light); border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden; position: relative;
+      box-shadow: var(--shadow);
     }
     .about-box-inner {
       font-family: 'Bebas Neue', sans-serif; font-size: 110px;
-      color: rgba(201,168,76,0.06); letter-spacing: -4px;
+      color: rgba(184,134,11,0.08); letter-spacing: -4px;
       line-height: 1; user-select: none; text-align: center; padding: 20px;
     }
     .about-badge {
       position: absolute; bottom: 24px; right: -16px;
       background: var(--red); padding: 14px 18px; border-radius: 4px; text-align: center;
+      color: white;
     }
     .about-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 1; }
     .about-badge-txt { font-size: 9px; letter-spacing: 2px; opacity: 0.8; }
     .about-features { margin-top: 32px; display: flex; flex-direction: column; gap: 14px; }
     .feature-row {
       display: flex; align-items: flex-start; gap: 14px; padding: 14px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-      transition: border-color 0.2s;
+      background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow);
     }
-    .feature-row:hover { border-color: var(--gold-dim); }
+    .feature-row:hover { border-color: var(--gold-dim); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
     .feature-title {
       font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700;
@@ -268,64 +250,37 @@
     /* ── TOKEN SECTION ── */
     #token {
       background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
     }
-    .token-inner { max-width: 1200px; margin: 0 auto; }
-    .token-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
-      align-items: start; margin-top: 52px;
-    }
-    .token-card {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 28px; transition: border-color 0.2s;
-    }
-    .token-card:hover { border-color: var(--gold-dim); }
-    .token-card-title {
-      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 20px;
-    }
-    .tokenomics-list { display: flex; flex-direction: column; gap: 14px; }
-    .toko-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 0; border-bottom: 1px solid rgba(201,168,76,0.07);
-    }
-    .toko-row:last-child { border-bottom: none; }
-    .toko-label { font-size: 13px; color: var(--text-dim); font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; }
-    .toko-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); letter-spacing: 2px; }
-    .toko-bar-wrap { margin-top: 20px; }
-    .toko-bar-label { display: flex; justify-content: space-between; font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 6px; }
-    .toko-bar { height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
-    .toko-bar-fill { height: 100%; border-radius: 3px; transition: width 1.2s ease; width: 0; }
-    .toko-bar-fill.community { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
-    .toko-bar-fill.team      { background: linear-gradient(90deg, var(--red), var(--red-bright)); }
-    .toko-bar-fill.liquidity { background: linear-gradient(90deg, #4f46e5, #7c3aed); }
-    .toko-bar-fill.reserve  { background: linear-gradient(90deg, #0052ff, #14f195); }
+    .token-inner { max-width: 900px; margin: 0 auto; }
 
     .contract-box {
-      background: #0a0a12; border: 1px solid rgba(124,58,237,0.3);
+      background: #f0ede6; border: 1px solid rgba(124,58,237,0.2);
       border-radius: 8px; padding: 18px 20px; margin-top: 24px;
+      box-shadow: var(--shadow);
     }
     .contract-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
     .contract-addr {
-      font-family: 'Rajdhani', sans-serif; font-size: 13px; color: #a78bfa;
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; color: #7c3aed;
       letter-spacing: 1px; word-break: break-all; line-height: 1.5;
     }
     .contract-copy {
       display: inline-flex; align-items: center; gap: 6px;
       margin-top: 10px; padding: 6px 14px; border-radius: 4px;
-      border: 1px solid rgba(124,58,237,0.4); background: rgba(124,58,237,0.08);
+      border: 1px solid rgba(124,58,237,0.3); background: rgba(124,58,237,0.06);
       font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 2px; color: #a78bfa; cursor: pointer; transition: all 0.2s;
+      letter-spacing: 2px; color: #7c3aed; cursor: pointer; transition: all 0.2s;
       text-transform: uppercase;
     }
-    .contract-copy:hover { background: rgba(124,58,237,0.18); }
+    .contract-copy:hover { background: rgba(124,58,237,0.12); }
 
     .token-chain-list { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
     .chain-row {
       display: flex; align-items: center; gap: 14px; padding: 16px;
-      background: var(--surface); border: 1px solid var(--border);
+      background: var(--bg2); border: 1px solid var(--border-light);
       border-radius: 8px; transition: border-color 0.2s, transform 0.2s;
+      box-shadow: var(--shadow);
     }
     .chain-row:hover { border-color: var(--gold-dim); transform: translateX(4px); }
     .chain-icon { font-size: 26px; flex-shrink: 0; }
@@ -336,18 +291,23 @@
       font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
     }
-    .chain-tag.live { background: rgba(20,241,149,0.1); color: #14f195; border: 1px solid rgba(20,241,149,0.3); }
-    .chain-tag.coming { background: rgba(201,168,76,0.08); color: var(--gold-dim); border: 1px solid rgba(201,168,76,0.2); }
+    .chain-tag.live { background: rgba(5,150,105,0.1); color: #059669; border: 1px solid rgba(5,150,105,0.3); }
+    .chain-tag.coming { background: rgba(184,134,11,0.08); color: var(--gold-dim); border: 1px solid rgba(184,134,11,0.2); }
 
-    .token-buy-cta {
-      margin-top: 40px; padding: 28px; text-align: center;
-      background: linear-gradient(135deg, rgba(79,70,229,0.1), rgba(124,58,237,0.06));
-      border: 1px solid rgba(124,58,237,0.25); border-radius: 10px;
+    .token-grid-single { margin-top: 52px; }
+    .token-card {
+      background: var(--bg2); border: 1px solid var(--border-light);
+      border-radius: 10px; padding: 28px; transition: border-color 0.2s;
+      box-shadow: var(--shadow); margin-bottom: 24px;
     }
-    .token-buy-cta p { font-size: 14px; color: var(--text-dim); margin-bottom: 18px; line-height: 1.7; }
+    .token-card:hover { border-color: var(--gold-dim); }
+    .token-card-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 20px;
+    }
 
     /* ── GENERATOR ── */
-    #generator { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #generator { background: var(--surface); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
     .generator-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
     .generator-form { display: flex; flex-direction: column; gap: 18px; }
     .form-group { display: flex; flex-direction: column; gap: 7px; }
@@ -356,18 +316,18 @@
       letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
     }
     .form-input {
-      padding: 13px 15px; background: var(--surface2); border: 1px solid var(--border);
+      padding: 13px 15px; background: var(--bg2); border: 1px solid var(--border-light);
       border-radius: 4px; color: var(--text); font-family: 'Noto Sans JP', sans-serif;
       font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
     }
-    .form-input:focus { border-color: var(--gold-dim); }
+    .form-input:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(184,134,11,0.08); }
     .form-select {
-      padding: 13px 15px; background: var(--surface2); border: 1px solid var(--border);
+      padding: 13px 15px; background: var(--bg2); border: 1px solid var(--border-light);
       border-radius: 4px; color: var(--text); font-family: 'Noto Sans JP', sans-serif;
       font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
       cursor: pointer; appearance: none; -webkit-appearance: none;
     }
-    .form-select:focus { border-color: var(--gold-dim); }
+    .form-select:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(184,134,11,0.08); }
     .select-wrapper { position: relative; }
     .select-wrapper::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; }
     .stat-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -375,9 +335,10 @@
     .slider-top { display: flex; justify-content: space-between; align-items: center; }
     .slider-name { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
     .slider-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); }
-    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--surface2); border-radius: 2px; outline: none; border: 1px solid var(--border); }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--bg2); border-radius: 2px; outline: none; border: 1px solid var(--border-light); }
     input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; }
-    .randomize-btn { padding: 9px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; border: none; }
+    .randomize-btn { padding: 9px; background: var(--bg2); border: 1px solid var(--border-light); border-radius: 4px; color: var(--text-dim); font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
     .randomize-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
     .generate-actions { display: flex; gap: 12px; }
 
@@ -386,24 +347,24 @@
     #player-card {
       width: 270px;
       background: linear-gradient(160deg, #0f0f1a 0%, #06060a 60%, #0a0005 100%);
-      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
-      box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 30px rgba(201,168,76,0.07);
+      border: 1px solid rgba(201,168,76,0.2); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,0,0,0.15), 0 0 30px rgba(201,168,76,0.07);
       animation: pulse-gold 3s infinite;
     }
     .card-header { background: linear-gradient(135deg, #1a0a0a, #0f0510); padding: 18px 18px 0; position: relative; }
     .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .card-overall { font-family: 'Bebas Neue', sans-serif; font-size: 50px; line-height: 1; color: var(--gold); text-shadow: 0 0 20px rgba(201,168,76,0.4); }
-    .card-pos-badge { background: var(--red); padding: 4px 10px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; }
-    .card-nation { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-top: 1px; }
+    .card-overall { font-family: 'Bebas Neue', sans-serif; font-size: 50px; line-height: 1; color: #c9a84c; text-shadow: 0 0 20px rgba(201,168,76,0.4); }
+    .card-pos-badge { background: #c1121f; padding: 4px 10px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; color: white; }
+    .card-nation { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 2px; margin-top: 1px; }
     .card-avatar { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 66px; margin-top: 8px; }
     .card-body { padding: 14px 18px 18px; }
-    .card-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; color: var(--gold); text-align: center; margin-bottom: 3px; }
-    .card-team-name { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-align: center; margin-bottom: 12px; text-transform: uppercase; }
-    .card-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); margin-bottom: 12px; }
+    .card-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; color: #c9a84c; text-align: center; margin-bottom: 3px; }
+    .card-team-name { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 12px; text-transform: uppercase; }
+    .card-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent); margin-bottom: 12px; }
     .card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     .card-stat { text-align: center; }
-    .card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); line-height: 1; }
-    .card-stat-lbl { font-family: 'Rajdhani', sans-serif; font-size: 8px; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; }
+    .card-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: #e8e8f0; line-height: 1; }
+    .card-stat-lbl { font-family: 'Rajdhani', sans-serif; font-size: 8px; letter-spacing: 1.5px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
     .card-footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(201,168,76,0.1); text-align: center; }
     .card-footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 4px; color: rgba(201,168,76,0.28); }
     .card-actions { display: flex; gap: 10px; width: 270px; }
@@ -413,21 +374,21 @@
     #how { background: var(--bg); }
     .how-inner { max-width: 1200px; margin: 0 auto; }
     .how-lang-toggle { display: flex; gap: 8px; margin-top: 20px; }
-    .lang-btn { padding: 6px 16px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-dim); transition: all 0.2s; text-transform: uppercase; }
+    .lang-btn { padding: 6px 16px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer; border: 1px solid var(--border-light); background: var(--surface); color: var(--text-dim); transition: all 0.2s; text-transform: uppercase; }
     .lang-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
-    .step { position: relative; padding: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; transition: border-color 0.2s, transform 0.2s; }
-    .step:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 68px; color: rgba(201,168,76,0.06); line-height: 1; position: absolute; top: 14px; right: 18px; }
+    .step { position: relative; padding: 28px; background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px; transition: border-color 0.2s, transform 0.2s; box-shadow: var(--shadow); }
+    .step:hover { border-color: var(--gold-dim); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 68px; color: rgba(184,134,11,0.08); line-height: 1; position: absolute; top: 14px; right: 18px; }
     .step-icon { font-size: 30px; margin-bottom: 14px; }
     .step-title { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 2px; color: var(--gold); margin-bottom: 4px; text-transform: uppercase; }
-    .step-title-ja { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 700; color: rgba(201,168,76,0.5); margin-bottom: 8px; }
+    .step-title-ja { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 700; color: rgba(184,134,11,0.5); margin-bottom: 8px; }
     .step-desc { font-size: 13px; line-height: 1.7; color: var(--text-dim); }
     .step-desc.ja { display: none; }
     .step-desc.en { display: block; }
     .lang-ja .step-desc.ja { display: block; }
     .lang-ja .step-desc.en { display: none; }
-    .how-tip { margin-top: 48px; padding: 22px 28px; background: linear-gradient(135deg, rgba(193,18,31,0.07), rgba(201,168,76,0.04)); border: 1px solid rgba(193,18,31,0.2); border-radius: 8px; display: flex; align-items: flex-start; gap: 16px; }
+    .how-tip { margin-top: 48px; padding: 22px 28px; background: linear-gradient(135deg, rgba(193,18,31,0.04), rgba(201,168,76,0.02)); border: 1px solid rgba(193,18,31,0.15); border-radius: 8px; display: flex; align-items: flex-start; gap: 16px; }
     .how-tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
     .how-tip-title { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--red-bright); text-transform: uppercase; margin-bottom: 4px; }
     .how-tip-text { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
@@ -439,20 +400,20 @@
     /* ── SHOWCASE ── */
     .showcase-inner { max-width: 1200px; margin: 0 auto; }
     .showcase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 48px; }
-    .showcase-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
-    .showcase-item:hover { transform: scale(1.03); border-color: var(--gold-dim); }
+    .showcase-item { background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; box-shadow: var(--shadow); }
+    .showcase-item:hover { transform: scale(1.03); border-color: var(--gold-dim); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
     .showcase-card-mini { padding: 18px 14px; background: linear-gradient(160deg, #12121f, #06060a); text-align: center; }
-    .sc-overall { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--gold); line-height: 1; }
-    .sc-pos { font-size: 9px; letter-spacing: 2px; color: var(--red-bright); font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; }
+    .sc-overall { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: #c9a84c; line-height: 1; }
+    .sc-pos { font-size: 9px; letter-spacing: 2px; color: #ef233c; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; }
     .sc-avatar { font-size: 38px; margin: 6px 0; }
-    .sc-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--gold); }
-    .sc-nation { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
+    .sc-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: #c9a84c; }
+    .sc-nation { font-size: 9px; color: rgba(255,255,255,0.35); margin-top: 2px; }
     .showcase-meta { padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
     .sc-user { font-size: 10px; color: var(--text-dim); }
     .sc-date { font-size: 9px; color: var(--text-dim); opacity: 0.6; }
     .showcase-stats-mini { display: flex; justify-content: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-    .ssm { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--text-dim); background: var(--surface2); padding: 2px 6px; border-radius: 2px; border: 1px solid var(--border); }
-    .ssm span { color: var(--gold); }
+    .ssm { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
+    .ssm span { color: #c9a84c; }
 
     /* ── ROADMAP ── */
     #roadmap { background: var(--bg); }
@@ -469,8 +430,8 @@
       font-size: 16px; border: 2px solid; position: relative; z-index: 1;
       background: var(--bg);
     }
-    .roadmap-dot.done { border-color: var(--red); background: rgba(193,18,31,0.15); }
-    .roadmap-dot.active { border-color: var(--gold); background: rgba(201,168,76,0.1); box-shadow: 0 0 16px rgba(201,168,76,0.3); }
+    .roadmap-dot.done { border-color: var(--red); background: rgba(193,18,31,0.08); }
+    .roadmap-dot.active { border-color: var(--gold); background: rgba(184,134,11,0.08); box-shadow: 0 0 16px rgba(184,134,11,0.2); }
     .roadmap-dot.soon { border-color: var(--text-dim); background: var(--surface); }
     .roadmap-body { padding-top: 6px; }
     .roadmap-phase { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
@@ -478,73 +439,71 @@
     .roadmap-desc { font-size: 13px; color: var(--text-dim); line-height: 1.7; max-width: 640px; }
     .roadmap-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .roadmap-tag { padding: 3px 10px; border-radius: 3px; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-    .roadmap-tag.done-t { background: rgba(193,18,31,0.15); color: #ef233c; border: 1px solid rgba(193,18,31,0.25); }
-    .roadmap-tag.active-t { background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
-    .roadmap-tag.soon-t { background: rgba(107,107,128,0.1); color: var(--text-dim); border: 1px solid rgba(107,107,128,0.2); }
+    .roadmap-tag.done-t { background: rgba(193,18,31,0.08); color: #ef233c; border: 1px solid rgba(193,18,31,0.2); }
+    .roadmap-tag.active-t { background: rgba(184,134,11,0.08); color: var(--gold); border: 1px solid rgba(184,134,11,0.2); }
+    .roadmap-tag.soon-t { background: rgba(107,107,128,0.08); color: var(--text-dim); border: 1px solid rgba(107,107,128,0.15); }
 
     /* ── TEAM ── */
-    #team { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #team { background: var(--surface); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
     .team-inner { max-width: 1200px; margin: 0 auto; }
     .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 56px; }
-    .team-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
-    .team-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
-    .team-avatar { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 52px; background: linear-gradient(135deg, #111120, #0a0a12); }
+    .team-card { background: var(--bg2); border: 1px solid var(--border-light); border-radius: 8px; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow); }
+    .team-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+    .team-avatar { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 52px; background: linear-gradient(135deg, #f0ede6, #e8e3d8); }
     .team-info { padding: 14px; }
     .team-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; color: var(--text); margin-bottom: 3px; }
     .team-role { font-size: 10px; letter-spacing: 2px; color: var(--red-bright); text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; margin-bottom: 7px; }
     .team-bio { font-size: 11px; line-height: 1.6; color: var(--text-dim); }
     .team-socials { display: flex; gap: 8px; margin-top: 10px; }
-    .team-social { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: border-color 0.2s; text-decoration: none; color: var(--text-dim); }
+    .team-social { width: 26px; height: 26px; border: 1px solid var(--border-light); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: border-color 0.2s; text-decoration: none; color: var(--text-dim); background: var(--surface); }
     .team-social:hover { border-color: var(--gold-dim); color: var(--gold); }
 
     /* ── FAQ ── */
     .faq-inner { max-width: 800px; margin: 0 auto; text-align: center; }
     .faq-list { text-align: left; margin-top: 48px; display: flex; flex-direction: column; gap: 10px; }
-    .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .faq-item { background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; overflow: hidden; box-shadow: var(--shadow); }
     .faq-q { padding: 16px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px; color: var(--text); user-select: none; transition: color 0.2s; }
     .faq-q:hover { color: var(--gold); }
     .faq-icon { font-size: 18px; color: var(--gold); transition: transform 0.3s; flex-shrink: 0; margin-left: 12px; }
     .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; font-size: 13px; line-height: 1.75; color: var(--text-dim); }
     .faq-item.open .faq-a { max-height: 300px; padding: 0 18px 16px; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-en { font-size: 11px; color: rgba(201,168,76,0.4); display: block; margin-top: 3px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+    .faq-en { font-size: 11px; color: rgba(184,134,11,0.5); display: block; margin-top: 3px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
 
     /* ── CTA BANNER ── */
     #cta-banner {
       text-align: center;
-      background: linear-gradient(135deg, rgba(193,18,31,0.1), rgba(201,168,76,0.05));
-      border-top: 1px solid rgba(193,18,31,0.18);
-      border-bottom: 1px solid rgba(193,18,31,0.18);
+      background: linear-gradient(135deg, rgba(193,18,31,0.04), rgba(184,134,11,0.03));
+      border-top: 1px solid rgba(193,18,31,0.12);
+      border-bottom: 1px solid rgba(193,18,31,0.12);
     }
     .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 6vw, 70px); letter-spacing: 6px; color: var(--gold); margin-bottom: 6px; }
-    .cta-title-en { font-family: 'Rajdhani', sans-serif; font-size: clamp(14px, 2.5vw, 22px); letter-spacing: 5px; color: rgba(201,168,76,0.35); font-weight: 700; text-transform: uppercase; margin-bottom: 14px; }
+    .cta-title-en { font-family: 'Rajdhani', sans-serif; font-size: clamp(14px, 2.5vw, 22px); letter-spacing: 5px; color: rgba(184,134,11,0.4); font-weight: 700; text-transform: uppercase; margin-bottom: 14px; }
     .cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
-    .cta-sub-en { font-family: 'Rajdhani', sans-serif; font-size: 12px; color: rgba(201,168,76,0.35); letter-spacing: 2px; margin-bottom: 34px; }
+    .cta-sub-en { font-family: 'Rajdhani', sans-serif; font-size: 12px; color: rgba(184,134,11,0.4); letter-spacing: 2px; margin-bottom: 34px; }
 
     /* ── FOOTER ── */
-    footer { position: relative; z-index: 1; padding: 60px 5% 36px; border-top: 1px solid var(--border); }
+    footer { position: relative; z-index: 1; padding: 60px 5% 36px; border-top: 1px solid var(--border-light); background: var(--surface); }
     .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
     .footer-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; color: var(--gold); margin-bottom: 10px; }
     .footer-brand-desc { font-size: 12px; line-height: 1.75; color: var(--text-dim); max-width: 260px; }
-    .footer-orynth { margin-top: 18px; }
-    .footer-orynth img { display: block; opacity: 0.85; transition: opacity 0.2s; border-radius: 6px; }
-    .footer-orynth img:hover { opacity: 1; }
     .footer-col-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 14px; }
     .footer-links { display: flex; flex-direction: column; gap: 9px; }
     .footer-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 5px; }
     .footer-links a:hover { color: var(--text); }
-    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 22px; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .footer-copy { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
     .footer-badges { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .badge-pill { padding: 3px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); }
+    .badge-pill { padding: 3px 12px; border: 1px solid var(--border-light); border-radius: 999px; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); background: var(--bg2); }
 
     /* ── TOAST ── */
     .toast {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
-      background: var(--surface2); border: 1px solid var(--gold-dim); border-radius: 8px;
+      background: var(--surface); border: 1px solid var(--gold-dim); border-radius: 8px;
       padding: 13px 22px; font-family: 'Rajdhani', sans-serif; font-size: 14px;
       letter-spacing: 1px; color: var(--gold); z-index: 9999;
       transition: transform 0.4s ease; white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -557,10 +516,6 @@
       0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.08); }
       50% { box-shadow: 0 0 40px rgba(201,168,76,0.22); }
     }
-    @keyframes floatBall {
-      0%,100% { transform: translateY(0) rotate(0deg); opacity: 0.06; }
-      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.12; }
-    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 960px) {
@@ -572,15 +527,17 @@
       .team-grid { grid-template-columns: repeat(2, 1fr); }
       .showcase-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-inner { grid-template-columns: 1fr 1fr; gap: 28px; }
-      .token-grid { grid-template-columns: 1fr; gap: 32px; }
     }
     @media (max-width: 600px) {
+      nav { padding: 12px 4%; }
       .nav-links { display: none; }
-      .nav-buy-btn span { display: none; }
       .nav-x-link { display: none; }
       .hamburger { display: flex; }
+      section { padding: 72px 4%; }
+      .hero { padding: 100px 4% 60px; }
       .hero h1 { letter-spacing: 3px; }
       .hero-stats { gap: 22px; }
+      .stat-num { font-size: 34px; }
       .stat-sliders { grid-template-columns: 1fr; }
       .team-grid { grid-template-columns: 1fr 1fr; }
       .showcase-grid { grid-template-columns: repeat(2, 1fr); }
@@ -589,6 +546,23 @@
       .card-actions { width: 100%; }
       #player-card { width: 255px; }
       .generate-actions { flex-direction: column; }
+      .hero-cta { gap: 10px; }
+      .btn-primary, .btn-outline { padding: 12px 20px; font-size: 12px; letter-spacing: 2px; }
+      .steps { gap: 16px; }
+      .step { padding: 20px; }
+      .roadmap-item { gap: 16px; }
+      .team-grid { gap: 14px; }
+      .about-box-inner { font-size: 70px; }
+      .token-chain-list { gap: 10px; }
+      .chain-row { padding: 12px; }
+      .how-tip { flex-direction: column; gap: 10px; }
+      .footer-inner { gap: 20px; }
+    }
+    @media (max-width: 380px) {
+      .showcase-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 52px; }
+      #player-card { width: 240px; }
+      .card-actions { width: 240px; }
     }
   </style>
 </head>
@@ -612,7 +586,6 @@
     </ul>
     <div class="nav-right">
       <a class="nav-x-link" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
-      <a class="nav-buy-btn" href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener">⚡ <span>Buy $KZK</span></a>
     </div>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
@@ -627,7 +600,6 @@
     <a href="#roadmap" onclick="toggleMenu()">Roadmap</a>
     <a href="#faq" onclick="toggleMenu()">FAQ</a>
     <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 フォローする</a>
-    <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="mobile-zora">⚡ Buy $KAIZENKICK on Zora</a>
   </div>
 
   <!-- HERO -->
@@ -641,7 +613,6 @@
     </p>
     <div class="hero-cta">
       <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
-      <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="btn-zora">⚡ Buy $KAIZENKICK on Zora</a>
       <a href="#how" class="btn-outline">使い方 / How It Works</a>
     </div>
     <div class="built-on-label">⛓ Built on</div>
@@ -685,7 +656,7 @@
       <h2 class="section-title">進化を<br>カードにせよ</h2>
       <div class="section-title-en">Turn Your Growth Into a Card</div>
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。<br><br><span style="color:rgba(201,168,76,0.45);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Base & Solana.</span></p>
+      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。<br><br><span style="color:rgba(184,134,11,0.55);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Base & Solana.</span></p>
       <div class="about-features">
         <div class="feature-row">
           <div class="feature-icon">🎴</div>
@@ -698,7 +669,7 @@
           <div class="feature-icon">💎</div>
           <div>
             <div class="feature-title">$KAIZENKICK Token / Web3 Integration</div>
-            <div class="feature-desc">Base & Solana上のトークンを保有してコミュニティに参加。Zora上で購入可能。<br>Hold $KAIZENKICK on Base or Solana. Buy on Zora and join the on-chain community.</div>
+            <div class="feature-desc">Base & Solana上のトークンを保有してコミュニティに参加。<br>Hold $KAIZENKICK on Base or Solana and join the on-chain community.</div>
           </div>
         </div>
         <div class="feature-row">
@@ -712,101 +683,50 @@
     </div>
   </section>
 
-  <!-- TOKEN SECTION -->
+  <!-- TOKEN SECTION (Tokenomics removed, chains + contract only) -->
   <section id="token">
     <div class="token-inner">
       <div class="section-label">トークン · Token</div>
       <h2 class="section-title">$KAIZENKICK</h2>
       <div class="section-title-en">The On-Chain Football Token</div>
       <div class="divider"></div>
-      <p class="section-desc">サッカーへの情熱をオンチェーンで証明。Base と Solana に展開した $KAIZENKICK トークンをゲットしよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(201,168,76,0.4);">The football improvement token. Live on Base via Zora. Expanding to Solana.</span></p>
+      <p class="section-desc">サッカーへの情熱をオンチェーンで証明。Base と Solana に展開した $KAIZENKICK トークンをゲットしよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(184,134,11,0.5);">The football improvement token. Live on Base. Expanding to Solana.</span></p>
 
-      <div class="token-grid">
-        <!-- LEFT: tokenomics -->
-        <div>
-          <div class="token-card">
-            <div class="token-card-title">📊 Tokenomics</div>
-            <div class="tokenomics-list">
-              <div class="toko-row">
-                <span class="toko-label">Token Name</span>
-                <span class="toko-val">KAIZENKICK</span>
+      <div class="token-grid-single">
+        <div class="token-card">
+          <div class="token-card-title">⛓ Supported Chains</div>
+          <div class="token-chain-list">
+            <div class="chain-row">
+              <div class="chain-icon">🔵</div>
+              <div>
+                <div class="chain-name">Base</div>
+                <div class="chain-desc">Coinbase L2 — fast, cheap, EVM-compatible.</div>
               </div>
-              <div class="toko-row">
-                <span class="toko-label">Ticker</span>
-                <span class="toko-val">$KZK</span>
-              </div>
-              <div class="toko-row">
-                <span class="toko-label">Total Supply</span>
-                <span class="toko-val">1,000,000,000</span>
-              </div>
-              <div class="toko-row">
-                <span class="toko-label">Network</span>
-                <span class="toko-val">Base + Solana</span>
-              </div>
-              <div class="toko-row">
-                <span class="toko-label">Protocol</span>
-                <span class="toko-val">Zora</span>
-              </div>
+              <span class="chain-tag live">● Live</span>
             </div>
-            <div class="toko-bar-wrap" style="margin-top:24px">
-              <div class="toko-bar-label"><span>🌍 Community (50%)</span><span style="color:var(--gold)">500M</span></div>
-              <div class="toko-bar"><div class="toko-bar-fill community" data-w="50"></div></div>
-              <div class="toko-bar-label"><span>💧 Liquidity (25%)</span><span style="color:#a78bfa">250M</span></div>
-              <div class="toko-bar"><div class="toko-bar-fill liquidity" data-w="25"></div></div>
-              <div class="toko-bar-label"><span>🔥 Team &amp; Dev (15%)</span><span style="color:var(--red-bright)">150M</span></div>
-              <div class="toko-bar"><div class="toko-bar-fill team" data-w="15"></div></div>
-              <div class="toko-bar-label"><span>🏦 Reserve (10%)</span><span style="color:#6b8cff">100M</span></div>
-              <div class="toko-bar"><div class="toko-bar-fill reserve" data-w="10"></div></div>
+            <div class="chain-row">
+              <div class="chain-icon">🟢</div>
+              <div>
+                <div class="chain-name">Solana</div>
+                <div class="chain-desc">High-speed L1 — low fees, massive community. Launching soon.</div>
+              </div>
+              <span class="chain-tag coming">Coming Soon</span>
             </div>
-          </div>
-
-          <div class="contract-box">
-            <div class="contract-label">📋 Contract Address (Base)</div>
-            <div class="contract-addr">0x56411eb4782e84910134d6642d42926e834f373e</div>
-            <button class="contract-copy" onclick="copyContract()">📋 Copy Address</button>
+            <div class="chain-row" style="opacity:0.5">
+              <div class="chain-icon">🔴</div>
+              <div>
+                <div class="chain-name">Ethereum</div>
+                <div class="chain-desc">Main EVM chain — planned for Phase 3.</div>
+              </div>
+              <span class="chain-tag coming">Phase 3</span>
+            </div>
           </div>
         </div>
 
-        <!-- RIGHT: chains + buy CTA -->
-        <div>
-          <div class="token-card">
-            <div class="token-card-title">⛓ Supported Chains</div>
-            <div class="token-chain-list">
-              <div class="chain-row">
-                <div class="chain-icon">🔵</div>
-                <div>
-                  <div class="chain-name">Base</div>
-                  <div class="chain-desc">Coinbase L2 — fast, cheap, EVM-compatible. Buy on Zora now.</div>
-                </div>
-                <span class="chain-tag live">● Live</span>
-              </div>
-              <div class="chain-row">
-                <div class="chain-icon">🟢</div>
-                <div>
-                  <div class="chain-name">Solana</div>
-                  <div class="chain-desc">High-speed L1 — low fees, massive community. Launching soon.</div>
-                </div>
-                <span class="chain-tag coming">Coming Soon</span>
-              </div>
-              <div class="chain-row" style="opacity:0.5">
-                <div class="chain-icon">🔴</div>
-                <div>
-                  <div class="chain-name">Ethereum</div>
-                  <div class="chain-desc">Main EVM chain — planned for Phase 3.</div>
-                </div>
-                <span class="chain-tag coming">Phase 3</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="token-buy-cta">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--gold);margin-bottom:10px;">$KAIZENKICK を手に入れろ</div>
-            <p>Zora上でトークンを購入してコミュニティに参加。サッカーとWeb3の融合をリードしよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:1px;">Buy $KAIZENKICK on Zora. Be part of the football x Web3 revolution.</span></p>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-              <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="btn-zora">⚡ Buy on Zora</a>
-              <a href="https://basescan.org/token/0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="btn-outline" style="font-size:12px;">🔍 View on Basescan</a>
-            </div>
-          </div>
+        <div class="contract-box">
+          <div class="contract-label">📋 Contract Address (Base)</div>
+          <div class="contract-addr">0x56411eb4782e84910134d6642d42926e834f373e</div>
+          <button class="contract-copy" onclick="copyContract()">📋 Copy Address</button>
         </div>
       </div>
     </div>
@@ -855,7 +775,7 @@
                 <option value="🇪🇸 ESP">🇪🇸 スペイン / Spain</option>
                 <option value="🇵🇹 POR">🇵🇹 ポルトガル / Portugal</option>
                 <option value="🇬🇧 ENG">🇬🇧 イングランド / England</option>
-                <option value="🇰🇷 KOR">🇰🇷 韓国 / Korea</option>
+                <option value="🇰🇷 KOR">🇰🇷 韓국 / Korea</option>
                 <option value="🇮🇩 IDN">🇮🇩 インドネシア / Indonesia</option>
                 <option value="🌏 OTH">🌏 その他 / Other</option>
               </select>
@@ -967,8 +887,8 @@
           <div class="step-icon">🚀</div>
           <div class="step-title">Save &amp; Share</div>
           <div class="step-title-ja">保存してシェアする</div>
-          <p class="step-desc en">Download as PNG or post to X with one tap. <strong style="color:var(--gold)">#KaizenKick</strong> added automatically. Hold $KZK to unlock future perks.</p>
-          <p class="step-desc ja">PNGでダウンロードまたはXへシェア。<strong style="color:var(--gold)">#KaizenKick</strong>が自動付与。$KZK保有で将来の特典も解放。</p>
+          <p class="step-desc en">Download as PNG or post to X with one tap. <strong style="color:var(--gold)">#KaizenKick</strong> added automatically.</p>
+          <p class="step-desc ja">PNGでダウンロードまたはXへシェア。<strong style="color:var(--gold)">#KaizenKick</strong>が自動付与されます。</p>
         </div>
       </div>
       <div class="how-tip">
@@ -985,13 +905,13 @@
   </section>
 
   <!-- SHOWCASE -->
-  <section id="showcase" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <section id="showcase" style="background:var(--surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)">
     <div class="showcase-inner">
       <div class="section-label">コミュニティ · Community Wall</div>
       <h2 class="section-title">カードウォール</h2>
       <div class="section-title-en">Latest Player Cards</div>
       <div class="divider"></div>
-      <p class="section-desc">みんなのカイゼンキックカード。あなたも参加しよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(201,168,76,0.4);">Real cards from the KaizenKick community. Generate yours and join the wall.</span></p>
+      <p class="section-desc">みんなのカイゼンキックカード。あなたも参加しよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(184,134,11,0.5);">Real cards from the KaizenKick community. Generate yours and join the wall.</span></p>
       <div class="showcase-grid" id="showcaseGrid"></div>
     </div>
   </section>
@@ -1009,7 +929,7 @@
           <div class="roadmap-body">
             <div class="roadmap-phase">Phase 1 · Q1 2026</div>
             <div class="roadmap-title">Genesis — Launch</div>
-            <div class="roadmap-desc">カイゼンキックプラットフォームの正式ローンチ。プレイヤーカードジェネレーター公開。$KAIZENKICK トークン Base (Zora) にて発行。<br>Official launch of KaizenKick. Player Card Generator goes live. $KAIZENKICK token minted on Base via Zora.</div>
+            <div class="roadmap-desc">カイゼンキックプラットフォームの正式ローンチ。プレイヤーカードジェネレーター公開。$KAIZENKICK トークン Base にて発行。<br>Official launch of KaizenKick. Player Card Generator goes live. $KAIZENKICK token minted on Base.</div>
             <div class="roadmap-tags">
               <span class="roadmap-tag done-t">✅ Card Generator</span>
               <span class="roadmap-tag done-t">✅ $KZK on Base</span>
@@ -1067,17 +987,16 @@
       <h2 class="section-title">開発チーム</h2>
       <div class="section-title-en">The People Behind KaizenKick</div>
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーとテクノロジーを愛する少数精鋭チームが運営しています。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(201,168,76,0.4);">A small, passionate team at the intersection of football and technology.</span></p>
+      <p class="section-desc">カイゼンキックは、サッカーとテクノロジーを愛する少数精鋭チームが運営しています。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(184,134,11,0.5);">A small, passionate team at the intersection of football and technology.</span></p>
       <div class="team-grid">
         <div class="team-card">
           <div class="team-avatar">🧑‍💻</div>
           <div class="team-info">
             <div class="team-name">田中 大輝 / Daiki Tanaka</div>
             <div class="team-role">Founder / CEO</div>
-            <div class="team-bio">元アマチュアFW。テクノロジーでサッカー文化を変えることを夢見る創業者。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">Ex-amateur striker turned founder. Dreaming of changing football culture through tech.</span></div>
+            <div class="team-bio">元アマチュアFW。テクノロジーでサッカー文化を変えることを夢見る創業者。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">Ex-amateur striker turned founder. Dreaming of changing football culture through tech.</span></div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-              <a class="team-social" href="#">⌨</a>
             </div>
           </div>
         </div>
@@ -1086,10 +1005,9 @@
           <div class="team-info">
             <div class="team-name">佐藤 美咲 / Misaki Sato</div>
             <div class="team-role">Head of Design</div>
-            <div class="team-bio">UIデザイナー兼フットサル選手。カイゼンキックのビジュアルアイデンティティを一から設計。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">UI designer & futsal player. Crafted KaizenKick's visual identity from scratch.</span></div>
+            <div class="team-bio">UIデザイナー兼フットサル選手。カイゼンキックのビジュアルアイデンティティを一から設計。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">UI designer & futsal player. Crafted KaizenKick's visual identity from scratch.</span></div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-              <a class="team-social" href="#">🎨</a>
             </div>
           </div>
         </div>
@@ -1098,10 +1016,9 @@
           <div class="team-info">
             <div class="team-name">山本 健太 / Kenta Yamamoto</div>
             <div class="team-role">Lead Engineer</div>
-            <div class="team-bio">フルスタックエンジニア。週末は地元チームのGK。コードとゴールの両方を守るのが得意。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">Full-stack engineer & weekend goalkeeper. Guards both code and the net.</span></div>
+            <div class="team-bio">フルスタックエンジニア。週末は地元チームのGK。コードとゴールの両方を守るのが得意。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">Full-stack engineer & weekend goalkeeper. Guards both code and the net.</span></div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-              <a class="team-social" href="#">⌨</a>
             </div>
           </div>
         </div>
@@ -1110,10 +1027,9 @@
           <div class="team-info">
             <div class="team-name">中村 遥 / Haruka Nakamura</div>
             <div class="team-role">Community Manager</div>
-            <div class="team-bio">コミュニティ構築とSNS運営を担当。年間観戦数は50試合超。<br><span style="color:rgba(201,168,76,0.35);font-size:10px;">Community builder & football fanatic. 50+ matches a year. KaizenKick's global voice.</span></div>
+            <div class="team-bio">コミュニティ構築とSNS運営を担当。年間観戦数は50試合超。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">Community builder & football fanatic. 50+ matches a year. KaizenKick's global voice.</span></div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
-              <a class="team-social" href="#">📸</a>
             </div>
           </div>
         </div>
@@ -1122,7 +1038,7 @@
   </section>
 
   <!-- FAQ -->
-  <section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <section style="background:var(--surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)">
     <div class="faq-inner">
       <div class="section-label">よくある質問 · FAQ</div>
       <h2 class="section-title">FAQ</h2>
@@ -1135,7 +1051,7 @@
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)"><span>$KAIZENKICK トークンはどこで買えますか？<span class="faq-en">Where can I buy $KAIZENKICK?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">現在は Zora（Base チェーン）にて購入可能です。コントラクトアドレス: 0x56411eb4782e84910134d6642d42926e834f373e。Solana 展開は近日公開予定。<br><br><em>Currently available on Zora (Base chain). Contract: 0x56411eb4782e84910134d6642d42926e834f373e. Solana coming soon.</em></div>
+          <div class="faq-a">現在は Base チェーンにて購入可能です。コントラクトアドレス: 0x56411eb4782e84910134d6642d42926e834f373e。Solana 展開は近日公開予定。<br><br><em>Currently available on Base chain. Contract: 0x56411eb4782e84910134d6642d42926e834f373e. Solana coming soon.</em></div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)"><span>$KZK を保有するとどんな特典がありますか？<span class="faq-en">What perks do $KZK holders get?</span></span><span class="faq-icon">+</span></div>
@@ -1158,10 +1074,10 @@
     <div class="cta-title">今すぐ進化を始めろ</div>
     <div class="cta-title-en">Start Your Evolution Today</div>
     <p class="cta-sub">カード一枚が、あなたの改善の証になる。</p>
-    <p class="cta-sub-en">One card. Your proof of progress. One token. Your place in the game.</p>
+    <p class="cta-sub-en">One card. Your proof of progress.</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center;">
       <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
-      <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" class="btn-zora">⚡ Buy $KAIZENKICK on Zora</a>
+      <a href="https://x.com/kainzenkick" target="_blank" rel="noopener" class="btn-outline">𝕏 @KaizenKick</a>
     </div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
       <span class="chain-badge chain-badge-sol"><span class="chain-badge-dot"></span>Solana</span>
@@ -1174,12 +1090,7 @@
     <div class="footer-inner">
       <div>
         <div class="footer-brand-name">カイゼンキック</div>
-        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化。$KAIZENKICK トークンでWeb3コミュニティに参加しよう。<br><br><span style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(201,168,76,0.35);">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK.</span></p>
-        <div class="footer-orynth" style="margin-top:18px">
-          <a href="https://orynth.dev/projects/kaizenkick" target="_blank" rel="noopener">
-            <img src="https://orynth.dev/api/badge/kaizenkick?theme=light&style=default" alt="Featured on Orynth" width="160" height="49" />
-          </a>
-        </div>
+        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化。$KAIZENKICK トークンでWeb3コミュニティに参加しよう。<br><br><span style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(184,134,11,0.45);">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK.</span></p>
       </div>
       <div>
         <div class="footer-col-title">サービス / Service</div>
@@ -1195,7 +1106,6 @@
         <div class="footer-links">
           <a href="#token">💎 $KAIZENKICK</a>
           <a href="#roadmap">🗺 Roadmap</a>
-          <a href="https://zora.co/collect/base:0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener" style="color:#a78bfa">⚡ Buy on Zora</a>
           <a href="https://basescan.org/token/0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener">🔍 Basescan</a>
         </div>
       </div>
@@ -1203,7 +1113,6 @@
         <div class="footer-col-title">フォロー / Follow</div>
         <div class="footer-links">
           <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
-          <a href="#">📸 Instagram</a>
           <a href="#team">チーム / Team</a>
           <a href="#">プライバシー / Privacy</a>
         </div>
@@ -1233,7 +1142,7 @@
     let W, H, mouse = { x: -999, y: -999 };
     let particles = [];
     const SYMBOLS = ['⚽','🥅','⚡','改','善'];
-    const N = 38;
+    const N = 28;
 
     function resize() {
       W = canvas.width = window.innerWidth;
@@ -1247,7 +1156,7 @@
         this.vx = (Math.random() - 0.5) * 0.4;
         this.vy = -(0.2 + Math.random() * 0.5);
         this.size = 12 + Math.random() * 18;
-        this.alpha = 0.04 + Math.random() * 0.08;
+        this.alpha = 0.03 + Math.random() * 0.06;
         this.sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
         this.life = 1;
         this.spin = (Math.random() - 0.5) * 0.01;
@@ -1261,7 +1170,6 @@
       particles.push(p);
     }
 
-    // connection lines between close particles
     function drawLines() {
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
@@ -1269,9 +1177,9 @@
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx*dx + dy*dy);
           if (dist < 160) {
-            const alpha = (1 - dist/160) * 0.04;
+            const alpha = (1 - dist/160) * 0.025;
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(201,168,76,${alpha})`;
+            ctx.strokeStyle = `rgba(184,134,11,${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -1281,7 +1189,6 @@
       }
     }
 
-    // mouse influence
     function mousePush(p) {
       const dx = p.x - mouse.x;
       const dy = p.y - mouse.y;
@@ -1298,16 +1205,12 @@
       drawLines();
       particles.forEach(p => {
         mousePush(p);
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.99;
-        p.vy *= 0.99;
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= 0.99; p.vy *= 0.99;
         p.angle += p.spin;
-        // wrap
         if (p.x < -50) p.x = W + 50;
         if (p.x > W + 50) p.x = -50;
         if (p.y < -60) p.reset(false);
-
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.angle);
@@ -1333,42 +1236,6 @@
   })();
 
   // ══════════════════════════════════════════
-  // CURSOR TRAIL
-  // ══════════════════════════════════════════
-  (function() {
-    const trails = [];
-    const NUM = 8;
-    for (let i = 0; i < NUM; i++) {
-      const d = document.createElement('div');
-      d.className = 'cursor-dot';
-      d.style.width = (8 - i) + 'px';
-      d.style.height = (8 - i) + 'px';
-      d.style.opacity = '0';
-      d.style.background = i === 0 ? '#c9a84c' : `rgba(201,168,76,${0.7 - i*0.08})`;
-      document.body.appendChild(d);
-      trails.push({ el: d, x: 0, y: 0 });
-    }
-    let mx = 0, my = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-    function tick() {
-      let lx = mx, ly = my;
-      trails.forEach((t, i) => {
-        const delay = i * 0.18;
-        t.x += (lx - t.x) * (0.35 - i * 0.03);
-        t.y += (ly - t.y) * (0.35 - i * 0.03);
-        lx = t.x; ly = t.y;
-        t.el.style.left = t.x + 'px';
-        t.el.style.top = t.y + 'px';
-        t.el.style.opacity = (0.9 - i * 0.1).toString();
-      });
-      requestAnimationFrame(tick);
-    }
-    tick();
-    // hide on mobile
-    if ('ontouchstart' in window) trails.forEach(t => t.el.style.display = 'none');
-  })();
-
-  // ══════════════════════════════════════════
   // ANIMATED COUNTER
   // ══════════════════════════════════════════
   function animateCounter(el, target, duration, suffix) {
@@ -1384,7 +1251,6 @@
     requestAnimationFrame(step);
   }
 
-  // Intersection observer to trigger counters when hero visible
   const heroStatsEl = document.querySelector('.hero-stats');
   let countersRan = false;
   const counterObs = new IntersectionObserver(entries => {
@@ -1399,27 +1265,24 @@
   counterObs.observe(heroStatsEl);
 
   // ══════════════════════════════════════════
-  // TOKENOMICS BAR ANIMATION
-  // ══════════════════════════════════════════
-  const barObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        document.querySelectorAll('.toko-bar-fill').forEach(bar => {
-          bar.style.width = bar.dataset.w + '%';
-        });
-        barObs.disconnect();
-      }
-    });
-  }, { threshold: 0.3 });
-  const tokenSection = document.getElementById('token');
-  if (tokenSection) barObs.observe(tokenSection);
-
-  // ══════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════
   function toggleMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    hamburger.classList.toggle('open');
   }
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.getElementById('hamburger');
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
+      menu.classList.remove('open');
+      hamburger.classList.remove('open');
+    }
+  });
 
   // ══════════════════════════════════════════
   // STATS (card generator)
@@ -1481,7 +1344,7 @@
     const name = document.getElementById('c-name').textContent;
     const ovr = document.getElementById('c-overall').textContent;
     const pos = document.getElementById('c-pos').textContent;
-    const text = `🎴 カイゼンキック プレイヤーカード\n⚡ ${name} | ${pos} | OVR ${ovr}\n\n改善を続ける選手として認定されました！\n💎 $KAIZENKICK on Zora\n#KaizenKick #カイゼンキック\nhttps://x.com/kainzenkick`;
+    const text = `🎴 カイゼンキック プレイヤーカード\n⚡ ${name} | ${pos} | OVR ${ovr}\n\n改善を続ける選手として認定されました！\n💎 $KAIZENKICK\n#KaizenKick #カイゼンキック\nhttps://x.com/kainzenkick`;
     window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
   }
 
@@ -1516,7 +1379,7 @@
   }
 
   // ══════════════════════════════════════════
-  // SHOWCASE MOCK DATA (16 cards — richer)
+  // SHOWCASE MOCK DATA
   // ══════════════════════════════════════════
   const fakeCards = [
     { name:'SUZUKI K.',    pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',    date:'2時間前',  nation:'🇯🇵', pac:88,sho:85,pas:72 },
