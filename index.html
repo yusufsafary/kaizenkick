@@ -8,22 +8,25 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --gold: #b8860b;
-      --gold-light: #d4a017;
-      --gold-dim: #8b6914;
-      --red: #c1121f;
-      --red-bright: #ef233c;
-      --bg: #f8f7f4;
-      --bg2: #f0ede6;
+      --gold: #8a6500;
+      --gold-light: #a87c00;
+      --gold-dim: #6b4f00;
+      --red: #b00e1a;
+      --red-bright: #d41b31;
+      --bg: #ffffff;
+      --bg2: #f0f7f0;
       --surface: #ffffff;
-      --surface2: #f4f1eb;
-      --text: #1a1a2e;
-      --text-dim: #6b6b80;
-      --border: rgba(184,134,11,0.18);
-      --border-light: rgba(0,0,0,0.08);
-      --purple: #7c3aed;
-      --sol: #059669;
-      --base-blue: #0052ff;
+      --surface2: #e8f4e8;
+      --text: #0f2d0f;
+      --text-dim: #3a5c3a;
+      --border: rgba(34,110,34,0.18);
+      --border-light: rgba(34,110,34,0.12);
+      --field-green: #1a6b1a;
+      --field-light: #2d8c2d;
+      --field-line: rgba(255,255,255,0.85);
+      --purple: #5c2db0;
+      --sol: #047857;
+      --base-blue: #0040cc;
       --shadow: 0 2px 16px rgba(0,0,0,0.07);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,17 +39,49 @@
       overflow-x: hidden;
     }
 
-    /* ── CANVAS BACKGROUND ── */
+    /* ── FOOTBALL FIELD BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      background-color: #ffffff;
+      background-image:
+        /* Stripes alternating field */
+        repeating-linear-gradient(
+          180deg,
+          rgba(34,139,34,0.07) 0px, rgba(34,139,34,0.07) 80px,
+          rgba(34,139,34,0.13) 80px, rgba(34,139,34,0.13) 160px
+        );
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      /* Field lines */
+      background-image:
+        /* Center line horizontal */
+        linear-gradient(180deg, transparent calc(50% - 1px), rgba(34,120,34,0.18) calc(50% - 1px), rgba(34,120,34,0.18) calc(50% + 1px), transparent calc(50% + 1px)),
+        /* Left boundary */
+        linear-gradient(90deg, transparent 4%, rgba(34,120,34,0.15) 4%, rgba(34,120,34,0.15) calc(4% + 1px), transparent calc(4% + 1px)),
+        /* Right boundary */
+        linear-gradient(90deg, transparent 96%, rgba(34,120,34,0.15) 96%, rgba(34,120,34,0.15) calc(96% + 1px), transparent calc(96% + 1px)),
+        /* Top boundary */
+        linear-gradient(180deg, transparent 6%, rgba(34,120,34,0.15) 6%, rgba(34,120,34,0.15) calc(6% + 1px), transparent calc(6% + 1px)),
+        /* Bottom boundary */
+        linear-gradient(180deg, transparent 94%, rgba(34,120,34,0.15) 94%, rgba(34,120,34,0.15) calc(94% + 1px), transparent calc(94% + 1px)),
+        /* Center circle (simulated with radial) */
+        radial-gradient(circle at 50% 50%, transparent 11%, rgba(34,120,34,0.14) 11%, rgba(34,120,34,0.14) 12%, transparent 12%);
+    }
     #bgCanvas {
       position: fixed; inset: 0; z-index: 0;
       pointer-events: none;
-      opacity: 0.35;
+      opacity: 0.2;
     }
     .grid-texture {
       position: fixed; inset: 0;
       background-image:
-        linear-gradient(rgba(184,134,11,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(184,134,11,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(34,120,34,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,120,34,0.04) 1px, transparent 1px);
       background-size: 50px 50px;
       pointer-events: none; z-index: 0;
     }
@@ -56,9 +91,9 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 5%;
-      background: rgba(248,247,244,0.95);
+      background: rgba(255,255,255,0.97);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid rgba(34,120,34,0.15);
       box-shadow: 0 1px 12px rgba(0,0,0,0.06);
     }
     .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 4px; color: var(--gold); }
@@ -86,8 +121,8 @@
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .mobile-menu {
       display: none; position: fixed; top: 58px; left: 0; right: 0;
-      background: rgba(248,247,244,0.99); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-light); z-index: 99;
+      background: rgba(255,255,255,0.99); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(34,120,34,0.15); z-index: 99;
       padding: 16px 5%; flex-direction: column;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
@@ -110,7 +145,7 @@
     .hero-glow {
       position: absolute; top: 0; left: 50%; transform: translateX(-50%);
       width: 900px; height: 550px;
-      background: radial-gradient(ellipse, rgba(193,18,31,0.06) 0%, transparent 65%);
+      background: radial-gradient(ellipse, rgba(34,120,34,0.06) 0%, transparent 65%);
       pointer-events: none; animation: glowPulse 4s ease-in-out infinite;
     }
     @keyframes glowPulse {
@@ -154,11 +189,11 @@
       font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase; border: 1px solid;
     }
-    .chain-badge-sol { background: rgba(5,150,105,0.07); border-color: rgba(5,150,105,0.3); color: #059669; }
-    .chain-badge-base { background: rgba(0,82,255,0.07); border-color: rgba(0,82,255,0.3); color: #0052ff; }
+    .chain-badge-sol { background: rgba(4,120,87,0.08); border-color: rgba(4,120,87,0.35); color: #047857; }
+    .chain-badge-base { background: rgba(0,64,204,0.08); border-color: rgba(0,64,204,0.35); color: #0040cc; }
     .chain-badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .chain-badge-sol .chain-badge-dot { background: #059669; box-shadow: 0 0 6px #059669; animation: blink 2s infinite; }
-    .chain-badge-base .chain-badge-dot { background: #0052ff; box-shadow: 0 0 6px #0052ff; animation: blink 2s 0.5s infinite; }
+    .chain-badge-sol .chain-badge-dot { background: #047857; box-shadow: 0 0 6px #047857; animation: blink 2s infinite; }
+    .chain-badge-base .chain-badge-dot { background: #0040cc; box-shadow: 0 0 6px #0040cc; animation: blink 2s 0.5s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     .hero-stats {
@@ -249,31 +284,31 @@
 
     /* ── TOKEN SECTION ── */
     #token {
-      background: var(--surface);
-      border-top: 1px solid var(--border-light);
-      border-bottom: 1px solid var(--border-light);
+      background: rgba(255,255,255,0.92);
+      border-top: 1px solid rgba(34,120,34,0.12);
+      border-bottom: 1px solid rgba(34,120,34,0.12);
     }
     .token-inner { max-width: 900px; margin: 0 auto; }
 
     .contract-box {
-      background: #f0ede6; border: 1px solid rgba(124,58,237,0.2);
+      background: #e8f4e8; border: 1px solid rgba(91,44,210,0.2);
       border-radius: 8px; padding: 18px 20px; margin-top: 24px;
       box-shadow: var(--shadow);
     }
     .contract-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
     .contract-addr {
-      font-family: 'Rajdhani', sans-serif; font-size: 13px; color: #7c3aed;
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; color: #5c2db0;
       letter-spacing: 1px; word-break: break-all; line-height: 1.5;
     }
     .contract-copy {
       display: inline-flex; align-items: center; gap: 6px;
       margin-top: 10px; padding: 6px 14px; border-radius: 4px;
-      border: 1px solid rgba(124,58,237,0.3); background: rgba(124,58,237,0.06);
+      border: 1px solid rgba(91,44,210,0.3); background: rgba(91,44,210,0.06);
       font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 2px; color: #7c3aed; cursor: pointer; transition: all 0.2s;
+      letter-spacing: 2px; color: #5c2db0; cursor: pointer; transition: all 0.2s;
       text-transform: uppercase;
     }
-    .contract-copy:hover { background: rgba(124,58,237,0.12); }
+    .contract-copy:hover { background: rgba(91,44,210,0.12); }
 
     .token-chain-list { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
     .chain-row {
@@ -618,7 +653,6 @@
     <div class="built-on-label">⛓ Built on</div>
     <div class="chain-badges">
       <span class="chain-badge chain-badge-sol"><span class="chain-badge-dot"></span>Solana</span>
-      <span class="chain-badge chain-badge-base"><span class="chain-badge-dot"></span>Base</span>
     </div>
     <div class="hero-stats">
       <div class="stat">
@@ -656,7 +690,7 @@
       <h2 class="section-title">進化を<br>カードにせよ</h2>
       <div class="section-title-en">Turn Your Growth Into a Card</div>
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。<br><br><span style="color:rgba(184,134,11,0.55);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Base & Solana.</span></p>
+      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。<br><br><span style="color:rgba(138,101,0,0.65);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Solana.</span></p>
       <div class="about-features">
         <div class="feature-row">
           <div class="feature-icon">🎴</div>
@@ -669,7 +703,7 @@
           <div class="feature-icon">💎</div>
           <div>
             <div class="feature-title">$KAIZENKICK Token / Web3 Integration</div>
-            <div class="feature-desc">Base & Solana上のトークンを保有してコミュニティに参加。<br>Hold $KAIZENKICK on Base or Solana and join the on-chain community.</div>
+            <div class="feature-desc">Solana上のトークンを保有してコミュニティに参加。<br>Hold $KAIZENKICK on Solana and join the on-chain community at orytnh.dev.</div>
           </div>
         </div>
         <div class="feature-row">
@@ -683,6 +717,72 @@
     </div>
   </section>
 
+  <!-- $ZEN ANNOUNCEMENT CARD -->
+  <div style="position:relative;z-index:2;padding:0 5%;margin-top:0;">
+    <div style="max-width:900px;margin:0 auto;padding:20px 0 0;">
+      <div id="zen-announce" style="
+        background: linear-gradient(135deg, #0f2d0f 0%, #1a4d1a 50%, #0a1f0a 100%);
+        border: 1.5px solid rgba(0,255,100,0.35);
+        border-radius: 14px;
+        padding: 24px 28px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 0 40px rgba(0,200,80,0.12), 0 4px 24px rgba(0,0,0,0.18);
+        position: relative;
+        overflow: hidden;
+      ">
+        <!-- Field line accent -->
+        <div style="position:absolute;inset:0;pointer-events:none;background:
+          linear-gradient(90deg,transparent 30%,rgba(255,255,255,0.03) 50%,transparent 70%),
+          radial-gradient(ellipse at 80% 50%,rgba(0,255,100,0.06) 0%,transparent 60%);"></div>
+        <!-- Blinking live dot -->
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div style="width:14px;height:14px;border-radius:50%;background:#00ff64;
+            box-shadow:0 0 12px #00ff64,0 0 24px rgba(0,255,100,0.5);
+            animation:blink 1.2s infinite;"></div>
+          <span style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;
+            letter-spacing:2px;color:#00cc50;text-transform:uppercase;">LIVE</span>
+        </div>
+        <!-- Main content -->
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#c9a84c;
+              letter-spacing:4px;line-height:1;text-shadow:0 0 20px rgba(201,168,76,0.4);">$ZEN</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;
+              letter-spacing:3px;color:#00cc50;text-transform:uppercase;
+              background:rgba(0,200,80,0.12);border:1px solid rgba(0,200,80,0.3);
+              padding:3px 10px;border-radius:3px;">Token Live Today</span>
+          </div>
+          <p style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;
+            color:rgba(255,255,255,0.88);letter-spacing:0.5px;margin:0 0 8px;">
+            🎉 Token <strong style="color:#c9a84c;">$ZEN</strong> resmi live hari ini di jaringan <strong style="color:#9be29b;">Solana</strong>!
+          </p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(255,255,255,0.45);
+              letter-spacing:1px;">Trade & info:</span>
+            <a href="https://orytnh.dev" target="_blank" rel="noopener" style="
+              font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;
+              letter-spacing:2px;color:#6edfff;text-decoration:none;
+              border-bottom:1px solid rgba(110,223,255,0.35);
+              transition:color 0.2s;text-transform:lowercase;
+            ">orytnh.dev</a>
+            <span style="color:rgba(255,255,255,0.2);font-size:10px;">|</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;
+              color:rgba(155,226,155,0.7);letter-spacing:1px;">⛓ Solana Network</span>
+          </div>
+        </div>
+        <!-- Right badge -->
+        <div style="flex-shrink:0;text-align:center;display:flex;flex-direction:column;
+          align-items:center;gap:4px;padding-left:16px;border-left:1px solid rgba(255,255,255,0.08);">
+          <div style="font-size:28px;">🚀</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;
+            letter-spacing:2px;color:rgba(201,168,76,0.6);text-transform:uppercase;">Now</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TOKEN SECTION (Tokenomics removed, chains + contract only) -->
   <section id="token">
     <div class="token-inner">
@@ -690,44 +790,23 @@
       <h2 class="section-title">$KAIZENKICK</h2>
       <div class="section-title-en">The On-Chain Football Token</div>
       <div class="divider"></div>
-      <p class="section-desc">サッカーへの情熱をオンチェーンで証明。Base と Solana に展開した $KAIZENKICK トークンをゲットしよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(184,134,11,0.5);">The football improvement token. Live on Base. Expanding to Solana.</span></p>
+      <p class="section-desc">サッカーへの情熱をオンチェーンで証明。Solana に展開した $KAIZENKICK トークンをゲットしよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(138,101,0,0.65);">The football improvement token. Live on Solana at orytnh.dev.</span></p>
 
       <div class="token-grid-single">
         <div class="token-card">
           <div class="token-card-title">⛓ Supported Chains</div>
           <div class="token-chain-list">
             <div class="chain-row">
-              <div class="chain-icon">🔵</div>
-              <div>
-                <div class="chain-name">Base</div>
-                <div class="chain-desc">Coinbase L2 — fast, cheap, EVM-compatible.</div>
-              </div>
-              <span class="chain-tag live">● Live</span>
-            </div>
-            <div class="chain-row">
               <div class="chain-icon">🟢</div>
               <div>
                 <div class="chain-name">Solana</div>
-                <div class="chain-desc">High-speed L1 — low fees, massive community. Launching soon.</div>
+                <div class="chain-desc">High-speed L1 — low fees, massive community.</div>
               </div>
-              <span class="chain-tag coming">Coming Soon</span>
-            </div>
-            <div class="chain-row" style="opacity:0.5">
-              <div class="chain-icon">🔴</div>
-              <div>
-                <div class="chain-name">Ethereum</div>
-                <div class="chain-desc">Main EVM chain — planned for Phase 3.</div>
-              </div>
-              <span class="chain-tag coming">Phase 3</span>
+              <span class="chain-tag live">● Live</span>
             </div>
           </div>
         </div>
 
-        <div class="contract-box">
-          <div class="contract-label">📋 Contract Address (Base)</div>
-          <div class="contract-addr">0x56411eb4782e84910134d6642d42926e834f373e</div>
-          <button class="contract-copy" onclick="copyContract()">📋 Copy Address</button>
-        </div>
       </div>
     </div>
   </section>
@@ -929,10 +1008,10 @@
           <div class="roadmap-body">
             <div class="roadmap-phase">Phase 1 · Q1 2026</div>
             <div class="roadmap-title">Genesis — Launch</div>
-            <div class="roadmap-desc">カイゼンキックプラットフォームの正式ローンチ。プレイヤーカードジェネレーター公開。$KAIZENKICK トークン Base にて発行。<br>Official launch of KaizenKick. Player Card Generator goes live. $KAIZENKICK token minted on Base.</div>
+            <div class="roadmap-desc">カイゼンキックプラットフォームの正式ローンチ。プレイヤーカードジェネレーター公開。$KAIZENKICK トークン Solana にて発行。<br>Official launch of KaizenKick. Player Card Generator goes live. $KAIZENKICK token live on Solana.</div>
             <div class="roadmap-tags">
               <span class="roadmap-tag done-t">✅ Card Generator</span>
-              <span class="roadmap-tag done-t">✅ $KZK on Base</span>
+              <span class="roadmap-tag done-t">✅ $KZK on Solana</span>
               <span class="roadmap-tag done-t">✅ Community Wall</span>
             </div>
           </div>
@@ -942,11 +1021,11 @@
           <div class="roadmap-body">
             <div class="roadmap-phase">Phase 2 · Q2 2026 — Now</div>
             <div class="roadmap-title">Expansion — Solana + Features</div>
-            <div class="roadmap-desc">Solana チェーンへの $KZK 展開。$KZK 保有者限定の特別カードフレームと特典。X シェア機能強化。<br>$KZK deployment to Solana. Exclusive card frames for token holders. Enhanced X sharing & community features.</div>
+            <div class="roadmap-desc">$KZK 保有者限定の特別カードフレームと特典。X シェア機能強化。コミュニティ成長。<br>Exclusive card frames for token holders. Enhanced X sharing & community features. Growing the community.</div>
             <div class="roadmap-tags">
-              <span class="roadmap-tag active-t">🟡 Solana Expansion</span>
               <span class="roadmap-tag active-t">🟡 Holder Perks</span>
               <span class="roadmap-tag active-t">🟡 Enhanced Sharing</span>
+              <span class="roadmap-tag active-t">🟡 Community Growth</span>
             </div>
           </div>
         </div>
@@ -1051,7 +1130,7 @@
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)"><span>$KAIZENKICK トークンはどこで買えますか？<span class="faq-en">Where can I buy $KAIZENKICK?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">現在は Base チェーンにて購入可能です。コントラクトアドレス: 0x56411eb4782e84910134d6642d42926e834f373e。Solana 展開は近日公開予定。<br><br><em>Currently available on Base chain. Contract: 0x56411eb4782e84910134d6642d42926e834f373e. Solana coming soon.</em></div>
+          <div class="faq-a">Solana ネットワークにて購入可能です。<a href="https://orytnh.dev" target="_blank" rel="noopener" style="color:var(--sol);">orytnh.dev</a> にてトレード・情報をご確認ください。<br><br><em>Available on Solana network. Trade and info available at <a href="https://orytnh.dev" target="_blank" rel="noopener" style="color:var(--sol);">orytnh.dev</a>.</em></div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)"><span>$KZK を保有するとどんな特典がありますか？<span class="faq-en">What perks do $KZK holders get?</span></span><span class="faq-icon">+</span></div>
@@ -1081,7 +1160,6 @@
     </div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
       <span class="chain-badge chain-badge-sol"><span class="chain-badge-dot"></span>Solana</span>
-      <span class="chain-badge chain-badge-base"><span class="chain-badge-dot"></span>Base</span>
     </div>
   </section>
 
@@ -1090,7 +1168,7 @@
     <div class="footer-inner">
       <div>
         <div class="footer-brand-name">カイゼンキック</div>
-        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化。$KAIZENKICK トークンでWeb3コミュニティに参加しよう。<br><br><span style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(184,134,11,0.45);">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK.</span></p>
+        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化。$KAIZENKICK トークンでWeb3コミュニティに参加しよう。<br><br><span style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(138,101,0,0.55);">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK on Solana.</span></p>
       </div>
       <div>
         <div class="footer-col-title">サービス / Service</div>
@@ -1106,7 +1184,7 @@
         <div class="footer-links">
           <a href="#token">💎 $KAIZENKICK</a>
           <a href="#roadmap">🗺 Roadmap</a>
-          <a href="https://basescan.org/token/0x56411eb4782e84910134d6642d42926e834f373e" target="_blank" rel="noopener">🔍 Basescan</a>
+          <a href="https://orytnh.dev" target="_blank" rel="noopener">🔍 orytnh.dev</a>
         </div>
       </div>
       <div>
@@ -1125,7 +1203,6 @@
         <span class="badge-pill">🇯🇵 Japan</span>
         <span class="badge-pill">🌍 Global</span>
         <span class="chain-badge chain-badge-sol" style="font-size:9px;padding:3px 10px;"><span class="chain-badge-dot"></span>Solana</span>
-        <span class="chain-badge chain-badge-base" style="font-size:9px;padding:3px 10px;"><span class="chain-badge-dot"></span>Base</span>
       </div>
     </div>
   </footer>
