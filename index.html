@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>カイゼンキック | KaizenKick</title>
+  <title>KaizenKick | The Football Improvement Token</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -284,7 +284,7 @@
 
     /* ── TOKEN SECTION ── */
     #token {
-      background: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.93);
       border-top: 1px solid rgba(34,120,34,0.12);
       border-bottom: 1px solid rgba(34,120,34,0.12);
     }
@@ -599,9 +599,22 @@
       #player-card { width: 240px; }
       .card-actions { width: 240px; }
     }
+
+    @keyframes zen-pulse-glow {
+      0%, 100% { box-shadow: 0 0 12px #00ff64, 0 0 24px rgba(0,255,100,0.4); }
+      50%       { box-shadow: 0 0 20px #00ff64, 0 0 48px rgba(0,255,100,0.7); }
+    }
+    @keyframes zen-border-flicker {
+      0%,100% { border-color: rgba(0,255,100,0.35); }
+      40%     { border-color: rgba(0,255,100,0.65); }
+      60%     { border-color: rgba(0,255,100,0.2); }
+    }
   </style>
 </head>
 <body>
+
+  <!-- DARK OVERLAY -->
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.62);z-index:0;pointer-events:none;"></div>
 
   <!-- INTERACTIVE BACKGROUND CANVAS -->
   <canvas id="bgCanvas"></canvas>
@@ -609,13 +622,13 @@
 
   <!-- NAV -->
   <nav>
-    <div class="nav-logo">カイゼンキック</div>
+    <div class="nav-logo">KaizenKick</div>
     <ul class="nav-links">
-      <li><a href="#about">概要</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#token">Token</a></li>
-      <li><a href="#generator">カード生成</a></li>
-      <li><a href="#how">使い方</a></li>
-      <li><a href="#showcase">ウォール</a></li>
+      <li><a href="#generator">Card Builder</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#showcase">Card Wall</a></li>
       <li><a href="#roadmap">Roadmap</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
@@ -627,28 +640,28 @@
     </div>
   </nav>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#about" onclick="toggleMenu()">概要</a>
+    <a href="#about" onclick="toggleMenu()">About</a>
     <a href="#token" onclick="toggleMenu()">💎 Token</a>
-    <a href="#generator" onclick="toggleMenu()">カード生成</a>
-    <a href="#how" onclick="toggleMenu()">使い方</a>
-    <a href="#showcase" onclick="toggleMenu()">ウォール</a>
+    <a href="#generator" onclick="toggleMenu()">Card Builder</a>
+    <a href="#how" onclick="toggleMenu()">How It Works</a>
+    <a href="#showcase" onclick="toggleMenu()">Card Wall</a>
     <a href="#roadmap" onclick="toggleMenu()">Roadmap</a>
     <a href="#faq" onclick="toggleMenu()">FAQ</a>
-    <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 フォローする</a>
+    <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 Follow Us</a>
   </div>
 
   <!-- HERO -->
   <section class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-eyebrow">⚽ 進化を可視化せよ · VISUALIZE YOUR EVOLUTION</div>
-    <h1>カイゼン<br>キック</h1>
+    <div class="hero-eyebrow">⚽ VISUALIZE YOUR EVOLUTION</div>
+    <h1>KAIZEN<br>KICK</h1>
     <p class="hero-sub">
-      あなたのサッカーの成長を、プレイヤーカードで共有する新体験
-      <span class="en">Your soccer growth, shared as a player card. Powered by Web3.</span>
+      Your soccer growth, shared as a player card.
+      
     </p>
     <div class="hero-cta">
-      <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
-      <a href="#how" class="btn-outline">使い方 / How It Works</a>
+      <a href="#generator" class="btn-primary">Create Your Card — FREE</a>
+      <a href="#how" class="btn-outline">How It Works</a>
     </div>
     <div class="built-on-label">⛓ Built on</div>
     <div class="chain-badges">
@@ -657,19 +670,19 @@
     <div class="hero-stats">
       <div class="stat">
         <div class="stat-num" data-target="12480" id="stat-cards">0</div>
-        <div class="stat-label">カード生成数<span class="en">Cards Created</span></div>
+        <div class="stat-label">Cards Created</div>
       </div>
       <div class="stat">
         <div class="stat-num" data-target="3200" id="stat-users">0</div>
-        <div class="stat-label">アクティブユーザー<span class="en">Active Users</span></div>
+        <div class="stat-label">Active Users</div>
       </div>
       <div class="stat">
         <div class="stat-num" id="stat-holders">—</div>
-        <div class="stat-label">Token Holders<span class="en">$KAIZENKICK</span></div>
+        <div class="stat-label">Token Holders</div>
       </div>
       <div class="stat">
         <div class="stat-num" data-target="11" id="stat-pos">0</div>
-        <div class="stat-label">対応ポジション<span class="en">Positions</span></div>
+        <div class="stat-label">Positions</div>
       </div>
     </div>
   </section>
@@ -678,7 +691,7 @@
   <section id="about">
     <div class="about-visual">
       <div class="about-box">
-        <div class="about-box-inner">改善<br>蹴球<br>進化</div>
+        <div class="about-box-inner">KZK<br>改<br>善</div>
         <div class="about-badge">
           <div class="about-badge-num">99</div>
           <div class="about-badge-txt">MAX LEVEL</div>
@@ -686,31 +699,31 @@
       </div>
     </div>
     <div class="about-content">
-      <div class="section-label">カイゼンキックとは · About</div>
-      <h2 class="section-title">進化を<br>カードにせよ</h2>
-      <div class="section-title-en">Turn Your Growth Into a Card</div>
+      <div class="section-label">About KaizenKick</div>
+      <h2 class="section-title">Turn Your<br>Growth Into A Card</h2>
+      
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーへの情熱と日々の改善（カイゼン）を、ゲーム風プレイヤーカードで表現・共有するプラットフォームです。自分だけのカードを作り、仲間と比べ、成長を刻もう。<br><br><span style="color:rgba(138,101,0,0.65);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Solana.</span></p>
+      <p class="section-desc">KaizenKick lets you turn your soccer passion into a game-style player card — create, share, and track your improvement every day. Now with $KAIZENKICK token on Solana.</p>
       <div class="about-features">
         <div class="feature-row">
           <div class="feature-icon">🎴</div>
           <div>
-            <div class="feature-title">カスタムカード生成 / Custom Card Generator</div>
-            <div class="feature-desc">名前・ポジション・国籍・能力値を自由に設定して、世界に一枚だけのプレイヤーカードを作成できます。<br>Set name, position, nationality and stats freely — create a one-of-a-kind card.</div>
+            <div class="feature-title">Custom Card Generator</div>
+            <div class="feature-desc">Set name, position, nationality and stats freely — create a one-of-a-kind player card.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon">💎</div>
           <div>
             <div class="feature-title">$KAIZENKICK Token / Web3 Integration</div>
-            <div class="feature-desc">Solana上のトークンを保有してコミュニティに参加。<br>Hold $KAIZENKICK on Solana and join the on-chain community at orytnh.dev.</div>
+            <div class="feature-desc">Hold $KAIZENKICK on Solana and join the on-chain community at orytnh.dev.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon">🔥</div>
           <div>
-            <div class="feature-title">カイゼン精神 / The Kaizen Spirit</div>
-            <div class="feature-desc">小さな改善を積み重ね、レベルを上げ続ける。サッカーも人生もカイゼンが全てだ。<br>Small improvements, every day. In football and in life — Kaizen is everything.</div>
+            <div class="feature-title">The Kaizen Spirit</div>
+            <div class="feature-desc">Small improvements, every day. In football and in life — Kaizen is everything.</div>
           </div>
         </div>
       </div>
@@ -721,63 +734,68 @@
   <div style="position:relative;z-index:2;padding:0 5%;margin-top:0;">
     <div style="max-width:900px;margin:0 auto;padding:20px 0 0;">
       <div id="zen-announce" style="
-        background: linear-gradient(135deg, #0f2d0f 0%, #1a4d1a 50%, #0a1f0a 100%);
+        background: linear-gradient(135deg, #0b200b 0%, #142d14 45%, #081408 100%);
         border: 1.5px solid rgba(0,255,100,0.35);
         border-radius: 14px;
         padding: 24px 28px;
         display: flex;
         align-items: center;
         gap: 20px;
-        box-shadow: 0 0 40px rgba(0,200,80,0.12), 0 4px 24px rgba(0,0,0,0.18);
+        box-shadow: 0 0 60px rgba(0,200,80,0.12), 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
         position: relative;
         overflow: hidden;
+        animation: zen-border-flicker 4s ease-in-out infinite;
       ">
-        <!-- Field line accent -->
+        <!-- Accents -->
         <div style="position:absolute;inset:0;pointer-events:none;background:
-          linear-gradient(90deg,transparent 30%,rgba(255,255,255,0.03) 50%,transparent 70%),
-          radial-gradient(ellipse at 80% 50%,rgba(0,255,100,0.06) 0%,transparent 60%);"></div>
-        <!-- Blinking live dot -->
+          linear-gradient(90deg,transparent 30%,rgba(255,255,255,0.02) 50%,transparent 70%),
+          radial-gradient(ellipse at 80% 50%,rgba(0,255,100,0.05) 0%,transparent 55%),
+          radial-gradient(ellipse at 10% 80%,rgba(201,168,76,0.04) 0%,transparent 45%);"></div>
+        <!-- Corner brackets -->
+        <div style="position:absolute;top:10px;left:10px;width:20px;height:20px;border-top:2px solid rgba(0,255,100,0.4);border-left:2px solid rgba(0,255,100,0.4);border-radius:3px 0 0 0;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:10px;right:10px;width:20px;height:20px;border-bottom:2px solid rgba(201,168,76,0.35);border-right:2px solid rgba(201,168,76,0.35);border-radius:0 0 3px 0;pointer-events:none;"></div>
+        <!-- Live dot -->
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;">
           <div style="width:14px;height:14px;border-radius:50%;background:#00ff64;
             box-shadow:0 0 12px #00ff64,0 0 24px rgba(0,255,100,0.5);
-            animation:blink 1.2s infinite;"></div>
+            animation:zen-pulse-glow 1.4s ease-in-out infinite;"></div>
           <span style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;
             letter-spacing:2px;color:#00cc50;text-transform:uppercase;">LIVE</span>
         </div>
         <!-- Main content -->
         <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
-            <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#c9a84c;
-              letter-spacing:4px;line-height:1;text-shadow:0 0 20px rgba(201,168,76,0.4);">$ZEN</span>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#c9a84c;
+              letter-spacing:5px;line-height:1;text-shadow:0 0 24px rgba(201,168,76,0.5);">$ZEN</span>
             <span style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;
-              letter-spacing:3px;color:#00cc50;text-transform:uppercase;
-              background:rgba(0,200,80,0.12);border:1px solid rgba(0,200,80,0.3);
-              padding:3px 10px;border-radius:3px;">Token Live Today</span>
+              letter-spacing:2.5px;color:#00cc50;text-transform:uppercase;
+              background:rgba(0,200,80,0.12);border:1px solid rgba(0,200,80,0.35);
+              padding:4px 11px;border-radius:4px;">Token Live Today</span>
           </div>
-          <p style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;
-            color:rgba(255,255,255,0.88);letter-spacing:0.5px;margin:0 0 8px;">
-            🎉 Token <strong style="color:#c9a84c;">$ZEN</strong> resmi live hari ini di jaringan <strong style="color:#9be29b;">Solana</strong>!
+          <p style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;
+            color:rgba(255,255,255,0.9);letter-spacing:0.4px;margin:0 0 10px;line-height:1.5;">
+            🎉 Token <strong style="color:#c9a84c;">$ZEN</strong> is officially live today on the <strong style="color:#9be29b;">Solana</strong> network!
           </p>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(255,255,255,0.45);
-              letter-spacing:1px;">Trade & info:</span>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span style="font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(255,255,255,0.38);
+              letter-spacing:1px;">Trade &amp; info:</span>
             <a href="https://orytnh.dev" target="_blank" rel="noopener" style="
               font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;
               letter-spacing:2px;color:#6edfff;text-decoration:none;
-              border-bottom:1px solid rgba(110,223,255,0.35);
+              border-bottom:1px solid rgba(110,223,255,0.3);
               transition:color 0.2s;text-transform:lowercase;
             ">orytnh.dev</a>
-            <span style="color:rgba(255,255,255,0.2);font-size:10px;">|</span>
+            <span style="color:rgba(255,255,255,0.18);font-size:10px;">|</span>
             <span style="font-family:'Rajdhani',sans-serif;font-size:11px;
-              color:rgba(155,226,155,0.7);letter-spacing:1px;">⛓ Solana Network</span>
+              color:rgba(155,226,155,0.75);letter-spacing:1px;">⛓ Solana Network</span>
           </div>
         </div>
         <!-- Right badge -->
         <div style="flex-shrink:0;text-align:center;display:flex;flex-direction:column;
-          align-items:center;gap:4px;padding-left:16px;border-left:1px solid rgba(255,255,255,0.08);">
-          <div style="font-size:28px;">🚀</div>
+          align-items:center;gap:5px;padding-left:18px;border-left:1px solid rgba(255,255,255,0.07);">
+          <div style="font-size:30px;">🚀</div>
           <div style="font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;
-            letter-spacing:2px;color:rgba(201,168,76,0.6);text-transform:uppercase;">Now</div>
+            letter-spacing:2px;color:rgba(201,168,76,0.55);text-transform:uppercase;">Now</div>
         </div>
       </div>
     </div>
@@ -786,11 +804,11 @@
   <!-- TOKEN SECTION (Tokenomics removed, chains + contract only) -->
   <section id="token">
     <div class="token-inner">
-      <div class="section-label">トークン · Token</div>
+      <div class="section-label">Token</div>
       <h2 class="section-title">$KAIZENKICK</h2>
-      <div class="section-title-en">The On-Chain Football Token</div>
+      
       <div class="divider"></div>
-      <p class="section-desc">サッカーへの情熱をオンチェーンで証明。Solana に展開した $KAIZENKICK トークンをゲットしよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(138,101,0,0.65);">The football improvement token. Live on Solana at orytnh.dev.</span></p>
+      <p class="section-desc">The football improvement token, live on Solana. Trade and get info at orytnh.dev.</p>
 
       <div class="token-grid-single">
         <div class="token-card">
@@ -815,83 +833,83 @@
   <section id="generator">
     <div class="generator-inner">
       <div>
-        <div class="section-label">カード生成 · Create Your Card</div>
-        <h2 class="section-title">あなたの<br>カードを作れ</h2>
-        <div class="section-title-en">Build Your Player Card</div>
+        <div class="section-label">Create Your Card</div>
+        <h2 class="section-title">Build Your<br>Player Card</h2>
+        
         <div class="divider"></div>
         <div class="generator-form">
           <div class="form-group">
-            <label class="form-label">名前 / NAME</label>
-            <input class="form-input" id="nameInput" placeholder="例：田中 カイゼン / e.g. T. KAIZEN" maxlength="20" />
+            <label class="form-label">NAME</label>
+            <input class="form-input" id="nameInput" placeholder="e.g. T. KAIZEN" maxlength="20" />
           </div>
           <div class="form-group">
-            <label class="form-label">ポジション / POSITION</label>
+            <label class="form-label">POSITION</label>
             <div class="select-wrapper">
               <select class="form-select" id="posInput">
-                <option value="ST">ST — ストライカー / Striker</option>
-                <option value="CF">CF — センターフォワード / Centre Forward</option>
-                <option value="LW">LW — 左ウィング / Left Wing</option>
-                <option value="RW">RW — 右ウィング / Right Wing</option>
-                <option value="CAM">CAM — 攻撃的MF / Attacking Mid</option>
-                <option value="CM">CM — セントラルMF / Central Mid</option>
-                <option value="CDM">CDM — 守備的MF / Defensive Mid</option>
-                <option value="LB">LB — 左サイドバック / Left Back</option>
-                <option value="RB">RB — 右サイドバック / Right Back</option>
-                <option value="CB">CB — センターバック / Centre Back</option>
-                <option value="GK">GK — ゴールキーパー / Goalkeeper</option>
+                <option value="ST">ST — Striker</option>
+                <option value="CF">CF — Centre Forward</option>
+                <option value="LW">LW — Left Wing</option>
+                <option value="RW">RW — Right Wing</option>
+                <option value="CAM">CAM — Attacking Mid</option>
+                <option value="CM">CM — Central Mid</option>
+                <option value="CDM">CDM — Defensive Mid</option>
+                <option value="LB">LB — Left Back</option>
+                <option value="RB">RB — Right Back</option>
+                <option value="CB">CB — Centre Back</option>
+                <option value="GK">GK — Goalkeeper</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">国籍 / NATION</label>
+            <label class="form-label">NATION</label>
             <div class="select-wrapper">
               <select class="form-select" id="nationInput">
-                <option value="🇯🇵 JPN">🇯🇵 日本 / Japan</option>
-                <option value="🇧🇷 BRA">🇧🇷 ブラジル / Brazil</option>
-                <option value="🇦🇷 ARG">🇦🇷 アルゼンチン / Argentina</option>
-                <option value="🇫🇷 FRA">🇫🇷 フランス / France</option>
-                <option value="🇩🇪 GER">🇩🇪 ドイツ / Germany</option>
-                <option value="🇪🇸 ESP">🇪🇸 スペイン / Spain</option>
-                <option value="🇵🇹 POR">🇵🇹 ポルトガル / Portugal</option>
-                <option value="🇬🇧 ENG">🇬🇧 イングランド / England</option>
-                <option value="🇰🇷 KOR">🇰🇷 韓국 / Korea</option>
-                <option value="🇮🇩 IDN">🇮🇩 インドネシア / Indonesia</option>
-                <option value="🌏 OTH">🌏 その他 / Other</option>
+                <option value="🇯🇵 JPN">🇯🇵 Japan</option>
+                <option value="🇧🇷 BRA">🇧🇷 Brazil</option>
+                <option value="🇦🇷 ARG">🇦🇷 Argentina</option>
+                <option value="🇫🇷 FRA">🇫🇷 France</option>
+                <option value="🇩🇪 GER">🇩🇪 Germany</option>
+                <option value="🇪🇸 ESP">🇪🇸 Spain</option>
+                <option value="🇵🇹 POR">🇵🇹 Portugal</option>
+                <option value="🇬🇧 ENG">🇬🇧 England</option>
+                <option value="🇰🇷 KOR">🇰🇷 Korea</option>
+                <option value="🇮🇩 IDN">🇮🇩 Indonesia</option>
+                <option value="🌏 OTH">🌏 Other</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">能力値 / STATS</label>
-            <button class="randomize-btn" onclick="randomizeStats()">🎲 ランダム生成 / Randomize</button>
+            <label class="form-label">STATS</label>
+            <button class="randomize-btn" onclick="randomizeStats()">🎲 Randomize</button>
             <div class="stat-sliders" style="margin-top:12px">
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PAC 速さ</span><span class="slider-val" id="val-pac">75</span></div>
+                <div class="slider-top"><span class="slider-name">PAC</span><span class="slider-val" id="val-pac">75</span></div>
                 <input type="range" min="40" max="99" value="75" id="sl-pac" oninput="updateStat('pac',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">SHO シュート</span><span class="slider-val" id="val-sho">70</span></div>
+                <div class="slider-top"><span class="slider-name">SHO</span><span class="slider-val" id="val-sho">70</span></div>
                 <input type="range" min="40" max="99" value="70" id="sl-sho" oninput="updateStat('sho',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PAS パス</span><span class="slider-val" id="val-pas">72</span></div>
+                <div class="slider-top"><span class="slider-name">PAS</span><span class="slider-val" id="val-pas">72</span></div>
                 <input type="range" min="40" max="99" value="72" id="sl-pas" oninput="updateStat('pas',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">DRI ドリブル</span><span class="slider-val" id="val-dri">68</span></div>
+                <div class="slider-top"><span class="slider-name">DRI</span><span class="slider-val" id="val-dri">68</span></div>
                 <input type="range" min="40" max="99" value="68" id="sl-dri" oninput="updateStat('dri',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">DEF 守備</span><span class="slider-val" id="val-def">55</span></div>
+                <div class="slider-top"><span class="slider-name">DEF</span><span class="slider-val" id="val-def">55</span></div>
                 <input type="range" min="40" max="99" value="55" id="sl-def" oninput="updateStat('def',this.value)">
               </div>
               <div class="slider-group">
-                <div class="slider-top"><span class="slider-name">PHY フィジカル</span><span class="slider-val" id="val-phy">65</span></div>
+                <div class="slider-top"><span class="slider-name">PHY</span><span class="slider-val" id="val-phy">65</span></div>
                 <input type="range" min="40" max="99" value="65" id="sl-phy" oninput="updateStat('phy',this.value)">
               </div>
             </div>
           </div>
           <div class="generate-actions">
-            <button class="btn-primary" onclick="generateCard()">⚡ カード生成 / Generate</button>
+            <button class="btn-primary" onclick="generateCard()">⚡ Generate Card</button>
           </div>
         </div>
       </div>
@@ -920,12 +938,12 @@
               <div class="card-stat"><div class="card-stat-val" id="c-def">55</div><div class="card-stat-lbl">DEF</div></div>
               <div class="card-stat"><div class="card-stat-val" id="c-phy">65</div><div class="card-stat-lbl">PHY</div></div>
             </div>
-            <div class="card-footer"><div class="card-footer-brand">カイゼンキック</div></div>
+            <div class="card-footer"><div class="card-footer-brand">KAIZENKICK</div></div>
           </div>
         </div>
         <div class="card-actions">
-          <button class="btn-primary" onclick="downloadCard()">📥 保存</button>
-          <button class="btn-outline" onclick="shareX()">𝕏 シェア</button>
+          <button class="btn-primary" onclick="downloadCard()">📥 Save</button>
+          <button class="btn-outline" onclick="shareX()">𝕏 Share</button>
         </div>
       </div>
     </div>
@@ -935,12 +953,12 @@
   <section id="how">
     <div class="how-inner">
       <div style="max-width:600px">
-        <div class="section-label">使い方 · How It Works</div>
-        <h2 class="section-title">3ステップで完成</h2>
-        <div class="section-title-en">Ready in 3 Steps</div>
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Ready in<br>3 Steps</h2>
+        
         <div class="divider"></div>
         <div class="how-lang-toggle" id="howLangToggle">
-          <button class="lang-btn active" onclick="setHowLang('ja')">🇯🇵 日本語</button>
+          <button class="lang-btn active" onclick="setHowLang('ja')">🇯🇵 JA</button>
           <button class="lang-btn" onclick="setHowLang('en')">🇬🇧 English</button>
         </div>
       </div>
@@ -949,34 +967,34 @@
           <div class="step-num">01</div>
           <div class="step-icon">✏️</div>
           <div class="step-title">Enter Your Info</div>
-          <div class="step-title-ja">情報を入力する</div>
+          <div class="step-title-ja">Step One</div>
           <p class="step-desc en">Type your name, pick your position and nationality, then slide each of the 6 stat bars. The card preview updates live.</p>
-          <p class="step-desc ja">名前・ポジション・国籍を入力し、6つの能力値をスライダーで設定。リアルタイムでカードが更新されます。</p>
+          <p class="step-desc ja">Enter name, position and nationality, then set 6 stat sliders. Card updates in real time.</p>
         </div>
         <div class="step">
           <div class="step-num">02</div>
           <div class="step-icon">⚡</div>
           <div class="step-title">Generate Your Card</div>
-          <div class="step-title-ja">カードを生成する</div>
+          <div class="step-title-ja">Step Two</div>
           <p class="step-desc en">Hit <strong style="color:var(--gold)">Generate</strong>. Your player card is created instantly with auto-calculated overall rating.</p>
-          <p class="step-desc ja">「カード生成」ボタンを押すと、あなただけのカードが完成。総合値は自動計算されます。</p>
+          <p class="step-desc ja">Hit Generate and your unique card is ready. Overall rating is calculated automatically.</p>
         </div>
         <div class="step">
           <div class="step-num">03</div>
           <div class="step-icon">🚀</div>
           <div class="step-title">Save &amp; Share</div>
-          <div class="step-title-ja">保存してシェアする</div>
+          <div class="step-title-ja">Step Three</div>
           <p class="step-desc en">Download as PNG or post to X with one tap. <strong style="color:var(--gold)">#KaizenKick</strong> added automatically.</p>
-          <p class="step-desc ja">PNGでダウンロードまたはXへシェア。<strong style="color:var(--gold)">#KaizenKick</strong>が自動付与されます。</p>
+          <p class="step-desc ja">Download as PNG or share to X. <strong style="color:var(--gold)">#KaizenKick</strong> is added automatically.</p>
         </div>
       </div>
       <div class="how-tip">
         <div class="how-tip-icon">💡</div>
         <div class="how-tip-body">
-          <div class="how-tip-title">Pro Tip / ヒント</div>
+          <div class="how-tip-title">Pro Tip</div>
           <div class="how-tip-text">
             <span class="en">Use <strong style="color:var(--gold)">🎲 Randomize</strong> to instantly try different builds. No account needed. Hold $KAIZENKICK to unlock future exclusive card frames and community perks.</span>
-            <span class="ja">「🎲 ランダム生成」で即座に能力値を試せます。登録不要。$KZKを保有することで、将来的に限定カードフレームやコミュニティ特典が解放されます。</span>
+            <span class="ja">Use 🎲 Randomize to instantly try different builds. No account needed. Hold $KZK to unlock future exclusive card frames and community perks.</span>
           </div>
         </div>
       </div>
@@ -986,11 +1004,11 @@
   <!-- SHOWCASE -->
   <section id="showcase" style="background:var(--surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)">
     <div class="showcase-inner">
-      <div class="section-label">コミュニティ · Community Wall</div>
-      <h2 class="section-title">カードウォール</h2>
-      <div class="section-title-en">Latest Player Cards</div>
+      <div class="section-label">Community Wall</div>
+      <h2 class="section-title">Card Wall</h2>
+      
       <div class="divider"></div>
-      <p class="section-desc">みんなのカイゼンキックカード。あなたも参加しよう。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(184,134,11,0.5);">Real cards from the KaizenKick community. Generate yours and join the wall.</span></p>
+      <p class="section-desc">Real cards from the KaizenKick community. Generate yours and join the wall.</p>
       <div class="showcase-grid" id="showcaseGrid"></div>
     </div>
   </section>
@@ -998,9 +1016,9 @@
   <!-- ROADMAP -->
   <section id="roadmap">
     <div class="roadmap-inner">
-      <div class="section-label">ロードマップ · Roadmap</div>
-      <h2 class="section-title">進化の軌跡</h2>
-      <div class="section-title-en">The Path Forward</div>
+      <div class="section-label">Roadmap</div>
+      <h2 class="section-title">The Path Forward</h2>
+      
       <div class="divider"></div>
       <div class="roadmap-list">
         <div class="roadmap-item">
@@ -1008,7 +1026,7 @@
           <div class="roadmap-body">
             <div class="roadmap-phase">Phase 1 · Q1 2026</div>
             <div class="roadmap-title">Genesis — Launch</div>
-            <div class="roadmap-desc">カイゼンキックプラットフォームの正式ローンチ。プレイヤーカードジェネレーター公開。$KAIZENKICK トークン Solana にて発行。<br>Official launch of KaizenKick. Player Card Generator goes live. $KAIZENKICK token live on Solana.</div>
+            <div class="roadmap-desc">Official launch of KaizenKick. Player Card Generator goes live. $KAIZENKICK token live on Solana.</div>
             <div class="roadmap-tags">
               <span class="roadmap-tag done-t">✅ Card Generator</span>
               <span class="roadmap-tag done-t">✅ $KZK on Solana</span>
@@ -1019,9 +1037,9 @@
         <div class="roadmap-item">
           <div class="roadmap-dot active">⚡</div>
           <div class="roadmap-body">
-            <div class="roadmap-phase">Phase 2 · Q2 2026 — Now</div>
+            <div class="roadmap-phase">Phase 2 · Q2 2026 — Active</div>
             <div class="roadmap-title">Expansion — Solana + Features</div>
-            <div class="roadmap-desc">$KZK 保有者限定の特別カードフレームと特典。X シェア機能強化。コミュニティ成長。<br>Exclusive card frames for token holders. Enhanced X sharing & community features. Growing the community.</div>
+            <div class="roadmap-desc">Exclusive card frames for token holders. Enhanced X sharing & community features. Growing the community.</div>
             <div class="roadmap-tags">
               <span class="roadmap-tag active-t">🟡 Holder Perks</span>
               <span class="roadmap-tag active-t">🟡 Enhanced Sharing</span>
@@ -1034,7 +1052,7 @@
           <div class="roadmap-body">
             <div class="roadmap-phase">Phase 3 · Q3 2026</div>
             <div class="roadmap-title">Battle — Card PvP System</div>
-            <div class="roadmap-desc">カード対決（バトル）モード実装。チームカード作成機能。成長履歴トラッキング機能。NFT カードへの移行オプション。<br>Card battle (PvP) mode. Team card creation. Growth history tracking. Option to mint your card as an NFT.</div>
+            <div class="roadmap-desc">Card battle (PvP) mode. Team card creation. Growth history tracking. Option to mint your card as an NFT.</div>
             <div class="roadmap-tags">
               <span class="roadmap-tag soon-t">⬜ Card Battle</span>
               <span class="roadmap-tag soon-t">⬜ Team Cards</span>
@@ -1047,7 +1065,7 @@
           <div class="roadmap-body">
             <div class="roadmap-phase">Phase 4 · Q4 2026+</div>
             <div class="roadmap-title">Global — World League</div>
-            <div class="roadmap-desc">グローバルリーグシステム。国別ランキング。大型パートナーシップ。モバイルアプリ (iOS/Android) リリース。<br>Global league system. Country rankings. Major partnerships. Mobile app for iOS & Android.</div>
+            <div class="roadmap-desc">Global league system. Country rankings. Major partnerships. Mobile app for iOS & Android.</div>
             <div class="roadmap-tags">
               <span class="roadmap-tag soon-t">⬜ World League</span>
               <span class="roadmap-tag soon-t">⬜ Mobile App</span>
@@ -1062,18 +1080,18 @@
   <!-- TEAM -->
   <section id="team">
     <div class="team-inner">
-      <div class="section-label">チーム紹介 · Meet the Team</div>
-      <h2 class="section-title">開発チーム</h2>
-      <div class="section-title-en">The People Behind KaizenKick</div>
+      <div class="section-label">Meet the Team</div>
+      <h2 class="section-title">The Team</h2>
+      
       <div class="divider"></div>
-      <p class="section-desc">カイゼンキックは、サッカーとテクノロジーを愛する少数精鋭チームが運営しています。<br><span style="font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;color:rgba(184,134,11,0.5);">A small, passionate team at the intersection of football and technology.</span></p>
+      <p class="section-desc">A small, passionate team at the intersection of football and technology.</p>
       <div class="team-grid">
         <div class="team-card">
           <div class="team-avatar">🧑‍💻</div>
           <div class="team-info">
             <div class="team-name">田中 大輝 / Daiki Tanaka</div>
             <div class="team-role">Founder / CEO</div>
-            <div class="team-bio">元アマチュアFW。テクノロジーでサッカー文化を変えることを夢見る創業者。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">Ex-amateur striker turned founder. Dreaming of changing football culture through tech.</span></div>
+            <div class="team-bio">Ex-amateur striker turned founder. Dreaming of changing football culture through tech.</div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
             </div>
@@ -1084,7 +1102,7 @@
           <div class="team-info">
             <div class="team-name">佐藤 美咲 / Misaki Sato</div>
             <div class="team-role">Head of Design</div>
-            <div class="team-bio">UIデザイナー兼フットサル選手。カイゼンキックのビジュアルアイデンティティを一から設計。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">UI designer & futsal player. Crafted KaizenKick's visual identity from scratch.</span></div>
+            <div class="team-bio">UI designer & futsal player. Crafted KaizenKick's visual identity from scratch.</div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
             </div>
@@ -1095,7 +1113,7 @@
           <div class="team-info">
             <div class="team-name">山本 健太 / Kenta Yamamoto</div>
             <div class="team-role">Lead Engineer</div>
-            <div class="team-bio">フルスタックエンジニア。週末は地元チームのGK。コードとゴールの両方を守るのが得意。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">Full-stack engineer & weekend goalkeeper. Guards both code and the net.</span></div>
+            <div class="team-bio">Full-stack engineer & weekend goalkeeper. Guards both code and the net.</div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
             </div>
@@ -1106,7 +1124,7 @@
           <div class="team-info">
             <div class="team-name">中村 遥 / Haruka Nakamura</div>
             <div class="team-role">Community Manager</div>
-            <div class="team-bio">コミュニティ構築とSNS運営を担当。年間観戦数は50試合超。<br><span style="color:rgba(184,134,11,0.45);font-size:10px;">Community builder & football fanatic. 50+ matches a year. KaizenKick's global voice.</span></div>
+            <div class="team-bio">Community builder & football fanatic. 50+ matches a year. KaizenKick's global voice.</div>
             <div class="team-socials">
               <a class="team-social" href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏</a>
             </div>
@@ -1119,30 +1137,30 @@
   <!-- FAQ -->
   <section style="background:var(--surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)">
     <div class="faq-inner">
-      <div class="section-label">よくある質問 · FAQ</div>
+      <div class="section-label">FAQ</div>
       <h2 class="section-title">FAQ</h2>
-      <div class="section-title-en">Frequently Asked Questions</div>
+      
       <div class="divider" style="margin:16px auto"></div>
       <div class="faq-list">
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>カイゼンキックは無料ですか？<span class="faq-en">Is KaizenKick free?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">はい、カード生成・ダウンロード・シェアはすべて完全無料です。アカウント登録も不要。<br><br><em>Yes — card creation, download, and sharing are completely free. No account required.</em></div>
+          <div class="faq-q" onclick="toggleFaq(this)"><span>Is KaizenKick free?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Yes — card creation, download, and sharing are completely free. No account required.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>$KAIZENKICK トークンはどこで買えますか？<span class="faq-en">Where can I buy $KAIZENKICK?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Solana ネットワークにて購入可能です。<a href="https://orytnh.dev" target="_blank" rel="noopener" style="color:var(--sol);">orytnh.dev</a> にてトレード・情報をご確認ください。<br><br><em>Available on Solana network. Trade and info available at <a href="https://orytnh.dev" target="_blank" rel="noopener" style="color:var(--sol);">orytnh.dev</a>.</em></div>
+          <div class="faq-q" onclick="toggleFaq(this)"><span>Where can I buy $KAIZENKICK?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Available on Solana. Trade and info at <a href="https://orytnh.dev" target="_blank" rel="noopener" style="color:var(--sol);">orytnh.dev</a>.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>$KZK を保有するとどんな特典がありますか？<span class="faq-en">What perks do $KZK holders get?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Phase 2 以降、$KZK保有者には限定カードフレーム、早期アクセス機能、コミュニティ投票権などの特典が予定されています。<br><br><em>From Phase 2, $KZK holders get exclusive card frames, early access, and community governance rights.</em></div>
+          <div class="faq-q" onclick="toggleFaq(this)"><span>What perks do $KZK holders get?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">From Phase 2, $KZK holders get exclusive card frames, early access, and community governance rights.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>生成したカードはどこに保存されますか？<span class="faq-en">Where is my card saved?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">カードはブラウザ上で生成され、サーバーには保存されません。「保存」でPNG画像としてデバイスにダウンロードできます。<br><br><em>Cards are generated in-browser and not stored on any server. Tap Save to download a PNG.</em></div>
+          <div class="faq-q" onclick="toggleFaq(this)"><span>Where is my card saved?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Cards are generated in-browser and not stored on any server. Tap Save to download a PNG.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)"><span>今後の機能追加予定は？<span class="faq-en">What features are coming next?</span></span><span class="faq-icon">+</span></div>
-          <div class="faq-a">カードバトルモード、チームカード、NFTミント機能、Solana展開などを開発中。ロードマップセクションをご確認ください。<br><br><em>Card battle mode, team cards, NFT minting, Solana expansion and more. Check the roadmap section.</em></div>
+          <div class="faq-q" onclick="toggleFaq(this)"><span>What features are coming next?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Card battle mode, team cards, NFT minting, and more. Check the roadmap section.</div>
         </div>
       </div>
     </div>
@@ -1150,12 +1168,12 @@
 
   <!-- CTA BANNER -->
   <section id="cta-banner">
-    <div class="cta-title">今すぐ進化を始めろ</div>
-    <div class="cta-title-en">Start Your Evolution Today</div>
-    <p class="cta-sub">カード一枚が、あなたの改善の証になる。</p>
-    <p class="cta-sub-en">One card. Your proof of progress.</p>
+    <div class="cta-title">Start Your Evolution Today</div>
+    
+    <p class="cta-sub">One card. Your proof of progress.</p>
+    
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center;">
-      <a href="#generator" class="btn-primary">カードを作る — 無料 / FREE</a>
+      <a href="#generator" class="btn-primary">Create Your Card — FREE</a>
       <a href="https://x.com/kainzenkick" target="_blank" rel="noopener" class="btn-outline">𝕏 @KaizenKick</a>
     </div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;">
@@ -1167,16 +1185,16 @@
   <footer>
     <div class="footer-inner">
       <div>
-        <div class="footer-brand-name">カイゼンキック</div>
-        <p class="footer-brand-desc">サッカーへの情熱と日々の改善を、プレイヤーカードで可視化。$KAIZENKICK トークンでWeb3コミュニティに参加しよう。<br><br><span style="font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(138,101,0,0.55);">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK on Solana.</span></p>
+        <div class="footer-brand-name">KaizenKick</div>
+        <p class="footer-brand-desc">Visualize your soccer growth. Join the Web3 community with $KAIZENKICK on Solana.</p>
       </div>
       <div>
-        <div class="footer-col-title">サービス / Service</div>
+        <div class="footer-col-title">Service</div>
         <div class="footer-links">
-          <a href="#generator">カード生成 / Create Card</a>
-          <a href="#showcase">カードウォール / Card Wall</a>
-          <a href="#how">使い方 / How It Works</a>
-          <a href="#about">概要 / About</a>
+          <a href="#generator">Create Card</a>
+          <a href="#showcase">Card Wall</a>
+          <a href="#how">How It Works</a>
+          <a href="#about">About</a>
         </div>
       </div>
       <div>
@@ -1188,16 +1206,16 @@
         </div>
       </div>
       <div>
-        <div class="footer-col-title">フォロー / Follow</div>
+        <div class="footer-col-title">Follow</div>
         <div class="footer-links">
           <a href="https://x.com/kainzenkick" target="_blank" rel="noopener">𝕏 @KaizenKick</a>
-          <a href="#team">チーム / Team</a>
-          <a href="#">プライバシー / Privacy</a>
+          <a href="#team">Team</a>
+          <a href="#">Privacy</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-copy">© 2026 カイゼンキック — All rights reserved.</div>
+      <div class="footer-copy">© 2026 KaizenKick — All rights reserved.</div>
       <div class="footer-badges">
         <span class="badge-pill">⚽ Made for Ballers</span>
         <span class="badge-pill">🇯🇵 Japan</span>
@@ -1394,7 +1412,7 @@
 
   function generateCard() {
     const name = document.getElementById('nameInput').value.trim();
-    if (!name) { showToast('❗ 名前を入力してください / Enter your name'); return; }
+    if (!name) { showToast('❗ Please enter your name'); return; }
     const pos = document.getElementById('posInput').value;
     const nation = document.getElementById('nationInput').value;
     document.getElementById('c-name').textContent = name.toUpperCase();
@@ -1402,7 +1420,7 @@
     document.getElementById('c-nation').textContent = nation;
     document.getElementById('c-avatar').textContent = avatarMap[pos] || '⚽';
     updateOverall();
-    showToast('🎴 カードを生成しました！ / Card Generated!');
+    showToast('🎴 Card Generated!');
     addToShowcase(name.toUpperCase(), pos, parseInt(document.getElementById('c-overall').textContent), nation);
   }
 
@@ -1413,24 +1431,17 @@
       link.download = 'kaizenkick-card.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
-      showToast('✅ カードを保存しました / Card Saved!');
-    }).catch(() => showToast('⚠️ 保存に失敗しました / Save failed'));
+      showToast('✅ Card Saved!');
+    }).catch(() => showToast('⚠️ Save failed'));
   }
 
   function shareX() {
     const name = document.getElementById('c-name').textContent;
     const ovr = document.getElementById('c-overall').textContent;
     const pos = document.getElementById('c-pos').textContent;
-    const text = `🎴 カイゼンキック プレイヤーカード\n⚡ ${name} | ${pos} | OVR ${ovr}\n\n改善を続ける選手として認定されました！\n💎 $KAIZENKICK\n#KaizenKick #カイゼンキック\nhttps://x.com/kainzenkick`;
+    const text = `🎴 KaizenKick Player Card\n⚡ ${name} | ${pos} | OVR ${ovr}\n\nCertified as a player who never stops improving!\n💎 $KAIZENKICK\n#KaizenKick\nhttps://x.com/kainzenkick`;
     window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
   }
-
-  function copyContract() {
-    navigator.clipboard.writeText('0x56411eb4782e84910134d6642d42926e834f373e')
-      .then(() => showToast('✅ Contract address copied!'))
-      .catch(() => showToast('📋 0x56411eb4782e84910134d6642d42926e834f373e'));
-  }
-
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1459,22 +1470,22 @@
   // SHOWCASE MOCK DATA
   // ══════════════════════════════════════════
   const fakeCards = [
-    { name:'SUZUKI K.',    pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',    date:'2時間前',  nation:'🇯🇵', pac:88,sho:85,pas:72 },
-    { name:'HAYASHI R.',   pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',    date:'3時間前',  nation:'🇯🇵', pac:55,sho:40,pas:68 },
-    { name:'NAKAMURA T.',  pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',     date:'5時間前',  nation:'🇧🇷', pac:76,sho:79,pas:91 },
-    { name:'WATANABE',     pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense',  date:'昨日',     nation:'🇯🇵', pac:66,sho:48,pas:71 },
-    { name:'ITO YUKI',     pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',        date:'昨日',     nation:'🇦🇷', pac:95,sho:80,pas:77 },
-    { name:'KATO S.',      pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',   date:'2日前',    nation:'🇯🇵', pac:68,sho:55,pas:78 },
-    { name:'YAMAMOTO',     pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',      date:'2日前',    nation:'🇩🇪', pac:74,sho:70,pas:87 },
-    { name:'TANAKA D.',    pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',    date:'3日前',    nation:'🇫🇷', pac:91,sho:83,pas:74 },
-    { name:'SILVA A.',     pos:'ST',  ovr:90, avatar:'🏃', user:'@silva_gol',     date:'3日前',    nation:'🇧🇷', pac:93,sho:92,pas:68 },
-    { name:'PARK J.',      pos:'LB',  ovr:77, avatar:'🏃', user:'@park_lb7',      date:'4日前',    nation:'🇰🇷', pac:80,sho:44,pas:76 },
-    { name:'MUELLER',      pos:'CAM', ovr:89, avatar:'🎯', user:'@mueller_10',    date:'4日前',    nation:'🇩🇪', pac:78,sho:84,pas:94 },
-    { name:'ROSSI G.',     pos:'CF',  ovr:84, avatar:'⚡', user:'@rossi_g',       date:'5日前',    nation:'🇮🇹', pac:82,sho:88,pas:76 },
-    { name:'SANTOS',       pos:'GK',  ovr:86, avatar:'🧤', user:'@santos_gk1',   date:'5日前',    nation:'🇵🇹', pac:58,sho:42,pas:72 },
-    { name:'LEE M.',       pos:'RB',  ovr:75, avatar:'🏃', user:'@lee_rb22',      date:'6日前',    nation:'🇰🇷', pac:82,sho:40,pas:74 },
-    { name:'CHEN W.',      pos:'CM',  ovr:80, avatar:'🔄', user:'@chen_w88',      date:'6日前',    nation:'🌏', pac:72,sho:66,pas:85 },
-    { name:'KOBAYASHI',    pos:'CB',  ovr:81, avatar:'🧱', user:'@koba_def',      date:'1週間前',  nation:'🇯🇵', pac:69,sho:50,pas:73 },
+    { name:'SUZUKI K.',    pos:'ST',  ovr:87, avatar:'🏃', user:'@kzk_suzuki',    date:'2h ago',  nation:'🇯🇵', pac:88,sho:85,pas:72 },
+    { name:'HAYASHI R.',   pos:'GK',  ovr:91, avatar:'🧤', user:'@hayashi_gk',    date:'3h ago',  nation:'🇯🇵', pac:55,sho:40,pas:68 },
+    { name:'NAKAMURA T.',  pos:'CAM', ovr:83, avatar:'🎯', user:'@nkm_cam10',     date:'5h ago',  nation:'🇧🇷', pac:76,sho:79,pas:91 },
+    { name:'WATANABE',     pos:'CB',  ovr:79, avatar:'🧱', user:'@wata_defense',  date:'Yesterday',     nation:'🇯🇵', pac:66,sho:48,pas:71 },
+    { name:'ITO YUKI',     pos:'LW',  ovr:88, avatar:'🌪️', user:'@ito_lw',        date:'Yesterday',     nation:'🇦🇷', pac:95,sho:80,pas:77 },
+    { name:'KATO S.',      pos:'CDM', ovr:76, avatar:'🛡️', user:'@kato_shield',   date:'2d ago',    nation:'🇯🇵', pac:68,sho:55,pas:78 },
+    { name:'YAMAMOTO',     pos:'CM',  ovr:82, avatar:'🔄', user:'@yama_mid',      date:'2d ago',    nation:'🇩🇪', pac:74,sho:70,pas:87 },
+    { name:'TANAKA D.',    pos:'RW',  ovr:85, avatar:'🌪️', user:'@tanaka_rw9',    date:'3d ago',    nation:'🇫🇷', pac:91,sho:83,pas:74 },
+    { name:'SILVA A.',     pos:'ST',  ovr:90, avatar:'🏃', user:'@silva_gol',     date:'3d ago',    nation:'🇧🇷', pac:93,sho:92,pas:68 },
+    { name:'PARK J.',      pos:'LB',  ovr:77, avatar:'🏃', user:'@park_lb7',      date:'4d ago',    nation:'🇰🇷', pac:80,sho:44,pas:76 },
+    { name:'MUELLER',      pos:'CAM', ovr:89, avatar:'🎯', user:'@mueller_10',    date:'4d ago',    nation:'🇩🇪', pac:78,sho:84,pas:94 },
+    { name:'ROSSI G.',     pos:'CF',  ovr:84, avatar:'⚡', user:'@rossi_g',       date:'5d ago',    nation:'🇮🇹', pac:82,sho:88,pas:76 },
+    { name:'SANTOS',       pos:'GK',  ovr:86, avatar:'🧤', user:'@santos_gk1',   date:'5d ago',    nation:'🇵🇹', pac:58,sho:42,pas:72 },
+    { name:'LEE M.',       pos:'RB',  ovr:75, avatar:'🏃', user:'@lee_rb22',      date:'6d ago',    nation:'🇰🇷', pac:82,sho:40,pas:74 },
+    { name:'CHEN W.',      pos:'CM',  ovr:80, avatar:'🔄', user:'@chen_w88',      date:'6d ago',    nation:'🌏', pac:72,sho:66,pas:85 },
+    { name:'KOBAYASHI',    pos:'CB',  ovr:81, avatar:'🧱', user:'@koba_def',      date:'1 week ago',  nation:'🇯🇵', pac:69,sho:50,pas:73 },
   ];
 
   function buildShowcaseItem(c) {
@@ -1502,7 +1513,7 @@
     const grid = document.getElementById('showcaseGrid');
     const item = buildShowcaseItem({
       name, pos, ovr, nation: nation||'🌏',
-      avatar: avatarMap[pos]||'⚽', user:'@you', date:'たった今 / Just now',
+      avatar: avatarMap[pos]||'⚽', user:'@you', date:'Just now',
       pac: stats.pac, sho: stats.sho, pas: stats.pas
     });
     grid.insertAdjacentHTML('afterbegin', item);
